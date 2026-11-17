@@ -54,6 +54,11 @@ export const LICENSE_EXCEPTIONS: readonly LicenseException[] = [
   },
   { name: 'minimatch', license: 'BlueOak-1.0.0', reason: 'permissive license, dev tooling' },
   {
+    name: 'lru-cache',
+    license: 'BlueOak-1.0.0',
+    reason: 'permissive license, dev tooling (jsdom)',
+  },
+  {
     name: 'caniuse-lite',
     license: 'CC-BY-4.0',
     reason: 'browser data, dev tooling, attribution only',
