@@ -1,0 +1,58 @@
+/* Tokens only (S2). Document text is at least 1rem; the body stays within about 75 characters. */
+.editor-top-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  padding-inline: var(--ds-space-200);
+  padding-block: var(--ds-space-100);
+  min-inline-size: 0;
+}
+
+.editor-top-bar__name {
+  font: var(--ds-font-body);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--ds-text);
+}
+
+.editor-top-bar__status {
+  margin: 0 0 0 auto;
+  font: var(--ds-font-body-small);
+  color: var(--ds-text-subtle);
+  text-align: end;
+}
+
+.editor-page-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-100);
+  padding-inline: var(--ds-space-200);
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  box-sizing: border-box;
+}
+
+.editor-page-main textarea {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 75ch;
+  min-block-size: 60dvh;
+  box-sizing: border-box;
+  padding: var(--ds-space-150);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-small);
+  background: transparent;
+  color: var(--ds-text);
+  font: var(--ds-font-body);
+  font-size: max(1rem, 16px);
+  resize: vertical;
+}
+
+@media (pointer: coarse) {
+  .editor-top-bar .ds-icon-link,
+  .editor-top-bar__name {
+    min-block-size: 44px;
+    min-inline-size: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}

@@ -29,6 +29,11 @@
   --bp-md: 768px;
   --bp-lg: 1024px;
   --bp-xl: 1280px;
+
+  /* Stacking order for the app shell (S9). Keep the sidebar below the drawer and its scrim. */
+  --app-z-sidebar: 10;
+  --app-z-scrim: 20;
+  --app-z-drawer: 30;
 }
 
 html,

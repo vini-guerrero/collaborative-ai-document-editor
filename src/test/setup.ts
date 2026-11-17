@@ -1,9 +1,13 @@
 import { afterEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
+import { installMatchMedia, resetMatchMedia } from './matchMedia';
+
+installMatchMedia();
 
 // Unmount rendered trees and clear the DOM after every test so tests stay isolated.
 afterEach(() => {
   cleanup();
+  resetMatchMedia();
 });
 
 // DEBT: jsdom 31 implements HTMLDialogElement but not showModal() or close(). This stub installs

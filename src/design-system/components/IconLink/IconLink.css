@@ -1,0 +1,5 @@
+/* Variant, square size and touch target come from Button.css and IconButton.css. */
+.ds-icon-link {
+  color: inherit;
+  text-decoration: none;
+}

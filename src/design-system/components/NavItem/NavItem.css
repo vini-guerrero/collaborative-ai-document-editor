@@ -1,0 +1,62 @@
+/* S2: tokens only. S7: the current item is marked by a bar and weight, not color alone. */
+.ds-nav-item {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  inline-size: 100%;
+  min-block-size: 32px;
+  min-inline-size: 0;
+  padding: var(--ds-space-050) var(--ds-space-100);
+  border: none;
+  border-radius: var(--ds-radius-small);
+  background: transparent;
+  color: var(--ds-text);
+  font: var(--ds-font-body);
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ds-nav-item:not(.ds-nav-item--disabled):hover {
+  background: var(--ds-background-neutral-subtle-hovered);
+}
+
+.ds-nav-item__label {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.ds-nav-item--current {
+  background: var(--ds-background-selected);
+  color: var(--ds-text-selected);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.ds-nav-item--current::before {
+  content: '';
+  position: absolute;
+  inset-block: var(--ds-space-050);
+  inset-inline-start: 0;
+  inline-size: var(--ds-space-025);
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-border-selected);
+}
+
+.ds-nav-item--disabled {
+  color: var(--ds-text-disabled);
+  cursor: not-allowed;
+}
+
+.ds-nav-item--collapsed {
+  justify-content: center;
+}
+
+/* S9: at least 44px targets on coarse pointers. */
+@media (pointer: coarse) {
+  .ds-nav-item {
+    min-block-size: 44px;
+  }
+}

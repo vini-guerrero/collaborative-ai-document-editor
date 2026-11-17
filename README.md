@@ -24,7 +24,9 @@ Updated in the same commit as each phase.
 | 14 | Documents store: zod schemas, `DocumentStore` over localStorage with index recovery, preview helper (built early, in parallel with 12) | Done |
 | 15 | DocumentStore provider and hook, relativeTime, store wired in main | Done |
 | 12 | Dialog on native `<dialog>` (reviewed: busy guard, native-close sync, focus return) | Done |
-| 13, 16-20 | Home screen milestone: layout, routing, home, views, delete (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 13 |
+| 13 | Responsive layout: useBreakpoint, AppShell (sidebar, rail, drawer), NavItem, IconLink (reviewed) | Done |
+| 16 | Routing, route error boundaries, editor placeholder (textarea) with serialized autosave (reviewed) | Done |
+| 17-20 | Home screen milestone: home shell, views, delete flow, milestone close (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 17 |
 
 ## What it is
 

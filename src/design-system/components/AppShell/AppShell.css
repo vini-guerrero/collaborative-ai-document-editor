@@ -1,0 +1,109 @@
+/* S9: the mode class is chosen in JS by useBreakpoint, so this file has no media queries. Layout
+   constants below are geometry, not palette values (S2). */
+.ds-app-shell {
+  --ds-app-shell-sidebar-width: 240px;
+  --ds-app-shell-rail-width: 64px;
+  --ds-app-shell-drawer-width: 280px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas: 'header' 'main';
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  background: var(--ds-surface);
+  color: var(--ds-text);
+}
+
+.ds-app-shell--expanded {
+  grid-template-columns: var(--ds-app-shell-sidebar-width) minmax(0, 1fr);
+  grid-template-areas: 'header header' 'sidebar main';
+}
+
+.ds-app-shell--rail {
+  grid-template-columns: var(--ds-app-shell-rail-width) minmax(0, 1fr);
+  grid-template-areas: 'header header' 'sidebar main';
+}
+
+.ds-app-shell__header {
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  min-inline-size: 0;
+  padding: var(--ds-space-100) var(--ds-space-200);
+  border-block-end: 1px solid var(--ds-border);
+  background: var(--ds-surface-raised);
+}
+
+/* Persistent sidebar (expanded and rail): stays in view while the main content scrolls. */
+.ds-app-shell--expanded .ds-app-shell__sidebar,
+.ds-app-shell--rail .ds-app-shell__sidebar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--app-z-sidebar);
+  align-self: start;
+  max-block-size: 100dvh;
+}
+
+.ds-app-shell__sidebar {
+  grid-area: sidebar;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: var(--ds-space-200) var(--ds-space-100);
+  border-inline-end: 1px solid var(--ds-border);
+  background: var(--ds-surface-raised);
+  overflow-y: auto;
+}
+
+.ds-app-shell__drawer-head {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ds-app-shell__main {
+  grid-area: main;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: var(--ds-space-200);
+}
+
+/* Drawer: the sidebar leaves the grid and slides in over the page. Safe-area insets keep its
+   first and last items clear of device notches; overscroll stays inside the drawer. */
+.ds-app-shell--drawer .ds-app-shell__sidebar {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: var(--app-z-drawer);
+  box-sizing: border-box;
+  inline-size: min(var(--ds-app-shell-drawer-width), 100vw);
+  padding-block-start: calc(var(--ds-space-200) + env(safe-area-inset-top, 0px));
+  padding-block-end: calc(var(--ds-space-200) + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: var(--ds-shadow-overlay);
+}
+
+/* The slide is enabled only after the user has toggled the drawer (data-animate), so a resize
+   never animates the sidebar in or out. */
+.ds-app-shell--drawer[data-animate='true'] .ds-app-shell__sidebar {
+  transition:
+    transform var(--ds-duration-medium) var(--ds-easing-out-practical),
+    visibility var(--ds-duration-medium);
+}
+
+.ds-app-shell--drawer .ds-app-shell__sidebar[inert] {
+  transform: translateX(-100%);
+  visibility: hidden;
+}
+
+/* RTL: the drawer sits on the inline-start edge, so the hidden position flips. */
+[dir='rtl'] .ds-app-shell--drawer .ds-app-shell__sidebar[inert] {
+  transform: translateX(100%);
+}
+
+.ds-app-shell__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--app-z-scrim);
+  background: var(--ds-blanket);
+}
