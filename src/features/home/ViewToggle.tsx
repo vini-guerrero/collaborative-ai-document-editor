@@ -25,6 +25,7 @@ export function ViewToggle({ value, onChange }: ViewToggleProps): JSX.Element {
       label="Document view"
       value={value}
       options={OPTIONS}
+      iconOnly
       onChange={(next) => {
         if (isDocumentView(next)) {
           onChange(next);

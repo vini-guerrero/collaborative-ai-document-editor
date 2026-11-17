@@ -35,14 +35,25 @@
   background: var(--ds-surface-raised);
 }
 
-/* Persistent sidebar (expanded and rail): stays in view while the main content scrolls. */
+/* Persistent sidebar (expanded and rail): the shell is exactly one viewport tall, the main area
+   scrolls inside it, and the sidebar stretches the full height below the header so its edge rule
+   runs flush from the header rule to the bottom of the viewport. */
+.ds-app-shell--expanded,
+.ds-app-shell--rail {
+  block-size: 100dvh;
+}
+
 .ds-app-shell--expanded .ds-app-shell__sidebar,
 .ds-app-shell--rail .ds-app-shell__sidebar {
-  position: sticky;
-  inset-block-start: 0;
   z-index: var(--app-z-sidebar);
-  align-self: start;
-  max-block-size: 100dvh;
+  align-self: stretch;
+  min-block-size: 0;
+}
+
+.ds-app-shell--expanded .ds-app-shell__main,
+.ds-app-shell--rail .ds-app-shell__main {
+  min-block-size: 0;
+  overflow-y: auto;
 }
 
 .ds-app-shell__sidebar {

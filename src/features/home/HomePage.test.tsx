@@ -51,6 +51,22 @@ describe('HomePage', () => {
     expect(screen.getByText(/Edited /)).toBeTruthy();
   });
 
+  // H4: the Grid/List toggle sits in the same row as the title, and only when there are documents.
+  it('puts the view toggle in the title row once documents exist (H4)', async () => {
+    renderHome(fakeStore([{ ok: true, value: [] }]));
+    await screen.findByRole('heading', { level: 2, name: 'Start your first document' });
+    expect(screen.queryByRole('group', { name: 'Document view' })).toBeNull();
+  });
+
+  it('shares the title row with the view toggle when documents exist (H4)', async () => {
+    renderHome(fakeStore([{ ok: true, value: [PLAN] }]));
+
+    await screen.findByRole('link', { name: 'Plan' });
+    const title = screen.getByRole('heading', { level: 1, name: 'Documents' });
+    const toggle = screen.getByRole('group', { name: 'Document view' });
+    expect(title.parentElement?.contains(toggle)).toBe(true);
+  });
+
   // H4: cards are the default view; the toggle switches to rows and keeps the same links.
   // The preview belongs to the grid cards only (H4), so it disappears in the list.
   it('shows cards by default and switches to rows with the view toggle (H4, S7)', async () => {
@@ -116,6 +132,18 @@ describe('HomePage', () => {
     await user.click(screen.getByRole('button', { name: 'Retry' }));
 
     await screen.findByRole('link', { name: 'Plan' });
+  });
+
+  // H3: the navbar search is visible but disabled; it explains itself with a tooltip, not a label.
+  it('shows a disabled search with a tooltip and no Soon label in the navbar (H3)', () => {
+    renderHome(fakeStore([{ ok: true, value: [] }]));
+
+    const banner = screen.getByRole('banner');
+    const search = within(banner).getByRole('searchbox', { name: 'Search documents' });
+    expect(search.hasAttribute('disabled')).toBe(true);
+    expect(search.getAttribute('aria-disabled')).toBe('true');
+    expect(search.closest('[title]')?.getAttribute('title')).toBe('Search is coming later');
+    expect(within(banner).queryByText('Soon')).toBeNull();
   });
 
   // H2: the sidebar keeps Pinned, Collaborations and Archive visible but disabled, with Soon labels.

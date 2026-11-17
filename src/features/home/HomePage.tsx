@@ -26,7 +26,6 @@ export interface HomePageProps {
 interface DocumentsPanelOptions {
   view: DocumentView;
   now: number;
-  onViewChange: (view: DocumentView) => void;
   onRetry: () => void;
   onNewDocument: () => void;
   onDelete: (doc: DocumentSummary) => void;
@@ -63,15 +62,10 @@ function renderDocuments(state: DocumentListState, options: DocumentsPanelOption
   if (state.documents.length === 0) {
     return <EmptyHome onNewDocument={options.onNewDocument} />;
   }
-  return (
-    <>
-      <ViewToggle value={options.view} onChange={options.onViewChange} />
-      {options.view === 'grid' ? (
-        <DocumentGrid documents={state.documents} now={options.now} onDelete={options.onDelete} />
-      ) : (
-        <DocumentList documents={state.documents} now={options.now} onDelete={options.onDelete} />
-      )}
-    </>
+  return options.view === 'grid' ? (
+    <DocumentGrid documents={state.documents} now={options.now} onDelete={options.onDelete} />
+  ) : (
+    <DocumentList documents={state.documents} now={options.now} onDelete={options.onDelete} />
   );
 }
 
@@ -107,13 +101,17 @@ export function HomePage({ newId = createDocumentId, now }: HomePageProps): JSX.
   return (
     <AppShell navbar={<HomeNavbar />} sidebar={<HomeSidebar onNewDocument={startNewDocument} />}>
       <div className="home-page">
-        <h1 ref={headingRef} tabIndex={-1} className="home-page__title">
-          Documents
-        </h1>
+        <div className="home-page__head">
+          <h1 ref={headingRef} tabIndex={-1} className="home-page__title">
+            Documents
+          </h1>
+          {state.kind === 'ready' && state.documents.length > 0 ? (
+            <ViewToggle value={view} onChange={setView} />
+          ) : null}
+        </div>
         {renderDocuments(state, {
           view,
           now: renderedAt,
-          onViewChange: setView,
           onRetry: retry,
           onNewDocument: startNewDocument,
           onDelete: deletion.request,

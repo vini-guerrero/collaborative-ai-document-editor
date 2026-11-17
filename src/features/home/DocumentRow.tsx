@@ -13,8 +13,8 @@ export interface DocumentRowProps {
 }
 
 // H4: a compact row with title and edit time only; the preview is shown in the grid cards alone.
-// The whole row is one link. The delete button is its own cell after the edit time, outside the
-// link (H5, S9, D17).
+// The whole row is one link (stretched link). The delete button sits above the link overlay at the
+// row end, so it is never nested inside the link and is always visible (H5, S9, D17).
 export function DocumentRow({ doc, now, onDelete }: DocumentRowProps): JSX.Element {
   const title = displayTitle(doc.title);
   return (

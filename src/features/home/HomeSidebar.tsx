@@ -1,6 +1,6 @@
 import type { JSX, MouseEvent } from 'react';
 import { useNavigate } from 'react-router';
-import { NavItem } from '@/design-system';
+import { Button, Icon, NavItem, useShell } from '@/design-system';
 
 export interface HomeSidebarProps {
   onNewDocument: () => void;
@@ -23,6 +23,13 @@ function isPlainPrimaryClick(event: MouseEvent<HTMLElement>): boolean {
 // H2: only New document and the current Documents entry work. The rest are visible promises (Soon).
 export function HomeSidebar({ onNewDocument }: HomeSidebarProps): JSX.Element {
   const navigate = useNavigate();
+  const shell = useShell();
+
+  // The primary action is a button, not a nav item, so it closes the drawer itself (S9).
+  function startNewDocument(): void {
+    shell.closeDrawer();
+    onNewDocument();
+  }
 
   // Stays in the single-page app: a plain click navigates with the router, not a full reload.
   function goHome(event: MouseEvent<HTMLElement>): void {
@@ -35,7 +42,12 @@ export function HomeSidebar({ onNewDocument }: HomeSidebarProps): JSX.Element {
 
   return (
     <div className="home-sidebar">
-      <NavItem icon="plus" label="New document" onClick={onNewDocument} />
+      <div className="home-sidebar__new">
+        <Button variant="primary" onClick={startNewDocument}>
+          <Icon name="plus" />
+          New document
+        </Button>
+      </div>
       <NavItem icon="file-text" label="Documents" href="/" current onClick={goHome} />
       <NavItem icon="pin" label="Pinned" disabled soon />
       <NavItem icon="users" label="Collaborations" disabled soon />

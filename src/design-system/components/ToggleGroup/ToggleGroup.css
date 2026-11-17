@@ -2,8 +2,8 @@
   display: inline-flex;
   gap: var(--ds-space-025);
   padding: var(--ds-space-025);
-  border: var(--ds-border-width) solid var(--ds-border);
-  border-radius: var(--ds-radius-small);
+  border-radius: var(--ds-radius-large);
+  background: var(--ds-background-neutral);
 }
 
 .ds-toggle-group__button {
@@ -15,7 +15,7 @@
   min-block-size: 32px;
   padding-inline: var(--ds-space-100);
   border: 0;
-  border-radius: var(--ds-radius-small);
+  border-radius: var(--ds-radius-medium);
   background: transparent;
   color: var(--ds-text-subtle);
   font: var(--ds-font-body);
@@ -31,12 +31,13 @@
   background: var(--ds-background-neutral-pressed);
 }
 
-/* Selected is shown by background, text color and weight, not by color alone (S7). */
+/* Selected is raised above the track and shown in bold text, not by color alone (S7). */
 .ds-toggle-group__button--selected,
 .ds-toggle-group__button--selected:hover {
-  background: var(--ds-background-brand-subtlest);
-  color: var(--ds-text-brand);
+  background: var(--ds-surface-raised);
+  color: var(--ds-text);
   font-weight: var(--ds-font-weight-semibold);
+  box-shadow: var(--ds-shadow-raised);
 }
 
 @media (pointer: coarse) {

@@ -1,34 +1,79 @@
-/* S2: tokens only. Sizes are multiples of the spacing tokens (1 unit = --ds-space-100, 0.5rem):
-   200px is 25 units and 320px is 40 units. S9: the navbar wraps instead of overflowing at 320px. */
+/* S2: tokens only. Sizes are multiples of the spacing tokens (1 unit = --ds-space-100, 0.5rem)
+   unless noted. S9: the navbar wraps instead of overflowing at 320px. */
 .home-navbar {
   display: flex;
   flex: 1 1 auto;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--ds-space-100);
+  min-block-size: var(--ds-space-500);
   min-inline-size: 0;
 }
 
+/* H3: the name column is as wide as the sidebar, so the search starts where the main column does. */
 .home-navbar__name {
+  display: flex;
   flex: 0 0 auto;
-  padding-block: var(--ds-space-050);
-  font: var(--ds-font-heading-xsmall);
+  align-items: center;
+  gap: var(--ds-space-100);
+  font: var(--ds-font-heading-small);
   color: var(--ds-text);
   text-decoration: none;
+}
+
+.ds-app-shell--expanded .home-navbar__name {
+  inline-size: calc(var(--ds-app-shell-sidebar-width) - var(--ds-space-200) - var(--ds-space-100));
+}
+
+.home-navbar__mark {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  inline-size: var(--ds-space-400);
+  block-size: var(--ds-space-400);
+  border-radius: var(--ds-radius-large);
+  background: var(--ds-background-brand-bold);
+  color: var(--ds-text-inverse);
+  font: var(--ds-font-heading-small);
 }
 
 .home-navbar__search {
   display: flex;
   flex: 1 1 calc(var(--ds-space-100) * 25);
   align-items: center;
-  gap: var(--ds-space-100);
   min-inline-size: 0;
-  max-inline-size: calc(var(--ds-space-100) * 40);
+  max-inline-size: calc(var(--ds-space-100) * 70);
 }
 
-.home-navbar__search .ds-text-field {
+.home-navbar__field {
+  position: relative;
   flex: 1 1 auto;
   min-inline-size: 0;
+}
+
+.home-navbar__search-icon {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--ds-space-150);
+  display: flex;
+  color: var(--ds-icon-subtle);
+  translate: 0 -50%;
+  pointer-events: none;
+}
+
+/* H3: a 40px muted field with no outline; the fill and the icon carry it. */
+.home-navbar__field .ds-text-field__input,
+.home-navbar__field .ds-text-field__input:disabled {
+  min-block-size: var(--ds-space-500);
+  padding-inline-start: calc(var(--ds-space-100) * 5);
+  border: 0;
+  border-radius: var(--ds-radius-large);
+  background: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+}
+
+.home-navbar__field .ds-text-field__input::placeholder {
+  color: var(--ds-text-disabled);
 }
 
 .home-navbar__user {
@@ -40,12 +85,26 @@
   display: flex;
   flex-direction: column;
   gap: var(--ds-space-200);
+  /* H4: with the shell's 16px main padding this gives the 24px top and 32px side spacing. */
+  padding-block: var(--ds-space-100);
+  padding-inline: var(--ds-space-200);
+  min-inline-size: 0;
+}
+
+/* H4: the section title and the Grid/List toggle share one row. */
+.home-page__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-100);
+  min-block-size: var(--ds-space-400);
   min-inline-size: 0;
 }
 
 .home-page__title {
   margin: 0;
-  font: var(--ds-font-heading-medium);
+  font: var(--ds-font-heading-small);
   color: var(--ds-text);
 }
 
@@ -76,4 +135,16 @@
   display: flex;
   flex-direction: column;
   gap: var(--ds-space-050);
+}
+
+/* H2: the primary action spans the sidebar and sits apart from the navigation entries. */
+.home-sidebar__new {
+  display: flex;
+  margin-block-end: var(--ds-space-150);
+}
+
+.home-sidebar__new .ds-button {
+  inline-size: 100%;
+  min-block-size: var(--ds-space-500);
+  padding-inline: var(--ds-space-200);
 }
