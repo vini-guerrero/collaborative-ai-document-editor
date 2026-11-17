@@ -54,11 +54,31 @@
   inset: 0;
 }
 
+.doc-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ds-space-050);
+  min-inline-size: 0;
+}
+
+/* The action cell sits above the stretched-link overlay so its button stays clickable (H5). */
+.doc-card__action,
+.doc-row__action {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+}
+
 .doc-card__title,
 .doc-row__title {
   margin: 0;
   min-inline-size: 0;
   font: var(--ds-font-heading-xsmall);
+}
+
+.doc-card__header .doc-card__title {
+  flex: 1 1 auto;
 }
 
 .doc-card__preview {

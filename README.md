@@ -28,7 +28,8 @@ Updated in the same commit as each phase.
 | 16 | Routing, route error boundaries, editor placeholder (textarea) with serialized autosave (reviewed) | Done |
 | 17 | Home shell: navbar, sidebar (disabled items with Soon), loading/error/empty/ready, New document | Done |
 | 18 | Grid/List views: ViewToggle, DocumentCard, DocumentRow | Done |
-| 19-20 | Home screen milestone: delete flow, milestone close (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 19 |
+| 19 | Delete flow: always-visible delete button, confirm dialog naming the document, error handling | Done |
+| 20 | Home milestone close: Opus review of the home screen, README | In progress |
 
 ## What it is
 

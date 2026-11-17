@@ -89,4 +89,24 @@ describe('useDocuments', () => {
       expect(result.current.state).toEqual({ kind: 'ready', documents: [] });
     });
   });
+
+  // H5: reload after a mutation keeps the visible list while it reads, so no spinner flashes.
+  it('reload keeps the ready list during the read and never shows loading (H5)', async () => {
+    const store = scriptedStore([
+      { ok: true, value: [SUMMARY] },
+      { ok: true, value: [] },
+    ]);
+    const { result } = renderHook(() => useDocuments(), { wrapper: wrapperFor(store) });
+
+    await waitFor(() => {
+      expect(result.current.state).toEqual({ kind: 'ready', documents: [SUMMARY] });
+    });
+    act(() => {
+      result.current.reload();
+    });
+    expect(result.current.state).toEqual({ kind: 'ready', documents: [SUMMARY] });
+    await waitFor(() => {
+      expect(result.current.state).toEqual({ kind: 'ready', documents: [] });
+    });
+  });
 });

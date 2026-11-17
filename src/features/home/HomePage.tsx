@@ -1,7 +1,9 @@
 import type { JSX } from 'react';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AppShell, Button, EmptyState, Spinner } from '@/design-system';
+import type { DocumentSummary } from '@/features/documents';
+import { DeleteDocumentDialog } from './DeleteDocumentDialog';
 import { DocumentGrid } from './DocumentGrid';
 import { DocumentList } from './DocumentList';
 import { EmptyHome } from './EmptyHome';
@@ -9,6 +11,7 @@ import { HomeNavbar } from './HomeNavbar';
 import { HomeSidebar } from './HomeSidebar';
 import type { DocumentListState } from './useDocuments';
 import { useDocuments } from './useDocuments';
+import { useDeleteDocument } from './useDeleteDocument';
 import { ViewToggle, type DocumentView } from './ViewToggle';
 import './home.css';
 import './views.css';
@@ -26,6 +29,7 @@ interface DocumentsPanelOptions {
   onViewChange: (view: DocumentView) => void;
   onRetry: () => void;
   onNewDocument: () => void;
+  onDelete: (doc: DocumentSummary) => void;
 }
 
 function createDocumentId(): string {
@@ -58,9 +62,9 @@ function renderDocuments(state: DocumentListState, options: DocumentsPanelOption
     <>
       <ViewToggle value={options.view} onChange={options.onViewChange} />
       {options.view === 'grid' ? (
-        <DocumentGrid documents={state.documents} now={options.now} />
+        <DocumentGrid documents={state.documents} now={options.now} onDelete={options.onDelete} />
       ) : (
-        <DocumentList documents={state.documents} now={options.now} />
+        <DocumentList documents={state.documents} now={options.now} onDelete={options.onDelete} />
       )}
     </>
   );
@@ -69,10 +73,26 @@ function renderDocuments(state: DocumentListState, options: DocumentsPanelOption
 // H1-H4, H6: the app's first screen. Every read state is rendered; none blanks the page (D14).
 export function HomePage({ newId = createDocumentId, now }: HomePageProps): JSX.Element {
   const navigate = useNavigate();
-  const { state, retry } = useDocuments();
+  const { state, retry, reload } = useDocuments();
   const [view, setView] = useState<DocumentView>('grid');
   // Read once when the page mounts: relative times stay stable across re-renders (purity).
   const [renderedAt] = useState(() => now ?? Date.now());
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  // Set when a delete succeeds, so the dialog's close moves focus to the heading (the removed
+  // card's button can no longer take it).
+  const deletedRef = useRef(false);
+  const deletion = useDeleteDocument({
+    onDeleted: () => {
+      deletedRef.current = true;
+      reload();
+    },
+  });
+
+  const returnFocusOnClose = useCallback((): HTMLElement | null => {
+    const deleted = deletedRef.current;
+    deletedRef.current = false;
+    return deleted ? headingRef.current : null;
+  }, []);
 
   function startNewDocument(): void {
     void navigate(`/documents/${newId()}`);
@@ -81,14 +101,23 @@ export function HomePage({ newId = createDocumentId, now }: HomePageProps): JSX.
   return (
     <AppShell navbar={<HomeNavbar />} sidebar={<HomeSidebar onNewDocument={startNewDocument} />}>
       <div className="home-page">
-        <h1 className="home-page__title">Documents</h1>
+        <h1 ref={headingRef} tabIndex={-1} className="home-page__title">
+          Documents
+        </h1>
         {renderDocuments(state, {
           view,
           now: renderedAt,
           onViewChange: setView,
           onRetry: retry,
           onNewDocument: startNewDocument,
+          onDelete: deletion.request,
         })}
+        <DeleteDocumentDialog
+          state={deletion.state}
+          onConfirm={deletion.confirm}
+          onCancel={deletion.cancel}
+          onCloseFocus={returnFocusOnClose}
+        />
       </div>
     </AppShell>
   );

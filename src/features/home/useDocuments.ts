@@ -11,9 +11,10 @@ export type DocumentListState =
 
 export interface UseDocumentsResult {
   state: DocumentListState;
-  // Re-runs the read after an error (D14). Same function as reload, which later phases call after
-  // a mutation such as delete (H5).
+  // Shows the loading state and re-runs the read after an error (D14).
   retry: () => void;
+  // Re-runs the read after a mutation such as delete (H5). Keeps the visible list while it reads,
+  // so the spinner never flashes over data the user is looking at.
   reload: () => void;
 }
 
@@ -49,10 +50,14 @@ export function useDocuments(): UseDocumentsResult {
     };
   }, [store, readCount]);
 
-  const reload = useCallback((): void => {
+  const retry = useCallback((): void => {
     setState({ kind: 'loading' });
     setReadCount((count) => count + 1);
   }, []);
 
-  return { state, retry: reload, reload };
+  const reload = useCallback((): void => {
+    setReadCount((count) => count + 1);
+  }, []);
+
+  return { state, retry, reload };
 }

@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider, type DataRouter } from 'react-router';
 import { describe, expect, it } from 'vitest';
@@ -15,7 +15,9 @@ import { HomePage } from './HomePage';
 type ListResult = Result<DocumentSummary[], StoreError>;
 
 const PLAN: DocumentSummary = { id: 'doc-plan', title: 'Plan', preview: 'Goals', updatedAt: 0 };
+const NOTES: DocumentSummary = { id: 'doc-notes', title: 'Notes', preview: '', updatedAt: 0 };
 const NEW_ID = 'new-doc-1';
+const DELETE_FAILED = 'Could not delete this document. It is still saved. Try again.';
 
 // In-memory DocumentStore: each list() call takes the next scripted result.
 function fakeStore(results: ListResult[]): DocumentStore {
@@ -32,6 +34,33 @@ function fakeStore(results: ListResult[]): DocumentStore {
   };
 }
 
+// In-memory store for the delete flow: list() returns what is left, and remove() applies the
+// scripted outcome. "not-found" also drops the document, since it is already gone (H5).
+function deletableStore(
+  initial: DocumentSummary[],
+  outcome: () => Promise<RemoveOutcome>,
+): { store: DocumentStore; removed: string[] } {
+  let docs = initial;
+  const removed: string[] = [];
+  const store: DocumentStore = {
+    list: () => Promise.resolve({ ok: true, value: [...docs] }),
+    get: () => Promise.resolve({ ok: false, error: { kind: 'not-found' } } as const),
+    save: () => Promise.resolve({ ok: true, value: undefined } as const),
+    remove: (id: string): Promise<Result<void, StoreError>> => {
+      removed.push(id);
+      return outcome().then((result) => {
+        if (result.ok || result.error.kind === 'not-found') {
+          docs = docs.filter((doc) => doc.id !== id);
+        }
+        return result;
+      });
+    },
+  };
+  return { store, removed };
+}
+
+type RemoveOutcome = Result<void, StoreError>;
+
 function renderHome(store: DocumentStore): DataRouter {
   const router = createMemoryRouter(
     [
@@ -46,6 +75,11 @@ function renderHome(store: DocumentStore): DataRouter {
     </DocumentStoreProvider>,
   );
   return router;
+}
+
+// The dialog stays in the DOM when closed; its open attribute is the state the user sees.
+function dialogIsOpen(): boolean {
+  return document.querySelector('dialog')?.hasAttribute('open') === true;
 }
 
 describe('HomePage', () => {
@@ -160,5 +194,130 @@ describe('HomePage', () => {
     await waitFor(() => {
       expect(router.state.location.pathname).toBe(`/documents/${NEW_ID}`);
     });
+  });
+
+  // H5: the delete button is always visible and opens a confirmation that names the document.
+  it('opens a confirmation naming the document from its delete button (H5)', async () => {
+    const user = userEvent.setup();
+    const { store } = deletableStore([PLAN], () => Promise.resolve({ ok: true, value: undefined }));
+    renderHome(store);
+
+    await screen.findByRole('link', { name: 'Plan' });
+    await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
+
+    expect(dialogIsOpen()).toBe(true);
+    expect(screen.getByText('Delete "Plan"?')).toBeTruthy();
+    expect(screen.getByText(/This can't be undone\./)).toBeTruthy();
+  });
+
+  // H5: Cancel closes the dialog and leaves the document in the list.
+  it('Cancel closes the confirmation without removing the document (H5)', async () => {
+    const user = userEvent.setup();
+    const { store, removed } = deletableStore([PLAN], () =>
+      Promise.resolve({ ok: true, value: undefined }),
+    );
+    renderHome(store);
+
+    await screen.findByRole('link', { name: 'Plan' });
+    await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(dialogIsOpen()).toBe(false);
+    expect(removed).toEqual([]);
+    expect(screen.getByRole('link', { name: 'Plan' })).toBeTruthy();
+  });
+
+  // H5: confirm removes the document and refreshes the list in place, with no spinner.
+  it('confirm removes the document and refreshes the list without a spinner (H5)', async () => {
+    const user = userEvent.setup();
+    const { store, removed } = deletableStore([PLAN, NOTES], () =>
+      Promise.resolve({ ok: true, value: undefined }),
+    );
+    renderHome(store);
+
+    await screen.findByRole('link', { name: 'Plan' });
+    await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
+    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+
+    expect(screen.queryByRole('status')).toBeNull();
+    await waitFor(() => {
+      expect(screen.queryByRole('link', { name: 'Plan' })).toBeNull();
+    });
+    expect(screen.getByRole('link', { name: 'Notes' })).toBeTruthy();
+    expect(screen.queryByRole('status')).toBeNull();
+    expect(removed).toEqual(['doc-plan']);
+    expect(dialogIsOpen()).toBe(false);
+  });
+
+  // D14, H5: not-found means the document is already gone, so the list simply drops it.
+  it('treats a not-found result as deleted and drops the document (D14, H5)', async () => {
+    const user = userEvent.setup();
+    const { store } = deletableStore([PLAN], () =>
+      Promise.resolve({ ok: false, error: { kind: 'not-found' } }),
+    );
+    renderHome(store);
+
+    await screen.findByRole('link', { name: 'Plan' });
+    await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
+    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole('link', { name: 'Plan' })).toBeNull();
+    });
+    expect(dialogIsOpen()).toBe(false);
+  });
+
+  // D14: a failed delete keeps the dialog open with the error and the document still listed.
+  it('keeps the dialog open with an error when the store fails, and the document listed (D14)', async () => {
+    const user = userEvent.setup();
+    const { store } = deletableStore([PLAN], () =>
+      Promise.resolve({ ok: false, error: { kind: 'quota' } }),
+    );
+    renderHome(store);
+
+    await screen.findByRole('link', { name: 'Plan' });
+    await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
+    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+
+    expect(await screen.findByText(DELETE_FAILED)).toBeTruthy();
+    expect(dialogIsOpen()).toBe(true);
+    expect(screen.getByRole('link', { name: 'Plan' })).toBeTruthy();
+  });
+
+  // D14: a rejected delete (storage disabled) is shown the same way, never thrown or lost.
+  it('keeps the dialog open with an error when the store rejects (D14)', async () => {
+    const user = userEvent.setup();
+    const { store } = deletableStore([PLAN], () => Promise.reject(new Error('storage disabled')));
+    renderHome(store);
+
+    await screen.findByRole('link', { name: 'Plan' });
+    await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
+    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+
+    expect(await screen.findByText(DELETE_FAILED)).toBeTruthy();
+    expect(dialogIsOpen()).toBe(true);
+    expect(screen.getByRole('link', { name: 'Plan' })).toBeTruthy();
+  });
+
+  // S7, D14: Esc closes the confirmation when nothing is running and leaves the list alone.
+  it('Esc cancels the confirmation when not busy (H5, S7)', async () => {
+    const user = userEvent.setup();
+    const { store, removed } = deletableStore([PLAN], () =>
+      Promise.resolve({ ok: true, value: undefined }),
+    );
+    renderHome(store);
+
+    await screen.findByRole('link', { name: 'Plan' });
+    await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
+    const dialog = document.querySelector('dialog');
+    if (dialog === null) {
+      throw new Error('Dialog did not render a <dialog> element');
+    }
+    // jsdom does not emulate the native Escape key, so the cancel event is dispatched directly.
+    fireEvent(dialog, new Event('cancel', { cancelable: true }));
+
+    expect(dialogIsOpen()).toBe(false);
+    expect(removed).toEqual([]);
+    expect(screen.getByRole('link', { name: 'Plan' })).toBeTruthy();
   });
 });

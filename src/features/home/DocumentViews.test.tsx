@@ -56,7 +56,7 @@ describe('DocumentCard', () => {
   it('renders title, preview and relative edit time for the injected now (H4)', () => {
     renderInRouter(
       <ul>
-        <DocumentCard doc={DRAFT} now={NOW} />
+        <DocumentCard doc={DRAFT} now={NOW} onDelete={vi.fn<(doc: DocumentSummary) => void>()} />
       </ul>,
     );
 
@@ -70,7 +70,7 @@ describe('DocumentCard', () => {
   it('names a blank title as Untitled document (H4, H5)', () => {
     renderInRouter(
       <ul>
-        <DocumentCard doc={BLANK} now={NOW} />
+        <DocumentCard doc={BLANK} now={NOW} onDelete={vi.fn<(doc: DocumentSummary) => void>()} />
       </ul>,
     );
 
@@ -81,7 +81,13 @@ describe('DocumentCard', () => {
 describe('DocumentGrid', () => {
   // H4: each card is a link to its editor route, in the order given.
   it('renders one link per document in array order, each to its editor route (H4)', () => {
-    renderInRouter(<DocumentGrid documents={[DRAFT, BLANK, LONG]} now={NOW} />);
+    renderInRouter(
+      <DocumentGrid
+        documents={[DRAFT, BLANK, LONG]}
+        now={NOW}
+        onDelete={vi.fn<(doc: DocumentSummary) => void>()}
+      />,
+    );
 
     expect(linkTexts()).toEqual(['Résumé draft 🚀', 'Untitled document', 'x'.repeat(200)]);
     expect(screen.getByRole('link', { name: 'Résumé draft 🚀' }).getAttribute('href')).toBe(
@@ -94,11 +100,14 @@ describe('DocumentGrid', () => {
 
   // H4 key stability: a reordered array keeps each title paired with its own link (stable ids).
   it('keeps each title paired with its link after a reorder (H4)', () => {
-    const { rerender } = renderInRouter(<DocumentGrid documents={[DRAFT, LONG]} now={NOW} />);
+    const onDelete = vi.fn<(doc: DocumentSummary) => void>();
+    const { rerender } = renderInRouter(
+      <DocumentGrid documents={[DRAFT, LONG]} now={NOW} onDelete={onDelete} />,
+    );
 
     rerender(
       <MemoryRouter>
-        <DocumentGrid documents={[LONG, DRAFT]} now={NOW} />
+        <DocumentGrid documents={[LONG, DRAFT]} now={NOW} onDelete={onDelete} />
       </MemoryRouter>,
     );
 
@@ -107,12 +116,55 @@ describe('DocumentGrid', () => {
       '/documents/doc-draft',
     );
   });
+
+  // H5, S9: every card has a visible delete button named after its document; it is never hidden
+  // behind a hover, so it is reachable by touch and keyboard. Activating it reports the document.
+  it('gives every card a delete button named after its title and reports the document (H5, S9)', async () => {
+    const user = userEvent.setup();
+    const onDelete = vi.fn<(doc: DocumentSummary) => void>();
+    renderInRouter(<DocumentGrid documents={[DRAFT, BLANK]} now={NOW} onDelete={onDelete} />);
+
+    const draftDelete = screen.getByRole('button', { name: 'Delete "Résumé draft 🚀"' });
+    expect(screen.getByRole('button', { name: 'Delete "Untitled document"' })).toBeTruthy();
+
+    await user.click(draftDelete);
+
+    expect(onDelete).toHaveBeenCalledWith(DRAFT);
+  });
+
+  // S9, D17: the delete button is a sibling of the title link, never nested inside it, and Tab
+  // moves from the title link to the delete button.
+  it('keeps the delete button out of the title link and tabs from link to button (S9, D17)', async () => {
+    const user = userEvent.setup();
+    renderInRouter(
+      <DocumentGrid
+        documents={[DRAFT]}
+        now={NOW}
+        onDelete={vi.fn<(doc: DocumentSummary) => void>()}
+      />,
+    );
+
+    const link = screen.getByRole('link', { name: 'Résumé draft 🚀' });
+    const button = screen.getByRole('button', { name: 'Delete "Résumé draft 🚀"' });
+    expect(link.contains(button)).toBe(false);
+
+    link.focus();
+    await user.tab();
+
+    expect(document.activeElement).toBe(button);
+  });
 });
 
 describe('DocumentList', () => {
   // H4: the list view keeps the links, the edit time and the order of the grid.
   it('keeps links and edit times in the compact rows, in array order (H4)', () => {
-    renderInRouter(<DocumentList documents={[DRAFT, BLANK]} now={NOW} />);
+    renderInRouter(
+      <DocumentList
+        documents={[DRAFT, BLANK]}
+        now={NOW}
+        onDelete={vi.fn<(doc: DocumentSummary) => void>()}
+      />,
+    );
 
     expect(screen.getByTestId('document-list')).toBeTruthy();
     expect(linkTexts()).toEqual(['Résumé draft 🚀', 'Untitled document']);
@@ -125,11 +177,14 @@ describe('DocumentList', () => {
 
   // H4 key stability: rows survive a reorder with their own title and link.
   it('keeps each title paired with its link after a reorder (H4)', () => {
-    const { rerender } = renderInRouter(<DocumentList documents={[DRAFT, LONG]} now={NOW} />);
+    const onDelete = vi.fn<(doc: DocumentSummary) => void>();
+    const { rerender } = renderInRouter(
+      <DocumentList documents={[DRAFT, LONG]} now={NOW} onDelete={onDelete} />,
+    );
 
     rerender(
       <MemoryRouter>
-        <DocumentList documents={[LONG, DRAFT]} now={NOW} />
+        <DocumentList documents={[LONG, DRAFT]} now={NOW} onDelete={onDelete} />
       </MemoryRouter>,
     );
 
@@ -137,5 +192,21 @@ describe('DocumentList', () => {
     expect(screen.getByRole('link', { name: 'Résumé draft 🚀' }).getAttribute('href')).toBe(
       '/documents/doc-draft',
     );
+  });
+
+  // H5, S9: every row has a visible delete button named after its document, outside the link.
+  it('gives every row a delete button named after its title and keeps it out of the link (H5, S9)', async () => {
+    const user = userEvent.setup();
+    const onDelete = vi.fn<(doc: DocumentSummary) => void>();
+    renderInRouter(<DocumentList documents={[DRAFT, LONG]} now={NOW} onDelete={onDelete} />);
+
+    const link = screen.getByRole('link', { name: 'Résumé draft 🚀' });
+    const button = screen.getByRole('button', { name: 'Delete "Résumé draft 🚀"' });
+    expect(link.contains(button)).toBe(false);
+
+    await user.click(button);
+
+    expect(onDelete).toHaveBeenCalledWith(DRAFT);
+    expect(screen.getByRole('button', { name: `Delete "${'x'.repeat(200)}"` })).toBeTruthy();
   });
 });
