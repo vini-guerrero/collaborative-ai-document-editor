@@ -2,7 +2,7 @@
 
 A collaborative AI document editor in the browser. You write Markdown; an AI co-author notices things, speaks up quietly, and never changes the document without a visible diff and your explicit Accept.
 
-> **Status: scaffolding.** Product, technical and design decisions are written down; the project and its `pnpm check` gate are being set up before any feature code. This README is a working draft and will evolve with the product.
+> **Status: scaffolded.** The project and its `pnpm check` gate are in place; feature work comes next. Decisions are in `docs/`. This README is a working draft and will evolve with the product.
 
 ### Build progress
 
@@ -15,7 +15,7 @@ Updated in the same commit as each phase.
 | 3 | Format and lint (TypeScript pinned to 6.0.x, see T13) | Done |
 | 4 | Vitest | Done |
 | 5 | Hono server and config (binds 127.0.0.1, `/api/health`) | Done |
-| 6 | License check and the `pnpm check` gate | Next |
+| 6 | License check and the `pnpm check` gate | Done |
 
 ## What it is
 
@@ -33,7 +33,7 @@ TypeScript, React, Vite, TipTap (ProseMirror), a small Hono server that proxies 
 
 ## Run it locally
 
-*Planned; these commands work once the project is scaffolded.*
+These commands work now. `pnpm dev` needs a filled `.env` for the server.
 
 Requirements: Node (version pinned in `.nvmrc`), pnpm (version pinned in `packageManager`; enable it with `corepack enable`), an OpenRouter API key.
 

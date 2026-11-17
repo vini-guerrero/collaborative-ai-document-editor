@@ -14,11 +14,14 @@
     "dev:server": "tsx watch --env-file-if-exists=.env server/main.ts",
     "build:web": "vite build",
     "build:server": "vite build --ssr server/main.ts --outDir dist/server",
+    "build": "pnpm build:web && pnpm build:server",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0",
-    "test": "vitest run"
+    "licenses:check": "node scripts/check-licenses.ts",
+    "test": "vitest run",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm licenses:check && pnpm test && pnpm build"
   },
   "dependencies": {
     "@hono/node-server": "2.1.8",
