@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@hono/node-server": "2.1.8",
+    "diff": "9.0.0",
     "hono": "4.13.19",
     "lucide-react": "1.74.0",
     "react": "19.3.1",
