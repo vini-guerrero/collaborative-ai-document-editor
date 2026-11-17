@@ -1,0 +1,65 @@
+/* S4, S9: tokens only. Width is capped at --app-dialog-width and keeps a 16px gutter on small screens. */
+.ds-dialog {
+  box-sizing: border-box;
+  inline-size: min(var(--app-dialog-width), 100vw - 2 * var(--ds-space-200));
+  max-block-size: calc(100vh - 2 * var(--ds-space-200));
+  max-block-size: calc(100dvh - 2 * var(--ds-space-200));
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: none;
+  border-radius: var(--ds-radius-large);
+  background: var(--ds-surface-overlay);
+  color: var(--ds-text);
+  box-shadow: var(--ds-shadow-overlay);
+}
+
+.ds-dialog::backdrop {
+  background: var(--ds-blanket);
+}
+
+.ds-dialog__panel {
+  padding: var(--ds-space-300);
+}
+
+.ds-dialog__title {
+  margin: 0;
+  font: var(--ds-font-heading-small);
+  color: var(--ds-text);
+  overflow-wrap: anywhere;
+}
+
+.ds-dialog__description {
+  margin: var(--ds-space-100) 0 0;
+  font: var(--ds-font-body);
+  color: var(--ds-text-subtle);
+  overflow-wrap: anywhere;
+}
+
+/* The alert region stays in the DOM so screen readers announce changes. Spacing is added only
+   when there is a message, so an empty region leaves no gap. */
+.ds-dialog__error {
+  font: var(--ds-font-body);
+  color: var(--ds-text-danger);
+  overflow-wrap: anywhere;
+}
+
+.ds-dialog__error:not(:empty) {
+  margin-block-start: var(--ds-space-200);
+}
+
+.ds-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--ds-space-100);
+  margin-block-start: var(--ds-space-200);
+}
+
+/* Busy state: visibly inert, but still focusable so focus does not jump. The hover and press
+   colors from Button do not apply while the pointer is disabled. */
+.ds-dialog .ds-button[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}

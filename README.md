@@ -22,7 +22,8 @@ Updated in the same commit as each phase.
 | 10 | Components: Button, IconButton, Lozenge, Spinner, VisuallyHidden | Done |
 | 11 | Components: TextField, Avatar, ToggleGroup, EmptyState | Done |
 | 14 | Documents store: zod schemas, `DocumentStore` over localStorage with index recovery, preview helper (built early, in parallel with 12) | Done |
-| 12-13, 15-20 | Home screen milestone: dialog, layout, provider, routing, home, delete (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 12 |
+| 12 | Dialog on native `<dialog>` (reviewed: busy guard, native-close sync, focus return) | Done |
+| 13, 16-20 | Home screen milestone: layout, routing, home, views, delete (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 13 |
 
 ## What it is
 

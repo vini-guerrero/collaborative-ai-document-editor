@@ -9,6 +9,7 @@ export {
 export {
   Avatar,
   Button,
+  Dialog,
   EmptyState,
   IconButton,
   Lozenge,
@@ -20,6 +21,7 @@ export {
   type AvatarSize,
   type ButtonProps,
   type ButtonVariant,
+  type DialogProps,
   type EmptyStateProps,
   type IconButtonProps,
   type LozengeProps,
