@@ -17,7 +17,8 @@ Updated in the same commit as each phase.
 | 5 | Hono server and config (binds 127.0.0.1, `/api/health`) | Done |
 | 6 | License check and the `pnpm check` gate | Done |
 | 7 | Plan the home screen milestone; record design-system and storage decisions | Done |
-| 8-20 | Home screen milestone: test setup, design system, documents store, routing, home, delete (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 8 |
+| 8 | Vitest projects: node and jsdom, Testing Library, App smoke test | Done |
+| 9-20 | Home screen milestone: design system, documents store, routing, home, delete (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 9 |
 
 ## What it is
 

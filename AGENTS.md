@@ -81,7 +81,7 @@ One command, `pnpm check`, runs: format check, type-aware strict ESLint, `tsc --
 - Error boundary per route and around the editor, with fallback and retry. Boundaries do not catch event-handler or async errors; handle those where they occur.
 - Security: never `dangerouslySetInnerHTML`; never render user, API or LLM content as HTML or Markdown without sanitizing (T10). No secrets in client code. External `target="_blank"` gets `rel="noopener noreferrer"`. No inline scripts, `eval` or `new Function`.
 - Route-level `lazy` + `Suspense`; check bundle cost before adding a library.
-- Tests: Vitest + React Testing Library + `user-event`, colocated as `Component.test.tsx`. Query by role, label or text (`data-testid` last). Never test internal state or class names. `findBy*`/`waitFor` and fake timers (for the D4 pause), never fixed sleeps. The AI is faked at the client boundary. Cover loading, error, empty and success.
+- Tests: Vitest + React Testing Library + `user-event`, colocated as `Component.test.tsx`. Query by role, label or text (`data-testid` last). Never test internal state or class names. `findBy*`/`waitFor` and fake timers (for the D4 pause; use `vi.useFakeTimers({ shouldAdvanceTime: true })` with `userEvent.setup({ advanceTimers: vi.advanceTimersByTime })`, or `findBy*` can hang), never fixed sleeps. A src test that needs the DOM is a `.tsx` file (jsdom project). The AI is faked at the client boundary. Cover loading, error, empty and success.
 
 ## Server rules (Hono, Node)
 
