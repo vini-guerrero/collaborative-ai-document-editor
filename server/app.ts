@@ -1,9 +1,15 @@
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+import type { AiService } from './ai/service';
 import type { Config } from './config';
+import { createAiRoute } from './routes/ai';
 
 export interface AppDeps {
   config: Config;
+  // The AI service is injected so tests can fake the model boundary (T9).
+  ai: AiService;
+  // Upper bound on one AI call, including the provider round trip (T5).
+  timeoutMs: number;
   // Injected so tests can capture log lines; main.ts writes them to stdout.
   log: (line: Record<string, unknown>) => void;
 }
@@ -13,6 +19,16 @@ export const createApp = (deps: AppDeps): Hono => {
   const app = new Hono();
 
   app.get('/api/health', (c) => c.json({ status: 'ok' }));
+
+  app.route(
+    '/',
+    createAiRoute({
+      maxInputChars: deps.config.MAX_INPUT_CHARS,
+      ai: deps.ai,
+      timeoutMs: deps.timeoutMs,
+      log: deps.log,
+    }),
+  );
 
   app.notFound((c) => c.json({ error: 'not_found' }, 404));
 
