@@ -7,8 +7,10 @@ export { EmptyState, type EmptyStateProps } from './EmptyState/EmptyState';
 export { IconButton, type IconButtonProps } from './IconButton/IconButton';
 export { IconLink, iconLinkClassName, type IconLinkProps } from './IconLink/IconLink';
 export { Lozenge, type LozengeProps, type LozengeTone } from './Lozenge/Lozenge';
+export { Menu, type MenuItem, type MenuProps, type MenuTrigger } from './Menu/Menu';
 export { NavItem, type NavItemProps } from './NavItem/NavItem';
 export { Popover, type PopoverPlacement, type PopoverProps } from './Popover/Popover';
+export { Select, type SelectOption, type SelectProps } from './Select/Select';
 export { Spinner, type SpinnerProps } from './Spinner/Spinner';
 export { TextField, type TextFieldProps } from './TextField/TextField';
 export {

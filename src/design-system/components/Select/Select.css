@@ -1,0 +1,108 @@
+/* S2, S5, S7, S9: tokens only. The listbox panel itself is styled by Popover.css. */
+.ds-select__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-050);
+  min-block-size: 32px;
+  padding-inline: var(--ds-space-150) var(--ds-space-100);
+  border: var(--ds-border-width) solid var(--ds-border-input);
+  border-radius: var(--ds-radius-small);
+  background: var(--ds-background-input);
+  color: var(--ds-text);
+  font: var(--ds-font-body);
+  cursor: pointer;
+}
+
+.ds-select__trigger:hover {
+  background: var(--ds-background-input-hovered);
+}
+
+/* The open trigger gets a bolder border, so open is visible without relying on color alone. */
+.ds-select__trigger[aria-expanded='true'] {
+  border-color: var(--ds-border-bold);
+}
+
+.ds-select__value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A drawn chevron, so the trigger reads as a dropdown without an icon outside the icon set. */
+.ds-select__chevron {
+  flex-shrink: 0;
+  inline-size: var(--ds-space-100);
+  block-size: var(--ds-space-100);
+  border-inline-end: var(--ds-border-width) solid currentColor;
+  border-block-end: var(--ds-border-width) solid currentColor;
+  transform: translateY(-25%) rotate(45deg);
+  transition: transform var(--ds-duration-short) var(--ds-easing-out-practical);
+}
+
+.ds-select__trigger[aria-expanded='true'] .ds-select__chevron {
+  transform: translateY(25%) rotate(225deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-select__chevron {
+    transition: none;
+  }
+}
+
+.ds-select__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-025);
+}
+
+.ds-select__option {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-050);
+  min-block-size: 32px;
+  padding-inline: var(--ds-space-050) var(--ds-space-100);
+  border-radius: var(--ds-radius-small);
+  color: var(--ds-text);
+  font: var(--ds-font-body);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ds-select__option:hover {
+  background: var(--ds-background-neutral-hovered);
+}
+
+.ds-select__option:active {
+  background: var(--ds-background-neutral-pressed);
+}
+
+/* Selected is a fill, a bold label and a check mark, so it does not depend on color alone (S7). */
+.ds-select__option[aria-selected='true'] {
+  background: var(--ds-background-selected);
+  color: var(--ds-text-selected);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.ds-select__option[aria-disabled='true'] {
+  color: var(--ds-text-disabled);
+  cursor: not-allowed;
+}
+
+.ds-select__option[aria-disabled='true']:hover {
+  background: transparent;
+}
+
+.ds-select__check {
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  inline-size: var(--ds-space-300);
+}
+
+@media (pointer: coarse) {
+  .ds-select__trigger,
+  .ds-select__option {
+    min-block-size: 44px;
+  }
+}

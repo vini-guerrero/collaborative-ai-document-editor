@@ -38,7 +38,8 @@ Updated in the same commit as each phase.
 | 24 | TipTap editor surface replaces the textarea; `EditorPage`; `@tiptap/*` import ban; leading block markers escaped on save | Done |
 | 31 | Design-system Popover (anchored, clamped) and BottomSheet (native dialog) | Done |
 | 27 | AI service: `AIProvider`, prompts with nonce-delimited document data, zod-validated output with one retry, fake provider | Done |
-| 25, 28-30, 32-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phase 25; 27, 28, 32 in progress |
+| 32 | Design-system Menu and Select (keyboard, typeahead, roving focus) | Done |
+| 25, 28-30, 33-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phase 25; 27, 28, 32 in progress |
 
 ## What it is
 
