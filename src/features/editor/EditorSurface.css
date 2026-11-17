@@ -1,0 +1,63 @@
+/* Tokens only (S2). Body text is at least 1rem and the measure stays within 75ch (AGENTS). */
+.editor-surface {
+  min-inline-size: 0;
+  max-inline-size: 75ch;
+  inline-size: 100%;
+}
+
+.editor-surface .ProseMirror {
+  display: block;
+  /* Fills most of a phone screen on first open while the top bar stays visible (S9); the
+     document grows past this height. */
+  min-block-size: 60dvh;
+  box-sizing: border-box;
+  padding: var(--ds-space-150);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-small);
+  background: transparent;
+  color: var(--ds-text);
+  /* Document text is 16px (AGENTS UI/UX); the body token is 14px, so the large body token is used. */
+  font: var(--ds-font-body-large);
+  overflow-wrap: anywhere;
+}
+
+.editor-surface .ProseMirror > * + * {
+  margin-block-start: var(--ds-space-100);
+}
+
+.editor-surface .ProseMirror h1 {
+  font: var(--ds-font-heading-large);
+}
+
+.editor-surface .ProseMirror h2 {
+  font: var(--ds-font-heading-medium);
+}
+
+.editor-surface .ProseMirror h3 {
+  font: var(--ds-font-heading-small);
+}
+
+.editor-surface .ProseMirror ul,
+.editor-surface .ProseMirror ol {
+  padding-inline-start: var(--ds-space-300);
+}
+
+.editor-surface .ProseMirror code {
+  font: var(--ds-font-code);
+}
+
+.editor-surface .ProseMirror pre {
+  padding: var(--ds-space-100);
+  border-radius: var(--ds-radius-small);
+  background: var(--ds-background-neutral);
+  overflow-x: auto;
+}
+
+/* Placeholder from the Placeholder extension: shown only while the document is empty. */
+.editor-surface .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: inline-start;
+  block-size: 0;
+  color: var(--ds-text-subtle);
+  pointer-events: none;
+}

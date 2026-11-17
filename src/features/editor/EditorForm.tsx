@@ -1,4 +1,5 @@
-import { useId, useRef, useState, type JSX } from 'react';
+import { useRef, useState, type JSX } from 'react';
+import type { Editor } from '@tiptap/react';
 import { TextField, VisuallyHidden } from '@/design-system';
 import {
   toStoredDocument,
@@ -7,11 +8,9 @@ import {
   type StoreError,
   type StoredDocument,
 } from '@/features/documents';
+import { EditorSurface } from './EditorSurface';
 import { EditorTopBar } from './EditorTopBar';
 import { useAutosave, type AutosaveFailure, type AutosaveStatus } from './useAutosave';
-
-// DEBT: a plain textarea stands in until the TipTap editor lands (editor phase, T3).
-// The autosave contract (D17, H5) is final; only the body control changes.
 
 const DEFAULT_TITLE = 'Untitled document';
 
@@ -20,6 +19,7 @@ export interface EditorFormProps {
   // Null for a new draft that is not in the store yet (H5).
   initial: StoredDocument | null;
   now: () => number;
+  onReady?: ((editor: Editor) => void) | undefined;
 }
 
 interface EditorDraft {
@@ -42,12 +42,15 @@ function saveMessage(status: AutosaveStatus, failure: AutosaveFailure | null): s
 }
 
 // Mounted once per document: the route keys the page by id, so initial values are never stale.
-export function EditorForm({ documentId, initial, now }: EditorFormProps): JSX.Element {
+// The body lives in the TipTap editor; this form keeps only the latest Markdown in a ref, so
+// no copy of the document is mirrored in React state.
+export function EditorForm({ documentId, initial, now, onReady }: EditorFormProps): JSX.Element {
   const store = useDocumentStore();
-  const bodyId = useId();
+  const initialTitle = initial?.title ?? '';
+  const initialBody = initial?.markdown ?? '';
   const persistedRef = useRef<StoredDocument | null>(initial);
-  const [title, setTitle] = useState(initial?.title ?? '');
-  const [body, setBody] = useState(initial?.markdown ?? '');
+  const latestRef = useRef<EditorDraft>({ title: initialTitle, body: initialBody });
+  const [title, setTitle] = useState(initialTitle);
 
   const persist = async (draft: EditorDraft): Promise<Result<void, StoreError>> => {
     const doc = toStoredDocument(
@@ -86,20 +89,17 @@ export function EditorForm({ documentId, initial, now }: EditorFormProps): JSX.E
           onChange={(event) => {
             const nextTitle = event.target.value;
             setTitle(nextTitle);
-            schedule({ title: nextTitle, body });
+            latestRef.current = { ...latestRef.current, title: nextTitle };
+            schedule(latestRef.current);
           }}
         />
-        <label htmlFor={bodyId}>
-          <VisuallyHidden>Document body</VisuallyHidden>
-        </label>
-        <textarea
-          id={bodyId}
-          value={body}
-          onChange={(event) => {
-            const nextBody = event.target.value;
-            setBody(nextBody);
-            schedule({ title, body: nextBody });
+        <EditorSurface
+          initialMarkdown={initialBody}
+          onChange={(markdown) => {
+            latestRef.current = { ...latestRef.current, body: markdown };
+            schedule(latestRef.current);
           }}
+          onReady={onReady}
         />
       </main>
     </>

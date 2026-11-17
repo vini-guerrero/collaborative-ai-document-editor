@@ -1,23 +1,36 @@
 import type { JSX } from 'react';
+import type { Editor } from '@tiptap/react';
 import { Link } from 'react-router';
 import { EmptyState, Spinner } from '@/design-system';
 import { EditorForm } from './EditorForm';
 import { EditorTopBar } from './EditorTopBar';
-import './EditorPlaceholderPage.css';
+import './EditorPage.css';
 import { useStoredDocument } from './useStoredDocument';
 
-export interface EditorPlaceholderPageProps {
+export interface EditorPageProps {
   documentId: string;
   // Injected clock; defaults to Date.now at the page edge (no hidden global in the hook).
-  now?: () => number;
+  now?: (() => number) | undefined;
+}
+
+// Test seam: the same page, plus the live TipTap editor handed out once it exists. Kept out of
+// EditorPageProps so the feature's public API never exposes the TipTap type.
+export interface EditorPageViewProps extends EditorPageProps {
+  onReady?: ((editor: Editor) => void) | undefined;
+}
+
+// The public page: no editor handle leaves the feature.
+export function EditorPage({ documentId, now }: EditorPageProps): JSX.Element {
+  return <EditorPageView documentId={documentId} now={now} />;
 }
 
 // Picks the state to show. The form is mounted only once the document is known, so its
 // initial values come straight from the loaded document.
-export function EditorPlaceholderPage({
+export function EditorPageView({
   documentId,
   now = Date.now,
-}: EditorPlaceholderPageProps): JSX.Element {
+  onReady,
+}: EditorPageViewProps): JSX.Element {
   const loaded = useStoredDocument(documentId);
 
   if (loaded.kind === 'loading') {
@@ -46,5 +59,7 @@ export function EditorPlaceholderPage({
     );
   }
 
-  return <EditorForm documentId={documentId} initial={loaded.document} now={now} />;
+  return (
+    <EditorForm documentId={documentId} initial={loaded.document} now={now} onReady={onReady} />
+  );
 }

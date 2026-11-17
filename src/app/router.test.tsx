@@ -38,7 +38,7 @@ describe('app routes', () => {
   it('opens the editor for a valid document id', async () => {
     renderAt('/documents/x');
 
-    expect(await screen.findByRole('textbox', { name: 'Document body' })).toBeTruthy();
+    expect(await screen.findByRole('textbox', { name: 'Document' })).toBeTruthy();
   });
 
   // H5: ids outside the allowed pattern are not documents, so they show not-found.

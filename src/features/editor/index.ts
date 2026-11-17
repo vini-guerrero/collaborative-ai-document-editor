@@ -1,1 +1,1 @@
-export { EditorPlaceholderPage, type EditorPlaceholderPageProps } from './EditorPlaceholderPage';
+export { EditorPage, type EditorPageProps } from './EditorPage';

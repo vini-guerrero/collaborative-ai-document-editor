@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import type { JSX } from 'react';
 import userEvent from '@testing-library/user-event';
+import type { Editor } from '@tiptap/react';
 import { createMemoryRouter, RouterProvider, useParams, type DataRouter } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -12,7 +13,7 @@ import {
   type StoredDocument,
   toStoredDocument,
 } from '@/features/documents';
-import { EditorPlaceholderPage } from '@/features/editor';
+import { EditorPageView } from './EditorPage';
 import { AUTOSAVE_DELAY_MS } from './useAutosave';
 
 const NOW = 1_700_000_000_000;
@@ -64,22 +65,44 @@ function createFakeStore(options: FakeStoreOptions = {}): FakeStore {
   };
 }
 
-function EditorHarness(): JSX.Element {
+// Holds the editor that the page hands out through onReady; the latest mount wins.
+interface EditorHolder {
+  readonly editor: Editor | null;
+  capture: (editor: Editor) => void;
+}
+
+function EditorHarness({ holder }: { holder: EditorHolder }): JSX.Element {
   const { id = '' } = useParams();
-  return <EditorPlaceholderPage key={id} documentId={id} now={() => NOW} />;
+  return (
+    <EditorPageView
+      key={id}
+      documentId={id}
+      now={() => NOW}
+      onReady={(editor) => {
+        holder.capture(editor);
+      }}
+    />
+  );
 }
 
-function valueOf(element: HTMLElement): string {
-  if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
-    return element.value;
-  }
-  throw new Error('Expected a text input or textarea');
+interface RenderedEditor {
+  router: DataRouter;
+  holder: EditorHolder;
 }
 
-function renderEditor(store: DocumentStore, path = '/documents/doc-1'): DataRouter {
+function renderEditor(store: DocumentStore, path = '/documents/doc-1'): RenderedEditor {
+  let current: Editor | null = null;
+  const holder: EditorHolder = {
+    get editor() {
+      return current;
+    },
+    capture: (editor) => {
+      current = editor;
+    },
+  };
   const router = createMemoryRouter(
     [
-      { path: '/documents/:id', element: <EditorHarness /> },
+      { path: '/documents/:id', element: <EditorHarness holder={holder} /> },
       { path: '/', element: <p>Home</p> },
     ],
     { initialEntries: [path] },
@@ -89,7 +112,32 @@ function renderEditor(store: DocumentStore, path = '/documents/doc-1'): DataRout
       <RouterProvider router={router} />
     </DocumentStoreProvider>,
   );
-  return router;
+  return { router, holder };
+}
+
+// Waits until the page has mounted its editor and handed it out.
+async function readyEditor(holder: EditorHolder): Promise<Editor> {
+  await waitFor(() => {
+    expect(holder.editor).not.toBeNull();
+  });
+  if (holder.editor === null) {
+    throw new Error('the editor was not handed to onReady');
+  }
+  return holder.editor;
+}
+
+// Inserts Markdown as if typed; the editor emits an update, which the page autosaves.
+function insertMarkdown(editor: Editor, markdown: string): void {
+  act(() => {
+    editor.commands.insertContent(markdown, { contentType: 'markdown' });
+  });
+}
+
+function valueOf(element: HTMLElement): string {
+  if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+    return element.value;
+  }
+  throw new Error('Expected a text input');
 }
 
 async function advancePastDebounce(): Promise<void> {
@@ -107,15 +155,14 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-describe('EditorPlaceholderPage', () => {
+describe('EditorPage', () => {
   // D17 and H5: typing is saved once after the debounce; a blank title falls back to the default.
-  it('saves the typed body once after the debounce (D17, H5)', async () => {
+  it('saves the serialized Markdown once after the debounce (D17, H5)', async () => {
     const store = createFakeStore();
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    renderEditor(store);
+    const { holder } = renderEditor(store);
 
-    const body = await screen.findByRole('textbox', { name: 'Document body' });
-    await user.type(body, 'Hello');
+    const editor = await readyEditor(holder);
+    insertMarkdown(editor, 'Hello');
     await advancePastDebounce();
 
     await waitFor(() => {
@@ -131,10 +178,9 @@ describe('EditorPlaceholderPage', () => {
   it('writes exactly once when Back is clicked during the debounce (D17)', async () => {
     const store = createFakeStore();
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    renderEditor(store);
+    const { holder } = renderEditor(store);
 
-    const body = await screen.findByRole('textbox', { name: 'Document body' });
-    await user.type(body, 'Leaving');
+    insertMarkdown(await readyEditor(holder), 'Leaving');
     await user.click(screen.getByRole('link', { name: 'Back to documents' }));
     await advancePastDebounce();
 
@@ -156,14 +202,45 @@ describe('EditorPlaceholderPage', () => {
 
   // H5: an unknown document opens as a blank draft with the title as a placeholder hint only.
   it('opens an unknown document as an empty editable draft (H5)', async () => {
-    renderEditor(createFakeStore());
+    const { holder } = renderEditor(createFakeStore());
 
     const title = await screen.findByRole('textbox', { name: 'Document title' });
-    const body = screen.getByRole('textbox', { name: 'Document body' });
+    const editor = await readyEditor(holder);
 
-    expect(valueOf(title)).toBe('');
     expect(title.getAttribute('placeholder')).toBe('Untitled document');
-    expect(valueOf(body)).toBe('');
+    expect(screen.getByRole('textbox', { name: 'Document' })).toBeTruthy();
+    expect(valueOf(title)).toBe('');
+    expect(editor.getMarkdown()).toBe('');
+  });
+
+  // H5: a new draft with a title but no body is not kept.
+  it('does not save a new draft whose body is still empty (H5)', async () => {
+    const store = createFakeStore();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    renderEditor(store);
+
+    const title = await screen.findByRole('textbox', { name: 'Document title' });
+    await user.type(title, 'Draft');
+    await advancePastDebounce();
+
+    expect(store.saves).toHaveLength(0);
+  });
+
+  // The stored Markdown is parsed into the editor, not shown as raw text.
+  it('loads stored Markdown into the editor (T2)', async () => {
+    const stored = toStoredDocument(
+      null,
+      { id: 'doc-1', title: 'Notes', markdown: '# Heading\n\nSome **bold** text' },
+      100,
+    );
+    const { holder } = renderEditor(createFakeStore({ docs: [stored] }));
+
+    const editor = await readyEditor(holder);
+
+    await waitFor(() => {
+      expect(editor.getMarkdown()).toBe('# Heading\n\nSome **bold** text');
+    });
+    expect(editor.isEmpty).toBe(false);
   });
 
   // D17 and H5: reopening keeps createdAt and history; only updatedAt moves on save.
@@ -174,12 +251,11 @@ describe('EditorPlaceholderPage', () => {
       history: [{ id: 'h-1', author: 'user', markdown: 'Earlier', createdAt: 150 }],
     };
     const store = createFakeStore({ docs: [existing] });
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    renderEditor(store);
+    const { holder } = renderEditor(store);
 
-    const body = await screen.findByRole('textbox', { name: 'Document body' });
-    expect(valueOf(body)).toBe('Old text');
-    await user.type(body, ' more');
+    const editor = await readyEditor(holder);
+    expect(editor.getMarkdown()).toBe('Old text');
+    insertMarkdown(editor, 'more');
     await advancePastDebounce();
 
     await waitFor(() => {
@@ -194,11 +270,9 @@ describe('EditorPlaceholderPage', () => {
   // D14: a failed save says what happened, what is kept and what happens next.
   it('shows an actionable message when a save fails', async () => {
     const store = createFakeStore({ saveError: { kind: 'quota' } });
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    renderEditor(store);
+    const { holder } = renderEditor(store);
 
-    const body = await screen.findByRole('textbox', { name: 'Document body' });
-    await user.type(body, 'Too big');
+    insertMarkdown(await readyEditor(holder), 'Too big');
     await advancePastDebounce();
 
     expect(
@@ -211,11 +285,9 @@ describe('EditorPlaceholderPage', () => {
   // The store reports invalid documents with their own message.
   it('shows its own message when the store reports an invalid document', async () => {
     const store = createFakeStore({ saveError: { kind: 'invalid' } });
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    renderEditor(store);
+    const { holder } = renderEditor(store);
 
-    const body = await screen.findByRole('textbox', { name: 'Document body' });
-    await user.type(body, 'x');
+    insertMarkdown(await readyEditor(holder), 'x');
     await advancePastDebounce();
 
     expect(await screen.findByText('This document id is not valid.')).toBeTruthy();
@@ -235,15 +307,68 @@ describe('EditorPlaceholderPage', () => {
       markdown: 'Second body',
     };
     const store = createFakeStore({ docs: [first, second] });
-    const router = renderEditor(store);
+    const { router, holder } = renderEditor(store);
 
-    await screen.findByDisplayValue('First text');
+    const firstEditor = await readyEditor(holder);
+    await waitFor(() => {
+      expect(firstEditor.getMarkdown()).toBe('First text');
+    });
     await act(async () => {
       await router.navigate('/documents/doc-2');
     });
 
-    expect(await screen.findByDisplayValue('Second body')).toBeTruthy();
-    expect(screen.queryByDisplayValue('First text')).toBeNull();
+    expect(await screen.findByDisplayValue('Second')).toBeTruthy();
+    await waitFor(() => {
+      expect(holder.editor?.getMarkdown()).toBe('Second body');
+    });
+    expect(holder.editor).not.toBe(firstEditor);
+  });
+
+  // T10: raw HTML in stored Markdown loads as text; no img or script element reaches the DOM.
+  it('loads raw HTML from storage without live img or script elements (T10)', async () => {
+    const stored = toStoredDocument(
+      null,
+      {
+        id: 'doc-1',
+        title: 'Unsafe',
+        markdown: 'Safe text\n\n<img src=x onerror=alert(1)>\n\n<script>alert(1)</script>',
+      },
+      100,
+    );
+    const { holder } = renderEditor(createFakeStore({ docs: [stored] }));
+
+    await readyEditor(holder);
+    const surface = await screen.findByRole('textbox', { name: 'Document' });
+    await waitFor(() => {
+      expect(surface.textContent).toContain('Safe text');
+    });
+
+    expect(surface.querySelector('img')).toBeNull();
+    expect(surface.querySelector('script')).toBeNull();
+    expect(surface.querySelector('[onerror]')).toBeNull();
+  });
+
+  // D17: opening a document only reads it; leaving without a change writes nothing.
+  it('does not save when an existing document is opened and left unchanged (D17)', async () => {
+    const existing = toStoredDocument(
+      null,
+      { id: 'doc-1', title: 'Kept', markdown: 'Kept text' },
+      100,
+    );
+    const store = createFakeStore({ docs: [existing] });
+    const { router, holder } = renderEditor(store);
+
+    const editor = await readyEditor(holder);
+    await waitFor(() => {
+      expect(editor.getMarkdown()).toBe('Kept text');
+    });
+    await advancePastDebounce();
+    await act(async () => {
+      await router.navigate('/');
+    });
+    expect(await screen.findByText('Home')).toBeTruthy();
+
+    expect(store.saves).toHaveLength(0);
   });
 
   // D14: a document that cannot be read shows an error with a way home.

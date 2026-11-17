@@ -6,7 +6,7 @@ Priority: user instruction > this file and `docs/` > `guidelines/`. `Never` = ha
 
 ## Project in one paragraph
 
-A browser-based Markdown editor where an AI co-author flags and suggests; the user always sees a diff and must Accept. React + Vite + TipTap front end, a small Hono proxy to OpenRouter, localStorage persistence, no auth, no database. Built so far: the `pnpm check` gate, design system, documents store and the home screen (phases 1-20); the editor page is still a textarea placeholder and the AI server has only `/api/health`. Progress table: `README.md`; next milestone: `docs/PLAN-EDITOR-MILESTONE.md`.
+A browser-based Markdown editor where an AI co-author flags and suggests; the user always sees a diff and must Accept. React + Vite + TipTap front end, a small Hono proxy to OpenRouter, localStorage persistence, no auth, no database. Built so far: the `pnpm check` gate, design system, documents store and the home screen (phases 1-20); the editor page now runs on TipTap (Markdown canonical; phases 22-24, 26, 31 done) while the top bar, AI surfaces and AI server (only `/api/health`) are still to come. Progress table: `README.md`; next milestone: `docs/PLAN-EDITOR-MILESTONE.md`.
 
 ## Source of truth
 

@@ -10,6 +10,8 @@ const FEATURE_DEEP_IMPORT_MESSAGE =
 const ATLASKIT_MESSAGE =
   'No @atlaskit/* packages: use the vendored ADS tokens and custom components in src/design-system/ (S1, S8).';
 const LUCIDE_MESSAGE = 'Use Icon from src/design-system (S6, S8).';
+const TIPTAP_MESSAGE =
+  '@tiptap/* is confined to src/features/editor (T1). Reach the editor through the feature index.ts.';
 
 const featureDeepImportPattern = {
   group: ['@/features/*/*'],
@@ -24,6 +26,11 @@ const atlaskitPattern = {
 const lucidePattern = {
   group: ['lucide-react', 'lucide-react/**'],
   message: LUCIDE_MESSAGE,
+};
+
+const tiptapPattern = {
+  group: ['@tiptap/*'],
+  message: TIPTAP_MESSAGE,
 };
 
 // shared/ and server/ run without the web app: they may not reach into src/, by alias or
@@ -107,16 +114,43 @@ export default tseslint.config(
     },
   },
 
-  // Outside the design system, Lucide is reached only through Icon (S6, S8). This block
-  // replaces the rule above for these files, so it repeats the other bans.
+  // Each file matches exactly one block below, since a later block replaces the rule for the
+  // files it matches. Outside the design system, Lucide is reached only through Icon (S6, S8),
+  // and outside the editor, TipTap is reached only through the editor (T1).
   {
     files: ['**/*.{js,ts,tsx}'],
-    ignores: ['src/design-system/**'],
+    ignores: ['src/design-system/**', 'src/features/editor/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [atlaskitPattern, featureDeepImportPattern, lucidePattern, tiptapPattern],
+        },
+      ],
+    },
+  },
+
+  // The editor owns TipTap; it still reaches Lucide only through Icon.
+  {
+    files: ['src/features/editor/**/*.{js,ts,tsx}'],
     rules: {
       'no-restricted-imports': [
         'error',
         {
           patterns: [atlaskitPattern, featureDeepImportPattern, lucidePattern],
+        },
+      ],
+    },
+  },
+
+  // The design system owns Icon (so Lucide is allowed here) and must not import TipTap.
+  {
+    files: ['src/design-system/**/*.{js,ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [atlaskitPattern, featureDeepImportPattern, tiptapPattern],
         },
       ],
     },
@@ -130,7 +164,13 @@ export default tseslint.config(
       'no-restricted-imports': [
         'error',
         {
-          patterns: [atlaskitPattern, featureDeepImportPattern, lucidePattern, srcBoundaryPattern],
+          patterns: [
+            atlaskitPattern,
+            featureDeepImportPattern,
+            lucidePattern,
+            tiptapPattern,
+            srcBoundaryPattern,
+          ],
         },
       ],
     },

@@ -35,7 +35,8 @@ Updated in the same commit as each phase.
 | 23 | Markdown adapter (`parseMarkdown`/`serializeMarkdown`, raw HTML never live DOM) | Done |
 | 26 | Shared zod contracts in `shared/schemas/` and the `src/` import boundary rule | Done |
 | 20b | Home screen aligned to the prototype: navbar, sidebar divider, search, cards, list rows | Done |
-| 24-25, 27-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 31, then 24/25, 27-29, 32 |
+| 24 | TipTap editor surface replaces the textarea; `EditorPage`; `@tiptap/*` import ban; leading block markers escaped on save | Done |
+| 25, 27-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 31, then 24/25, 27-29, 32 |
 
 ## What it is
 

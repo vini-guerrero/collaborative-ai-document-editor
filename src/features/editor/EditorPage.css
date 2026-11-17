@@ -41,22 +41,6 @@
   box-sizing: border-box;
 }
 
-.editor-page-main textarea {
-  display: block;
-  inline-size: 100%;
-  max-inline-size: 75ch;
-  min-block-size: 60dvh;
-  box-sizing: border-box;
-  padding: var(--ds-space-150);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-small);
-  background: transparent;
-  color: var(--ds-text);
-  font: var(--ds-font-body);
-  font-size: max(1rem, 16px);
-  resize: vertical;
-}
-
 @media (pointer: coarse) {
   .editor-top-bar .ds-icon-link,
   .editor-top-bar__name {

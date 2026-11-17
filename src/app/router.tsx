@@ -9,7 +9,7 @@ const HomePage = lazy(() =>
   import('@/features/home').then((loaded) => ({ default: loaded.HomePage })),
 );
 const EditorPage = lazy(() =>
-  import('@/features/editor').then((loaded) => ({ default: loaded.EditorPlaceholderPage })),
+  import('@/features/editor').then((loaded) => ({ default: loaded.EditorPage })),
 );
 
 function withSuspense(element: JSX.Element): JSX.Element {
