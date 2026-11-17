@@ -27,6 +27,7 @@
     "@hono/node-server": "2.1.8",
     "@tiptap/core": "3.34.0",
     "@tiptap/extensions": "3.34.0",
+    "@tiptap/markdown": "3.34.0",
     "@tiptap/pm": "3.34.0",
     "@tiptap/react": "3.34.0",
     "@tiptap/starter-kit": "3.34.0",
