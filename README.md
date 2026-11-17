@@ -32,7 +32,9 @@ Updated in the same commit as each phase.
 | 20 | Home milestone close: Opus review of the home screen (fixes applied), README | Done |
 | 21 | Editor milestone plan saved; T2 amended to `@tiptap/markdown` | Done |
 | 22 | `src/lib/hash.ts` (FNV-1a) and `src/lib/diff.ts` (word diff adapter) with tests | Done |
-| 23-43 | Main editor milestone: Markdown adapter, Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 23, 26, 31 (parallel) |
+| 23 | Markdown adapter (`parseMarkdown`/`serializeMarkdown`, raw HTML never live DOM) | Done |
+| 26 | Shared zod contracts in `shared/schemas/` and the `src/` import boundary rule | Done |
+| 24-25, 27-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 31, then 24/25, 27-29, 32 |
 
 ## What it is
 
