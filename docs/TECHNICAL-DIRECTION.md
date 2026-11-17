@@ -68,7 +68,7 @@ chiri/
 ├── docs/                        # PRODUCT-, TECHNICAL-, DESIGN-DIRECTION.md
 ├── .env.example                 # OPENROUTER_API_KEY, model names, size cap
 ├── package.json  tsconfig.json  vite.config.ts  vitest.config.ts  eslint.config.js  index.html
-├── Mockups/  +  assessment PDF
+├── mockups/  +  assessment PDF
 ├── ai-sessions/                 # raw session files, secrets masked (added last)
 ├── shared/                      # contracts used by both client and server
 │   └── schemas/

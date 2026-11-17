@@ -1,6 +1,6 @@
 # Design Direction: AI Co-Author Editor
 
-Design system direction for the product in `PRODUCT-DIRECTION.md` (D1-D17, H1-H7), built under the stack in `TECHNICAL-DIRECTION.md` (T1-T11). The initial prototype in `../Mockups/medium-fidelity-prototype.html` is a visual reference only, not a source of final tokens. Decisions are numbered S1 to S9.
+Design system direction for the product in `PRODUCT-DIRECTION.md` (D1-D17, H1-H7), built under the stack in `TECHNICAL-DIRECTION.md` (T1-T11). The initial prototype in `../mockups/medium-fidelity-prototype.html` is a visual reference only, not a source of final tokens. Decisions are numbered S1 to S9.
 
 **Guiding principle (from the product):** the user writes; the AI is a co-author that speaks up quietly. The design system's job is to make the AI feel like a colleague's margin note: calm, precise, never louder than the user's own text.
 
