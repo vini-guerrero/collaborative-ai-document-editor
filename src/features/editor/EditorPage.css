@@ -1,6 +1,7 @@
 /* Tokens only (S2). Document text is at least 1rem; the body stays within about 75 characters. */
 .editor-top-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--ds-space-100);
   padding-inline: var(--ds-space-200);
@@ -14,7 +15,29 @@
   color: var(--ds-text);
 }
 
+/* Below md the title takes its own full row under the back arrow, name and overflow menu (S9). */
+.editor-top-bar__overflow {
+  margin-inline-start: auto;
+}
+
+.editor-top-bar__title {
+  flex: 1 1 100%;
+  min-inline-size: 0;
+}
+
+/* From md the title shares the bar with the toggles; 768px mirrors BREAKPOINTS.md (S9). */
+@media (min-width: 768px) {
+  .editor-top-bar__title {
+    flex: 1 1 12rem;
+  }
+}
+
+.editor-top-bar__title .ds-text-field__input {
+  box-sizing: border-box;
+}
+
 .editor-top-bar__status {
+  min-inline-size: 0;
   margin: 0 0 0 auto;
   font: var(--ds-font-body-small);
   color: var(--ds-text-subtle);
@@ -28,16 +51,6 @@
   padding-inline: var(--ds-space-200);
   min-inline-size: 0;
   max-inline-size: 100%;
-  box-sizing: border-box;
-}
-
-/* The title field shares the body's width and gutter; its input must use border-box or its padding
-   and border push the right edge past the gutter on narrow viewports. */
-.editor-page-main .ds-text-field {
-  max-inline-size: 75ch;
-}
-
-.editor-page-main .ds-text-field__input {
   box-sizing: border-box;
 }
 

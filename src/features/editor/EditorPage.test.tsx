@@ -14,6 +14,7 @@ import {
   toStoredDocument,
 } from '@/features/documents';
 import { EditorPageView } from './EditorPage';
+import { setViewportWidth } from '@/test/matchMedia';
 import { AUTOSAVE_DELAY_MS } from './useAutosave';
 
 const NOW = 1_700_000_000_000;
@@ -379,5 +380,88 @@ describe('EditorPage', () => {
       await screen.findByRole('heading', { level: 2, name: 'This document could not be opened' }),
     ).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Go to home' }).getAttribute('href')).toBe('/');
+  });
+  // H5: the title is typed in the top bar and saves through the same debounced autosave.
+  it('saves a title typed in the top bar (H5)', async () => {
+    const stored = toStoredDocument(null, { id: 'doc-1', title: 'Notes', markdown: 'Body' }, 100);
+    const store = createFakeStore({ docs: [stored] });
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    renderEditor(store);
+
+    const title = await screen.findByRole('textbox', { name: 'Document title' });
+    await user.clear(title);
+    await user.type(title, 'Renamed');
+    await advancePastDebounce();
+
+    await waitFor(() => {
+      expect(store.saves.at(-1)?.title).toBe('Renamed');
+    });
+  });
+
+  // D15: Visual -> Markdown -> edit -> Visual keeps the edited text in the saved Markdown.
+  it('keeps text edited in the Markdown view after returning to Visual (D15)', async () => {
+    const stored = toStoredDocument(null, { id: 'doc-1', title: 'Notes', markdown: 'Hello' }, 100);
+    const store = createFakeStore({ docs: [stored] });
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const { holder } = renderEditor(store);
+    const editor = await readyEditor(holder);
+
+    await user.click(screen.getByRole('button', { name: 'Markdown' }));
+    const source = await screen.findByRole('textbox', { name: 'Markdown source' });
+    expect(valueOf(source)).toBe('Hello');
+    expect(screen.queryByRole('textbox', { name: 'Document' })).toBeNull();
+
+    await user.type(source, ' edited');
+    await user.click(screen.getByRole('button', { name: 'Visual' }));
+
+    await waitFor(() => {
+      expect(editor.getMarkdown()).toBe('Hello edited');
+    });
+    await advancePastDebounce();
+    await waitFor(() => {
+      expect(store.saves.at(-1)?.markdown).toBe('Hello edited');
+    });
+  });
+
+  // D1: the AI mode defaults to Ambient and the toggle only changes its state.
+  it('switches the AI mode between Ambient and On demand (D1)', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    renderEditor(createFakeStore());
+
+    const ambient = await screen.findByRole('button', { name: 'Ambient' });
+    const onDemand = screen.getByRole('button', { name: 'On demand' });
+    expect(ambient.getAttribute('aria-pressed')).toBe('true');
+    expect(onDemand.getAttribute('aria-pressed')).toBe('false');
+
+    await user.click(onDemand);
+
+    expect(ambient.getAttribute('aria-pressed')).toBe('false');
+    expect(onDemand.getAttribute('aria-pressed')).toBe('true');
+  });
+
+  // S9: from md the view toggle and History are inline; below md they move into More actions.
+  it('keeps History inline from md and has no overflow menu there (S9)', async () => {
+    renderEditor(createFakeStore());
+
+    expect(await screen.findByRole('button', { name: 'Markdown' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'History (Soon)' }).hasAttribute('disabled')).toBe(
+      true,
+    );
+    expect(screen.queryByRole('button', { name: 'More actions' })).toBeNull();
+  });
+
+  it('shows the overflow menu with Raw and History below md (S9)', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    setViewportWidth(360);
+    renderEditor(createFakeStore());
+
+    await user.click(await screen.findByRole('button', { name: 'More actions' }));
+    expect(screen.queryByRole('button', { name: 'Markdown' })).toBeNull();
+    const history = screen.getByRole('menuitem', { name: 'History (Soon)' });
+    expect(history.getAttribute('aria-disabled')).toBe('true');
+
+    await user.click(screen.getByRole('menuitem', { name: 'Raw' }));
+
+    expect(await screen.findByRole('textbox', { name: 'Markdown source' })).toBeTruthy();
   });
 });

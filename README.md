@@ -40,7 +40,8 @@ Updated in the same commit as each phase.
 | 27 | AI service: `AIProvider`, prompts with nonce-delimited document data, zod-validated output with one retry, fake provider | Done |
 | 32 | Design-system Menu and Select (keyboard, typeahead, roving focus) | Done |
 | 28-29 | `POST /api/ai` with guards (body and input caps, credit latch, timeout, redacted logs) and the OpenRouter adapter wired in `server/main.ts` (one commit: 28 needs 29's wiring to typecheck) | Done |
-| 25, 30, 33-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 25 and 30 (then 33+) |
+| 25 | Editor top bar: title, Visual/Markdown toggle with raw source, Ambient/On demand state, overflow menu below md (scoped checks only; not yet seen in the browser) | Done |
+| 30, 33-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 25 and 30 (then 33+) |
 
 ## What it is
 

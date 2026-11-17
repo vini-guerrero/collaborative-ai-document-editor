@@ -1,0 +1,16 @@
+/* Tokens only (S2). The source is document text, so it uses the large body size (at least 16px). */
+.markdown-source {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 75ch;
+  min-block-size: 60dvh;
+  margin: 0;
+  padding: var(--ds-space-150);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-small);
+  background: transparent;
+  color: var(--ds-text);
+  font: var(--ds-font-body-large);
+  overflow-wrap: anywhere;
+  resize: vertical;
+}
