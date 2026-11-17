@@ -52,6 +52,8 @@ pnpm is the only package manager (no `package-lock.json` or `yarn.lock`). Every 
 **T13. Coding gates: one command, adapted guidelines.**
 The general guidelines in `guidelines/` (coding, Node, React, UI/UX) are the full reference. Their rules that fit this project are distilled into `AGENTS.md`, and the ones that do not (database, auth, queues, A/B testing, i18n, and similar) are dropped there on purpose and listed. `pnpm check` runs format check, type-aware strict ESLint, `tsc --noEmit`, the license check (S8), Vitest and the production build; it is created before any feature code. Failures are fixed at the cause, never suppressed.
 
+**TypeScript is pinned to 6.0.x on purpose.** typescript-eslint (type-aware rules) does not yet support TypeScript 7 (native port); checked 2026-11-17 on typescript-eslint 8.73.0. Revisit when typescript-eslint supports TS 7, as one deliberate upgrade (T12).
+
 ## Defaults decided without asking
 
 - Single `package.json` (no workspace), Node 24 (pinned in `.nvmrc`); `pnpm dev` starts Vite and Hono together.

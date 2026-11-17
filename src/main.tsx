@@ -1,8 +1,8 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { App } from "@/App";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { App } from '@/App';
 
-const ROOT_ELEMENT_ID = "root";
+const ROOT_ELEMENT_ID = 'root';
 
 function getRootElement(): HTMLElement {
   const element = document.getElementById(ROOT_ELEMENT_ID);

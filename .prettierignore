@@ -1,0 +1,10 @@
+docs/
+guidelines/
+mockups/
+ai-sessions/
+pnpm-lock.yaml
+dist/
+node_modules/
+*.md
+*.pdf
+*.lima.yaml
