@@ -31,7 +31,8 @@ Updated in the same commit as each phase.
 | 19 | Delete flow: always-visible delete button, confirm dialog naming the document, error handling | Done |
 | 20 | Home milestone close: Opus review of the home screen (fixes applied), README | Done |
 | 21 | Editor milestone plan saved; T2 amended to `@tiptap/markdown` | Done |
-| 22-43 | Main editor milestone: lib, Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 22, 23, 26, 31 (parallel) |
+| 22 | `src/lib/hash.ts` (FNV-1a) and `src/lib/diff.ts` (word diff adapter) with tests | Done |
+| 23-43 | Main editor milestone: Markdown adapter, Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 23, 26, 31 (parallel) |
 
 ## What it is
 
