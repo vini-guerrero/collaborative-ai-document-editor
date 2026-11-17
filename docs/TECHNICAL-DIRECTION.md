@@ -1,6 +1,6 @@
 # Technical Direction: AI Co-Author Editor
 
-Technical decisions for the product described in `PRODUCT-DIRECTION.md` (D1-D17, H1-H7) and the brief in `NEW - Chiri-Engineering-Assessment-AI-Document-Editor.pdf`. The product is settled; this file covers only what blocks building. Decisions are numbered T1 to T11.
+Technical decisions for the product described in `PRODUCT-DIRECTION.md` (D1-D17, H1-H7) and the brief in `NEW - Chiri-Engineering-Assessment-AI-Document-Editor.pdf`. The product is settled; this file covers only what blocks building. Decisions are numbered T1 to T13.
 
 **Constraints from the brief:** no database, auth or Docker; OpenRouter key with a $5 cap; focused 4-6 hour build; public GitHub repo; README with run steps, what was built and what would change with more time.
 
@@ -16,7 +16,7 @@ The brief says the user writes Markdown, the raw toggle (D15) becomes trivial, a
 This keeps the saved Markdown clean, gives a single Cmd+Z step (D17), and lets flags map through edits and drop when the text changes. Word-level diffs use the `diff` library.
 
 **T4. One `/api/ai` proxy holds the OpenRouter key, behind a provider-agnostic `AIProvider` interface.**
-The proxy is a small Hono (Node) server in `server/`. Vite proxies `/api` to it, and one `npm run dev` starts both. The key is read from `.env` and never reaches the browser. Models are chosen by config per task, so swapping models or providers needs no editor changes. The OpenRouter adapter is first. There is no database or auth.
+The proxy is a small Hono (Node) server in `server/`. Vite proxies `/api` to it, and one `pnpm dev` starts both. The key is read from `.env` and never reaches the browser. Models are chosen by config per task, so swapping models or providers needs no editor changes. The OpenRouter adapter is first. There is no database or auth.
 
 **T5. AI tasks: `analyze`, `rewrite`, `restructure`.**
 `analyze` is cheap and returns flags only (type, span, reason). `rewrite` runs on click. `restructure` returns a move/split/merge operation, not free text (D10). All return zod-validated JSON, with one retry on invalid output. Each task has its own model in config (small and fast for analysis, stronger for rewrites), which matches D3 and the $5 cap.
@@ -43,12 +43,18 @@ The client renders suggestions only as text through ProseMirror, never raw HTML.
 - **Path aliases.** `@/` for `src/` and `@shared/` for `shared/`, so no long relative paths.
 - **Small, single-purpose files.** One responsibility per file, aiming for under ~200 lines. Prompts are separate files in `server/prompts/`, never inline strings.
 - **Traceable to the product record.** Code comments and test names cite the decision they implement (for example `D4`, `H5`, `T7`), so a reviewer or an agent can trace code to intent.
-- **Agent-readable repo.** A root `AGENTS.md` (with `CLAUDE.md` pointing to it) holds the architecture map, conventions, the rules above and the commands. One command, `npm run check` (typecheck + lint + tests), is the gate before any change is considered done by a person or an agent.
+- **Agent-readable repo.** A root `AGENTS.md` (with `CLAUDE.md` pointing to it) holds the architecture map, conventions, the rules above and the commands. One command, `pnpm check` (see T13), is the gate before any change is considered done by a person or an agent.
 - **Human in the loop.** The AI-facing surface is small and explicit: schemas, prompts and the `AIProvider` interface are the only places model behavior is defined, so a person can review them without reading the editor code.
+
+**T12. Package management: pnpm, exact versions only.**
+pnpm is the only package manager (no `package-lock.json` or `yarn.lock`). Every dependency, dev dependencies included, is pinned to an exact version: `.npmrc` sets `save-exact=true`, and no `^`, `~`, ranges or `latest` appear in `package.json`, so a compromised or broken release cannot arrive unnoticed. `pnpm-lock.yaml` is committed, installs use `pnpm install --frozen-lockfile`, and `packageManager` and `engines` pin the pnpm and Node versions. Upgrades are deliberate: one package at a time, license re-checked (S8), checks run, committed alone. `pnpm audit` must show no high or critical findings, and dependency install scripts stay blocked unless explicitly allowlisted.
+
+**T13. Coding gates: one command, adapted guidelines.**
+The general guidelines in `guidelines/` (coding, Node, React, UI/UX) are the full reference. Their rules that fit this project are distilled into `AGENTS.md`, and the ones that do not (database, auth, queues, A/B testing, i18n, and similar) are dropped there on purpose and listed. `pnpm check` runs format check, type-aware strict ESLint, `tsc --noEmit`, the license check (S8), Vitest and the production build; it is created before any feature code. Failures are fixed at the cause, never suppressed.
 
 ## Defaults decided without asking
 
-- Single `package.json` with npm, Node 20+; `npm run dev` starts Vite and Hono together.
+- Single `package.json` (no workspace), Node 20+; `pnpm dev` starts Vite and Hono together.
 - Zod schemas live in `shared/schemas/` and are used by both server and client (see T11).
 - `react-router` with browser history, so the Back button returns home (H7).
 - Zustand for editor and AI UI state.
@@ -64,6 +70,8 @@ The client renders suggestions only as text through ProseMirror, never raw HTML.
 ```
 chiri/
 ├── README.md                    # install / run, what was built, what next
+├── guidelines/                  # full general guidelines (cold reference; distilled in AGENTS.md)
+├── .npmrc  .nvmrc  pnpm-lock.yaml   # save-exact, pinned Node, committed lockfile (T12)
 ├── AGENTS.md                    # architecture map, conventions, commands (CLAUDE.md points here)
 ├── docs/                        # PRODUCT-, TECHNICAL-, DESIGN-DIRECTION.md
 ├── .env.example                 # OPENROUTER_API_KEY, model names, size cap

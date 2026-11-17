@@ -54,7 +54,7 @@ Only packages under a permissive license (Apache-2.0, MIT, ISC, BSD) may be inst
 Checked on 2026-11-17 (registry `license` field and the LICENSE file inside the package tarball): `@atlaskit/tokens`, `primitives`, `css`, `button`, `modal-dialog`, `dropdown-menu`, `popup`, `tooltip`, `avatar`, `textfield`, `spinner`, `lozenge`, `toggle`, `empty-state`, `theme`, `select` are Apache-2.0; `lucide-react` is ISC; `@radix-ui/react-popover` is MIT. `@atlaskit/icon` and `@atlaskit/logo` are also Apache-2.0 as published, but stay excluded (S6) because public sources describe them as ADG-licensed and the question is unresolved. The Atlassian design guidelines and brand marks are not a code license, so they are used only as inspiration, never copied.
 
 Enforcement:
-1. **Allowlist script in `npm run check` (T11):** `license-checker` (or equivalent) fails the build if any dependency, including transitive ones, has a license outside the allowlist, or if `@atlaskit/icon` or `@atlaskit/logo` appears in the tree.
+1. **Allowlist script in `pnpm check` (T11):** `license-checker` (or equivalent) fails the build if any dependency, including transitive ones, has a license outside the allowlist, or if `@atlaskit/icon` or `@atlaskit/logo` appears in the tree.
 2. **Wrapper layer:** feature code imports only from `src/design-system/` (Button, Dialog, Menu, Tooltip, Icon, and so on), never from `@atlaskit/*` directly, enforced by an ESLint import rule. If a package is later found not permitted, only its wrapper changes.
 3. **Re-check on every new design-system dependency and version bump,** recorded here with the date.
 4. This is an engineering check, not legal advice; confirm with counsel before a commercial launch.
@@ -80,7 +80,7 @@ src/design-system/
 ├── components/         # wrappers over ADS (S4), each with index.ts, types.ts, test
 ├── ai/                 # custom AI components (S5)
 └── icons/              # Icon wrapper, Lucide set + custom SVGs (S6)
-scripts/check-licenses.*  # permissive-license allowlist, run by npm run check (S8)
+scripts/check-licenses.*  # permissive-license allowlist, run by pnpm check (S8)
 ```
 
 ## Open questions (not blocking until the first UI work)
