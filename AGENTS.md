@@ -173,4 +173,4 @@ Open: <questions, risks, follow-ups>
 
 ## Git
 
-Work on `development`; `main` is for releases. Short, imperative commit messages. Add one dependency or one upgrade per commit. The raw AI session files in `ai-sessions/` are added last, unedited except for masked secrets, as the brief requires.
+Work on `development`; `main` is for releases. Short, imperative commit messages. One commit per build phase; in the same commit, update the README build-progress table and any doc the phase changed. Add one dependency or one upgrade per commit. The raw AI session files in `ai-sessions/` are added last, unedited except for masked secrets, as the brief requires.

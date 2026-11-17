@@ -2,7 +2,20 @@
 
 A collaborative AI document editor in the browser. You write Markdown; an AI co-author notices things, speaks up quietly, and never changes the document without a visible diff and your explicit Accept.
 
-> **Status: pre-implementation.** Product, technical and design decisions are written down; no application code exists yet. This README is a working draft and will evolve with the product.
+> **Status: scaffolding.** Product, technical and design decisions are written down; the project and its `pnpm check` gate are being set up before any feature code. This README is a working draft and will evolve with the product.
+
+### Build progress
+
+Updated in the same commit as each phase.
+
+| Phase | Scope | State |
+|---|---|---|
+| 1 | Package baseline: pnpm, exact pins, Node, env example | Done |
+| 2 | Web shell: Vite, React, strict TypeScript | Done |
+| 3 | Format and lint | Planned |
+| 4 | Vitest | Planned |
+| 5 | Hono server and config | Planned |
+| 6 | License check and the `pnpm check` gate | Planned |
 
 ## What it is
 
