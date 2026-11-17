@@ -1,1 +1,1 @@
-export { HomePage } from './HomePagePlaceholder';
+export { HomePage } from './HomePage';

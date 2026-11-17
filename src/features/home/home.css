@@ -1,0 +1,107 @@
+/* S2: tokens only. S9: the navbar wraps instead of overflowing at 320px. */
+.home-navbar {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-space-100);
+  min-inline-size: 0;
+}
+
+.home-navbar__name {
+  flex: 0 0 auto;
+  padding-block: var(--ds-space-050);
+  font: var(--ds-font-heading-xsmall);
+  color: var(--ds-text);
+  text-decoration: none;
+}
+
+.home-navbar__search {
+  display: flex;
+  flex: 1 1 200px;
+  align-items: center;
+  gap: var(--ds-space-100);
+  min-inline-size: 0;
+  max-inline-size: 320px;
+}
+
+.home-navbar__search .ds-text-field {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+.home-navbar__user {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+}
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-200);
+  min-inline-size: 0;
+}
+
+.home-page__title {
+  margin: 0;
+  font: var(--ds-font-heading-medium);
+  color: var(--ds-text);
+}
+
+/* Reserved height so the list appearing does not shift the layout (S7, UI/UX). */
+.home-page__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--ds-space-800);
+}
+
+.home-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-050);
+}
+
+.home-list {
+  display: grid;
+  gap: var(--ds-space-100);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-050);
+  min-inline-size: 0;
+  padding: var(--ds-space-150);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-medium);
+  background: var(--ds-surface-raised);
+}
+
+.home-list__link {
+  align-self: flex-start;
+  overflow-wrap: anywhere;
+  font: var(--ds-font-body);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--ds-text);
+  text-decoration: underline;
+}
+
+.home-list__preview,
+.home-list__meta {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font: var(--ds-font-body-small);
+  color: var(--ds-text-subtle);
+}
+
+@media (pointer: coarse) {
+  .home-list__link {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+  }
+}

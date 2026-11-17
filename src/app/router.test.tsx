@@ -28,10 +28,10 @@ describe('app routes', () => {
   });
 
   // H1: the home screen is the root route.
-  it('shows the home heading on the root route', async () => {
+  it('shows the documents heading on the root route (H1)', async () => {
     renderAt('/');
 
-    await screen.findByRole('heading', { level: 1, name: 'AI Co-Author Editor' });
+    await screen.findByRole('heading', { level: 1, name: 'Documents' });
   });
 
   // H5: a document route opens the editor; a new id starts as a blank draft.

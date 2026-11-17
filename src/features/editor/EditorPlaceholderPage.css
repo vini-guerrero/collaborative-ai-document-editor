@@ -31,6 +31,16 @@
   box-sizing: border-box;
 }
 
+/* The title field shares the body's width and gutter; its input must use border-box or its padding
+   and border push the right edge past the gutter on narrow viewports. */
+.editor-page-main .ds-text-field {
+  max-inline-size: 75ch;
+}
+
+.editor-page-main .ds-text-field__input {
+  box-sizing: border-box;
+}
+
 .editor-page-main textarea {
   display: block;
   inline-size: 100%;

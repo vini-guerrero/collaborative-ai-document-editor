@@ -26,7 +26,8 @@ Updated in the same commit as each phase.
 | 12 | Dialog on native `<dialog>` (reviewed: busy guard, native-close sync, focus return) | Done |
 | 13 | Responsive layout: useBreakpoint, AppShell (sidebar, rail, drawer), NavItem, IconLink (reviewed) | Done |
 | 16 | Routing, route error boundaries, editor placeholder (textarea) with serialized autosave (reviewed) | Done |
-| 17-20 | Home screen milestone: home shell, views, delete flow, milestone close (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 17 |
+| 17 | Home shell: navbar, sidebar (disabled items with Soon), loading/error/empty/ready, New document | Done |
+| 18-20 | Home screen milestone: grid/list views and cards, delete flow, milestone close (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 18 |
 
 ## What it is
 
