@@ -89,6 +89,8 @@ describe('DocumentGrid', () => {
       />,
     );
 
+    // H4: the grid card shows the preview text.
+    expect(screen.getByText('Café notes, naïve plans')).toBeTruthy();
     expect(linkTexts()).toEqual(['Résumé draft 🚀', 'Untitled document', 'x'.repeat(200)]);
     expect(screen.getByRole('link', { name: 'Résumé draft 🚀' }).getAttribute('href')).toBe(
       '/documents/doc-draft',
@@ -167,6 +169,8 @@ describe('DocumentList', () => {
     );
 
     expect(screen.getByTestId('document-list')).toBeTruthy();
+    // H4: the preview belongs to the grid cards only, so list rows never show it.
+    expect(screen.queryByText('Café notes, naïve plans')).toBeNull();
     expect(linkTexts()).toEqual(['Résumé draft 🚀', 'Untitled document']);
     expect(screen.getByRole('link', { name: 'Résumé draft 🚀' }).getAttribute('href')).toBe(
       '/documents/doc-draft',

@@ -1,16 +1,42 @@
-import type { JSX } from 'react';
+import type { JSX, MouseEvent } from 'react';
+import { useNavigate } from 'react-router';
 import { NavItem } from '@/design-system';
 
 export interface HomeSidebarProps {
   onNewDocument: () => void;
 }
 
+const PRIMARY_BUTTON = 0;
+
+// Only a plain left click is handled in-app. Middle clicks and modifier clicks keep the real href,
+// so the browser can open the home screen in a new tab.
+function isPlainPrimaryClick(event: MouseEvent<HTMLElement>): boolean {
+  return (
+    event.button === PRIMARY_BUTTON &&
+    !event.metaKey &&
+    !event.ctrlKey &&
+    !event.shiftKey &&
+    !event.altKey
+  );
+}
+
 // H2: only New document and the current Documents entry work. The rest are visible promises (Soon).
 export function HomeSidebar({ onNewDocument }: HomeSidebarProps): JSX.Element {
+  const navigate = useNavigate();
+
+  // Stays in the single-page app: a plain click navigates with the router, not a full reload.
+  function goHome(event: MouseEvent<HTMLElement>): void {
+    if (!isPlainPrimaryClick(event)) {
+      return;
+    }
+    event.preventDefault();
+    void navigate('/');
+  }
+
   return (
     <div className="home-sidebar">
       <NavItem icon="plus" label="New document" onClick={onNewDocument} />
-      <NavItem icon="file-text" label="Documents" href="/" current />
+      <NavItem icon="file-text" label="Documents" href="/" current onClick={goHome} />
       <NavItem icon="pin" label="Pinned" disabled soon />
       <NavItem icon="users" label="Collaborations" disabled soon />
       <NavItem icon="archive" label="Archive" disabled soon />

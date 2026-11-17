@@ -45,14 +45,19 @@ function renderDocuments(state: DocumentListState, options: DocumentsPanelOption
     );
   }
   if (state.kind === 'error') {
+    // The alert wraps only the sentence; the heading and Retry stay outside it (D14).
     return (
-      <div role="alert">
-        <EmptyState
-          title="Could not load your documents"
-          description="Storage could not be read. Try again."
-          action={<Button onClick={options.onRetry}>Retry</Button>}
-        />
-      </div>
+      <EmptyState
+        title="Could not load your documents"
+        action={
+          <div className="home-page__error">
+            <p role="alert" className="home-page__error-text">
+              Storage could not be read. Try again.
+            </p>
+            <Button onClick={options.onRetry}>Retry</Button>
+          </div>
+        }
+      />
     );
   }
   if (state.documents.length === 0) {
@@ -75,7 +80,8 @@ export function HomePage({ newId = createDocumentId, now }: HomePageProps): JSX.
   const navigate = useNavigate();
   const { state, retry, reload } = useDocuments();
   const [view, setView] = useState<DocumentView>('grid');
-  // Read once when the page mounts: relative times stay stable across re-renders (purity).
+  // Read once when the page mounts: relative times stay stable across re-renders (purity). They do
+  // not refresh while the page stays open; this is accepted for now (H4).
   const [renderedAt] = useState(() => now ?? Date.now());
   const headingRef = useRef<HTMLHeadingElement>(null);
   // Set when a delete succeeds, so the dialog's close moves focus to the heading (the removed

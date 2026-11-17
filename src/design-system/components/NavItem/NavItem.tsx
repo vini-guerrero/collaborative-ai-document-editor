@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX, MouseEvent } from 'react';
 import { Icon, type IconName } from '../../icons';
 import { useShell } from '../AppShell/AppShell';
 import { Lozenge } from '../Lozenge/Lozenge';
@@ -10,7 +10,9 @@ export interface NavItemProps {
   label: string;
   // Renders a link. Without href the item is an action button that calls onClick.
   href?: string;
-  onClick?: () => void;
+  // Called on activation. On a link the consumer may call event.preventDefault() to handle the
+  // navigation itself (for example an in-app router); the real href stays for other clicks.
+  onClick?: (event: MouseEvent<HTMLElement>) => void;
   // Marks the page the user is on: aria-current on a link plus a visible indicator bar (S7).
   current?: boolean;
   // Disabled items are announced but not actionable (H2, H3).
@@ -70,8 +72,8 @@ export function NavItem({
     );
   }
 
-  function activate(): void {
-    onClick?.();
+  function activate(event: MouseEvent<HTMLElement>): void {
+    onClick?.(event);
     shell.closeDrawer();
   }
 

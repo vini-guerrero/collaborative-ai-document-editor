@@ -1,10 +1,39 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { MouseEvent } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { NavItem } from './NavItem';
 
 // S7, H2, H3: navigation items keep their meaning in every state.
 describe('NavItem (S7, H2, H3)', () => {
+  // H2: a link passes the click event to onClick, so a consumer can handle navigation in-app.
+  it('passes the click event to onClick on a link and keeps the href', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn<(event: MouseEvent<HTMLElement>) => void>();
+    render(<NavItem icon="file-text" label="Documents" href="/" onClick={onClick} />);
+
+    const link = screen.getByRole('link', { name: 'Documents' });
+    expect(link.getAttribute('href')).toBe('/');
+    await user.click(link);
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClick.mock.calls[0]?.[0]?.type).toBe('click');
+  });
+
+  // H2: a consumer that calls preventDefault in onClick stops the browser's own navigation.
+  it('lets onClick prevent the link default action', () => {
+    const onClick = vi.fn<(event: MouseEvent<HTMLElement>) => void>((event) => {
+      event.preventDefault();
+    });
+    render(<NavItem icon="file-text" label="Documents" href="/" onClick={onClick} />);
+
+    // fireEvent returns false when the default action was prevented.
+    const proceeds = fireEvent.click(screen.getByRole('link', { name: 'Documents' }));
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(proceeds).toBe(false);
+  });
+
   it('marks the current link with aria-current', () => {
     render(<NavItem icon="file-text" label="Documents" href="/documents" current />);
 

@@ -65,8 +65,10 @@ export function useDeleteDocument({
     void removeDocument(store, target.id).then((removed) => {
       inFlight.current = false;
       if (removed) {
-        setState({ kind: 'idle' });
+        // onDeleted runs first so the caller has set its focus target before the dialog closes;
+        // the order is explicit here rather than relying on React batching the two updates.
         onDeleted();
+        setState({ kind: 'idle' });
         return;
       }
       setState({ kind: 'error', document: target, message: DELETE_FAILED_MESSAGE });

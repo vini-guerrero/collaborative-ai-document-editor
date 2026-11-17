@@ -1,4 +1,5 @@
-/* S2: tokens only. S9: the navbar wraps instead of overflowing at 320px. */
+/* S2: tokens only. Sizes are multiples of the spacing tokens (1 unit = --ds-space-100, 0.5rem):
+   200px is 25 units and 320px is 40 units. S9: the navbar wraps instead of overflowing at 320px. */
 .home-navbar {
   display: flex;
   flex: 1 1 auto;
@@ -18,11 +19,11 @@
 
 .home-navbar__search {
   display: flex;
-  flex: 1 1 200px;
+  flex: 1 1 calc(var(--ds-space-100) * 25);
   align-items: center;
   gap: var(--ds-space-100);
   min-inline-size: 0;
-  max-inline-size: 320px;
+  max-inline-size: calc(var(--ds-space-100) * 40);
 }
 
 .home-navbar__search .ds-text-field {
@@ -46,6 +47,21 @@
   margin: 0;
   font: var(--ds-font-heading-medium);
   color: var(--ds-text);
+}
+
+/* The load-error text sits above the Retry button inside the empty-state action (D14). */
+.home-page__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ds-space-100);
+}
+
+.home-page__error-text {
+  margin: 0;
+  font: var(--ds-font-body);
+  color: var(--ds-text-subtle);
+  text-align: center;
 }
 
 /* Reserved height so the list appearing does not shift the layout (S7, UI/UX). */

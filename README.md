@@ -2,7 +2,7 @@
 
 A collaborative AI document editor in the browser. You write Markdown; an AI co-author notices things, speaks up quietly, and never changes the document without a visible diff and your explicit Accept.
 
-> **Status: scaffolded.** The project and its `pnpm check` gate are in place; feature work comes next. Decisions are in `docs/`. This README is a working draft and will evolve with the product.
+> **Status: home screen done.** The project, the `pnpm check` gate and the documents home (list, create, delete, grid/list) are built; the Markdown editor with the AI co-author is next. The editor page is still a plain textarea. Decisions are in `docs/`. This README is a working draft and will evolve with the product.
 
 ### Build progress
 
@@ -21,15 +21,16 @@ Updated in the same commit as each phase.
 | 9 | Design-system foundation: vendored ADS tokens, light/dark theme, Icon over Lucide, import bans | Done |
 | 10 | Components: Button, IconButton, Lozenge, Spinner, VisuallyHidden | Done |
 | 11 | Components: TextField, Avatar, ToggleGroup, EmptyState | Done |
-| 14 | Documents store: zod schemas, `DocumentStore` over localStorage with index recovery, preview helper (built early, in parallel with 12) | Done |
-| 15 | DocumentStore provider and hook, relativeTime, store wired in main | Done |
 | 12 | Dialog on native `<dialog>` (reviewed: busy guard, native-close sync, focus return) | Done |
 | 13 | Responsive layout: useBreakpoint, AppShell (sidebar, rail, drawer), NavItem, IconLink (reviewed) | Done |
+| 14 | Documents store: zod schemas, `DocumentStore` over localStorage with index recovery, preview helper (built early, in parallel with 12) | Done |
+| 15 | DocumentStore provider and hook, relativeTime, store wired in main | Done |
 | 16 | Routing, route error boundaries, editor placeholder (textarea) with serialized autosave (reviewed) | Done |
 | 17 | Home shell: navbar, sidebar (disabled items with Soon), loading/error/empty/ready, New document | Done |
 | 18 | Grid/List views: ViewToggle, DocumentCard, DocumentRow | Done |
 | 19 | Delete flow: always-visible delete button, confirm dialog naming the document, error handling | Done |
-| 20 | Home milestone close: Opus review of the home screen, README | In progress |
+| 20 | Home milestone close: Opus review of the home screen (fixes applied), README | Done |
+| 21-43 | Main editor milestone: TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Planned; next: phase 21 |
 
 ## What it is
 

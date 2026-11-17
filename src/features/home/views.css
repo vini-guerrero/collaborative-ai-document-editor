@@ -1,9 +1,10 @@
-/* S2: tokens only. The only literals are the S9 line clamp, the md breakpoint and the S9 touch target. */
+/* S2: tokens only. The only literals are the S9 line clamp and the S9 touch target.
+   The 16rem grid minimum is 8 units of --ds-space-400 (2rem). */
 
 /* H4 grid: one column at 360px (S9), more columns as the width grows. */
 .doc-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--ds-space-400) * 8)), 1fr));
   gap: var(--ds-space-150);
   margin: 0;
   padding: 0;
@@ -124,30 +125,10 @@
   flex: 1 1 auto;
 }
 
-.doc-row__preview {
-  display: none;
-  flex: 2 1 0;
-  min-inline-size: 0;
-  margin: 0;
-  overflow: hidden;
-  overflow-wrap: anywhere;
-  font: var(--ds-font-body-small);
-  color: var(--ds-text-subtle);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
 .doc-row__meta {
   flex: 0 0 auto;
   margin-inline-start: auto;
   text-align: end;
-}
-
-/* The 768px value mirrors --bp-md in tokens.css; custom properties cannot be used in media queries. */
-@media (min-width: 768px) {
-  .doc-row__preview {
-    display: block;
-  }
 }
 
 /* S9: touch targets are at least 44px on coarse pointers; the whole row is the target. */
