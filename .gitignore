@@ -1,1 +1,12 @@
 *.pdf
+
+# Personal dev VM
+*.lima.yaml
+.lima/
+node_modules/
+dist
+.env
+coverage
+.DS_Store
+package-lock.json
+yarn.lock

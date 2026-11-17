@@ -54,7 +54,7 @@ The general guidelines in `guidelines/` (coding, Node, React, UI/UX) are the ful
 
 ## Defaults decided without asking
 
-- Single `package.json` (no workspace), Node 20+; `pnpm dev` starts Vite and Hono together.
+- Single `package.json` (no workspace), Node 24 (pinned in `.nvmrc`); `pnpm dev` starts Vite and Hono together.
 - Zod schemas live in `shared/schemas/` and are used by both server and client (see T11).
 - `react-router` with browser history, so the Back button returns home (H7).
 - Zustand for editor and AI UI state.
