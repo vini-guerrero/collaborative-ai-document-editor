@@ -1,0 +1,43 @@
+/* S5, S9: tokens only. Position is set from JavaScript. The panel stays hidden until the first
+   position is applied, so it never flashes at the viewport origin. */
+.ds-popover {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: var(--app-z-drawer);
+  visibility: hidden;
+  box-sizing: border-box;
+  max-inline-size: calc(100vw - 2 * var(--ds-space-200));
+  padding: var(--ds-space-150);
+  border-radius: var(--ds-radius-large);
+  background: var(--ds-surface-overlay);
+  color: var(--ds-text);
+  box-shadow: var(--ds-shadow-overlay);
+  overflow-wrap: anywhere;
+}
+
+/* Motion (S5): 150ms, transform and opacity only. It starts once the panel is placed, so the
+   animation is not spent while the panel is still hidden. */
+.ds-popover[data-placed] {
+  visibility: visible;
+  animation: ds-popover-in var(--ds-duration-short) var(--ds-easing-out-practical) both;
+}
+
+/* S7 and the global reduced-motion rule: no movement when the user prefers less of it. The panel
+   still becomes visible once placed. */
+@media (prefers-reduced-motion: reduce) {
+  .ds-popover[data-placed] {
+    animation: none;
+  }
+}
+
+@keyframes ds-popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--ds-space-050));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

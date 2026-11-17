@@ -1,0 +1,75 @@
+/* S9: tokens only. The native modal is pinned to the bottom edge, keeps a gap from the top of the
+   screen and rounds only its top corners. The panel inside carries the padding, so a click on the
+   dialog element itself is a click on the scrim. */
+.ds-bottom-sheet {
+  box-sizing: border-box;
+  position: fixed;
+  inset-inline: 0;
+  inset-block-start: auto;
+  inset-block-end: 0;
+  inline-size: 100%;
+  max-inline-size: none;
+  max-block-size: calc(100vh - var(--ds-space-600));
+  max-block-size: calc(100dvh - var(--ds-space-600));
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  border: none;
+  border-radius: var(--ds-radius-large) var(--ds-radius-large) 0 0;
+  background: var(--ds-surface-overlay);
+  color: var(--ds-text);
+  box-shadow: var(--ds-shadow-overlay);
+}
+
+.ds-bottom-sheet::backdrop {
+  background: var(--ds-blanket);
+}
+
+.ds-bottom-sheet__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-150);
+  padding: var(--ds-space-150) var(--ds-space-200) var(--ds-space-300);
+}
+
+.ds-bottom-sheet__header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Motion (S5): 150-300ms, transform and opacity only. Runs only while open. */
+.ds-bottom-sheet[open] {
+  animation: ds-bottom-sheet-in var(--ds-duration-medium) var(--ds-easing-out-practical) both;
+}
+
+.ds-bottom-sheet[open]::backdrop {
+  animation: ds-bottom-sheet-fade var(--ds-duration-short) var(--ds-easing-out-practical) both;
+}
+
+/* S7 and the global reduced-motion rule: no movement when the user prefers less of it. */
+@media (prefers-reduced-motion: reduce) {
+  .ds-bottom-sheet[open],
+  .ds-bottom-sheet[open]::backdrop {
+    animation: none;
+  }
+}
+
+@keyframes ds-bottom-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ds-bottom-sheet-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
