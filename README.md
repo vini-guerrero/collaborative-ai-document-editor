@@ -30,7 +30,8 @@ Updated in the same commit as each phase.
 | 18 | Grid/List views: ViewToggle, DocumentCard, DocumentRow | Done |
 | 19 | Delete flow: always-visible delete button, confirm dialog naming the document, error handling | Done |
 | 20 | Home milestone close: Opus review of the home screen (fixes applied), README | Done |
-| 21-43 | Main editor milestone: TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Planned; next: phase 21 |
+| 21 | Editor milestone plan saved; T2 amended to `@tiptap/markdown` | Done |
+| 22-43 | Main editor milestone: lib, Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 22, 23, 26, 31 (parallel) |
 
 ## What it is
 

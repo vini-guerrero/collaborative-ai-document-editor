@@ -10,7 +10,7 @@ Technical decisions for the product described in `PRODUCT-DIRECTION.md` (D1-D17,
 It gives exact position mapping for inline tracked changes, anchored cards, the slash menu and single-step undo (D5, D9, D11, D17), and the brief endorses a prebuilt editor.
 
 **T2. The Markdown string is the canonical document.**
-The brief says the user writes Markdown, the raw toggle (D15) becomes trivial, and prompts stay simple. TipTap converts to and from it through tiptap-markdown. Round-trip edge cases are accepted for a showcase.
+The brief says the user writes Markdown, the raw toggle (D15) becomes trivial, and prompts stay simple. TipTap converts to and from it through the official `@tiptap/markdown` package. Round-trip edge cases are accepted for a showcase. *(Amended 2026-11-17: the community `tiptap-markdown` this decision first named is unmaintained since 2025-09 and pulls in extra libraries; the official package is released in step with TipTap. Raw HTML in the Markdown source must never become live DOM, and the round trip is covered by tests in phase 23.)*
 
 **T3. Flags and previews are ProseMirror plugin state rendered as decorations; the document changes only on Accept, in one transaction.**
 This keeps the saved Markdown clean, gives a single Cmd+Z step (D17), and lets flags map through edits and drop when the text changes. Word-level diffs use the `diff` library.
