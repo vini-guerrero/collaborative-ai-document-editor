@@ -8,3 +8,4 @@ node_modules/
 *.md
 *.pdf
 *.lima.yaml
+src/design-system/vendor/
