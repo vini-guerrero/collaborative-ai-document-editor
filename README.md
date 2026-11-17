@@ -21,7 +21,8 @@ Updated in the same commit as each phase.
 | 9 | Design-system foundation: vendored ADS tokens, light/dark theme, Icon over Lucide, import bans | Done |
 | 10 | Components: Button, IconButton, Lozenge, Spinner, VisuallyHidden | Done |
 | 11 | Components: TextField, Avatar, ToggleGroup, EmptyState | Done |
-| 12-20 | Home screen milestone: dialog, layout, documents store, routing, home, delete (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 12 |
+| 14 | Documents store: zod schemas, `DocumentStore` over localStorage with index recovery, preview helper (built early, in parallel with 12) | Done |
+| 12-13, 15-20 | Home screen milestone: dialog, layout, provider, routing, home, delete (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 12 |
 
 ## What it is
 
