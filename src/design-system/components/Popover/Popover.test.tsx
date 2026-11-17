@@ -153,6 +153,45 @@ describe('Popover (S5, S7, S9, D17)', () => {
     expect(screen.getByRole('button', { name: 'Accept' })).not.toBeNull();
   });
 
+  it('names the panel as a dialog when role is dialog (the default)', () => {
+    render(
+      <Popover
+        anchor={document.body}
+        open
+        role="dialog"
+        onClose={vi.fn<() => void>()}
+        label={LABEL}
+      >
+        <p>Note</p>
+      </Popover>,
+    );
+
+    const dialog = screen.getByRole('dialog', { name: LABEL });
+    expect(dialog.getAttribute('aria-label')).toBe(LABEL);
+  });
+
+  it('adds no dialog role or name when role is presentation, leaving the child menu named', () => {
+    render(
+      <Popover
+        anchor={document.body}
+        open
+        role="presentation"
+        onClose={vi.fn<() => void>()}
+        label={LABEL}
+      >
+        <div role="menu" aria-label={LABEL}>
+          <button type="button">Item</button>
+        </div>
+      </Popover>,
+    );
+
+    expect(screen.queryByRole('dialog')).toBeNull();
+    const wrapper = screen.getByRole('menu', { name: LABEL }).parentElement;
+    expect(wrapper).not.toBeNull();
+    expect(wrapper?.getAttribute('role')).toBe('presentation');
+    expect(wrapper?.hasAttribute('aria-label')).toBe(false);
+  });
+
   it('renders nothing while there is no anchor element', () => {
     render(
       <Popover anchor={null} open onClose={vi.fn<() => void>()} label={LABEL}>

@@ -128,11 +128,20 @@ export function findTabStop(
 ): HTMLElement | null {
   const stops = Array.from(document.querySelectorAll<HTMLElement>(TAB_STOP_SELECTOR)).filter(
     (element) =>
-      element.tabIndex >= 0 && !element.matches(':disabled') && panel?.contains(element) !== true,
+      element.tabIndex >= 0 &&
+      !element.matches(':disabled') &&
+      element.closest('[hidden], [inert]') === null &&
+      panel?.contains(element) !== true,
   );
   const index = stops.indexOf(trigger);
   if (index === NO_INDEX) {
     return null;
   }
-  return stops.at(backward ? index - 1 : index + 1) ?? null;
+  const target = backward ? index - 1 : index + 1;
+  // Past either end there is no next control. Null leaves focus on the trigger rather than
+  // wrapping to the other end of the page, which Shift+Tab from the first control would do.
+  if (target < 0 || target >= stops.length) {
+    return null;
+  }
+  return stops[target] ?? null;
 }

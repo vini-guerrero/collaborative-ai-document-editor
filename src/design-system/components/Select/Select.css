@@ -1,4 +1,5 @@
-/* S2, S5, S7, S9: tokens only. The listbox panel itself is styled by Popover.css. */
+/* S2, S5, S7, S9: tokens only. The listbox panel itself is styled by Popover.css. Control heights
+   (32px, 44px on coarse pointers) have no token in tokens.css yet; they match Button.css. */
 .ds-select__trigger {
   display: inline-flex;
   align-items: center;
@@ -27,6 +28,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* The placeholder is text in the subtle color, so the empty state reads as a prompt (S7). */
+.ds-select__value--placeholder {
+  color: var(--ds-text-subtle);
 }
 
 /* A drawn chevron, so the trigger reads as a dropdown without an icon outside the icon set. */

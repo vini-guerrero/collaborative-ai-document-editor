@@ -1,4 +1,10 @@
-import { useRef, useState, type JSX, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import {
+  useCallback,
+  useRef,
+  useState,
+  type JSX,
+  type KeyboardEvent as ReactKeyboardEvent,
+} from 'react';
 import { Icon, type IconName } from '../../icons';
 import '../Button/Button.css';
 import '../IconButton/IconButton.css';
@@ -11,9 +17,9 @@ import {
   lastEnabledIndex,
   navigationTarget,
   typeaheadTarget,
-} from './listKeyboard';
+} from '../list/listKeyboard';
 import './Menu.css';
-import { useTypeaheadQuery } from './useTypeaheadQuery';
+import { useTypeaheadQuery } from '../list/useTypeaheadQuery';
 
 export interface MenuItem {
   readonly id: string;
@@ -51,10 +57,12 @@ export function Menu({ label, trigger, items, onSelect }: MenuProps): JSX.Elemen
     setIsOpen(true);
   }
 
-  function close(): void {
+  // Popover re-subscribes its document listeners whenever onClose changes, so close is kept
+  // stable. Its only dependencies are state setters, which never change.
+  const close = useCallback((): void => {
     setIsOpen(false);
     setQuery('');
-  }
+  }, [setQuery]);
 
   function moveTo(index: number): void {
     setActiveIndex(index);
@@ -152,6 +160,7 @@ export function Menu({ label, trigger, items, onSelect }: MenuProps): JSX.Elemen
         open={isOpen}
         onClose={close}
         label={label}
+        role="presentation"
         returnFocusTo={returnFocus}
       >
         <div role="menu" aria-label={label} className="ds-menu" onKeyDown={handleListKeyDown}>
@@ -170,6 +179,12 @@ export function Menu({ label, trigger, items, onSelect }: MenuProps): JSX.Elemen
                 onFocus={() => {
                   if (!isDisabled) {
                     setActiveIndex(index);
+                  }
+                }}
+                // A disabled item keeps focus where it is: no focus move, no roving index change.
+                onMouseDown={(event) => {
+                  if (isDisabled) {
+                    event.preventDefault();
                   }
                 }}
                 onClick={() => {

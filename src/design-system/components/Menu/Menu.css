@@ -1,4 +1,5 @@
-/* S5, S7, S9: tokens only. The panel itself is styled by Popover.css. */
+/* S5, S7, S9: tokens only. The panel itself is styled by Popover.css. Control heights (32px,
+   44px on coarse pointers) have no token in tokens.css yet; they match Button.css. */
 .ds-menu {
   display: flex;
   flex-direction: column;

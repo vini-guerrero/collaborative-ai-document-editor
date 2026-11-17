@@ -2,7 +2,7 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Menu, type MenuItem } from './Menu';
-import { TYPEAHEAD_RESET_MS } from './listKeyboard';
+import { TYPEAHEAD_RESET_MS } from '../list/listKeyboard';
 
 const TRIGGER_NAME = 'Actions';
 const MENU_NAME = 'Text actions';
@@ -201,6 +201,7 @@ describe('Menu (S5, S9, D17)', () => {
 
     await user.click(item('Copy'));
     expect(onSelect).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(item('Delete'));
     expect(screen.getByRole('menu', { name: MENU_NAME })).not.toBeNull();
   });
 

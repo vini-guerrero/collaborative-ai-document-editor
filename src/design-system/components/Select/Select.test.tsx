@@ -2,7 +2,7 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState, type JSX } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { TYPEAHEAD_RESET_MS } from '../Menu/listKeyboard';
+import { TYPEAHEAD_RESET_MS } from '../list/listKeyboard';
 import { Select, type SelectOption } from './Select';
 
 const LABEL = 'Tone';
@@ -43,7 +43,7 @@ function StatefulSelect({ onChange }: { onChange: (value: string) => void }): JS
 }
 
 function trigger(): HTMLElement {
-  return screen.getByRole('button', { name: /^Tone:/ });
+  return screen.getByRole('button', { name: /^Tone(:|$)/ });
 }
 
 function option(name: string): HTMLElement {
@@ -63,10 +63,34 @@ describe('Select (D6, S5, S9)', () => {
     expect(trigger().getAttribute('aria-label')).toBe('Tone: Formal');
   });
 
-  it('falls back to the first option when the value matches none, so it is never empty', () => {
+  it('shows the label as placeholder and marks no option when the value matches none', async () => {
+    const user = userEvent.setup();
     renderSelect('unknown');
 
-    expect(trigger().textContent).toBe('Friendly');
+    expect(trigger().textContent).toBe(LABEL);
+    expect(trigger().getAttribute('aria-label')).toBe(LABEL);
+
+    await user.click(trigger());
+
+    for (const name of ['Friendly', 'Formal', 'Neutral']) {
+      expect(option(name).getAttribute('aria-selected')).toBe('false');
+    }
+    // The first enabled option is still reachable: opening focuses it.
+    expect(document.activeElement).toBe(option('Friendly'));
+  });
+
+  it('shows a custom placeholder while the value matches no option', () => {
+    render(
+      <Select
+        label={LABEL}
+        placeholder="Choose a tone"
+        value="unknown"
+        onChange={vi.fn()}
+        options={OPTIONS}
+      />,
+    );
+
+    expect(trigger().textContent).toBe('Choose a tone');
   });
 
   it('exposes aria-haspopup and aria-expanded on the trigger (S7)', async () => {
@@ -205,6 +229,7 @@ describe('Select (D6, S5, S9)', () => {
 
     await user.click(option('Formal'));
     expect(onChange).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(option('Neutral'));
     expect(screen.getByRole('listbox', { name: LABEL })).not.toBeNull();
   });
 

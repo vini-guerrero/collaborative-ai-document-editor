@@ -1,4 +1,10 @@
-import { useRef, useState, type JSX, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import {
+  useCallback,
+  useRef,
+  useState,
+  type JSX,
+  type KeyboardEvent as ReactKeyboardEvent,
+} from 'react';
 import { Icon } from '../../icons';
 import { Popover } from '../Popover/Popover';
 import {
@@ -9,8 +15,8 @@ import {
   lastEnabledIndex,
   navigationTarget,
   typeaheadTarget,
-} from '../Menu/listKeyboard';
-import { useTypeaheadQuery } from '../Menu/useTypeaheadQuery';
+} from '../list/listKeyboard';
+import { useTypeaheadQuery } from '../list/useTypeaheadQuery';
 import './Select.css';
 
 export interface SelectOption {
@@ -22,14 +28,23 @@ export interface SelectOption {
 export interface SelectProps {
   // Accessible name of the field, for example "Tone". Shown with the value in the trigger's name.
   label: string;
+  // Shown in the trigger while the value matches no option. Defaults to the label.
+  placeholder?: string;
   value: string;
   onChange: (value: string) => void;
   options: readonly SelectOption[];
 }
 
-// D6, S5, S9: a single-choice dropdown. The trigger always shows the label of the selected option.
-// A value that matches no option falls back to the first option, so the trigger is never empty.
-export function Select({ label, value, onChange, options }: SelectProps): JSX.Element {
+// D6, S5, S9: a single-choice dropdown. The trigger shows the label of the selected option. A value
+// that matches no option shows the placeholder and marks no option; the first enabled option is
+// still reachable by keyboard.
+export function Select({
+  label,
+  placeholder = label,
+  value,
+  onChange,
+  options,
+}: SelectProps): JSX.Element {
   const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -39,7 +54,7 @@ export function Select({ label, value, onChange, options }: SelectProps): JSX.El
   const tabStopRef = useRef<HTMLElement | null>(null);
 
   const selectedIndex = options.findIndex((option) => option.value === value);
-  const shown = options[selectedIndex] ?? options[0];
+  const selectedLabel = options[selectedIndex]?.label ?? null;
 
   function open(index: number): void {
     setActiveIndex(index);
@@ -54,10 +69,12 @@ export function Select({ label, value, onChange, options }: SelectProps): JSX.El
     open(isSelectable ? selectedIndex : firstEnabledIndex(options));
   }
 
-  function close(): void {
+  // Popover re-subscribes its document listeners whenever onClose changes, so close is kept
+  // stable. Its only dependencies are state setters, which never change.
+  const close = useCallback((): void => {
     setIsOpen(false);
     setQuery('');
-  }
+  }, [setQuery]);
 
   function moveTo(index: number): void {
     setActiveIndex(index);
@@ -138,12 +155,20 @@ export function Select({ label, value, onChange, options }: SelectProps): JSX.El
         type="button"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-label={`${label}: ${shown?.label ?? ''}`}
+        aria-label={selectedLabel === null ? label : `${label}: ${selectedLabel}`}
         className="ds-select__trigger"
         onClick={handleTriggerClick}
         onKeyDown={handleTriggerKeyDown}
       >
-        <span className="ds-select__value">{shown?.label ?? ''}</span>
+        <span
+          className={
+            selectedLabel === null
+              ? 'ds-select__value ds-select__value--placeholder'
+              : 'ds-select__value'
+          }
+        >
+          {selectedLabel ?? placeholder}
+        </span>
         <span className="ds-select__chevron" aria-hidden="true" />
       </button>
       <Popover
@@ -151,6 +176,7 @@ export function Select({ label, value, onChange, options }: SelectProps): JSX.El
         open={isOpen}
         onClose={close}
         label={label}
+        role="presentation"
         returnFocusTo={returnFocus}
       >
         <div
@@ -176,6 +202,12 @@ export function Select({ label, value, onChange, options }: SelectProps): JSX.El
                 onFocus={() => {
                   if (!isDisabled) {
                     setActiveIndex(index);
+                  }
+                }}
+                // A disabled option keeps focus where it is: no focus move, no roving index change.
+                onMouseDown={(event) => {
+                  if (isDisabled) {
+                    event.preventDefault();
                   }
                 }}
                 onClick={() => {

@@ -18,6 +18,8 @@ export type PopoverPlacement =
   | 'right-start'
   | 'right-end';
 
+export type PopoverRole = 'dialog' | 'presentation';
+
 export interface PopoverProps {
   // The element the popover is attached to. While null, nothing renders.
   anchor: HTMLElement | null;
@@ -26,6 +28,9 @@ export interface PopoverProps {
   onClose: () => void;
   // Accessible name, for example "Suggestion for this sentence".
   label: string;
+  // 'dialog' (default) names the panel with `label`. 'presentation' is for a panel whose child
+  // already carries the role and name (a menu or listbox), so the wrapper adds no extra role.
+  role?: PopoverRole;
   placement?: PopoverPlacement;
   // Where focus goes on close, as Dialog's onCloseFocus. Returning null, or an element that is
   // no longer in the document, falls back to the anchor, then to the document.
@@ -111,6 +116,7 @@ export function Popover({
   open,
   onClose,
   label,
+  role = 'dialog',
   placement = 'bottom-start',
   returnFocusTo,
   children,
@@ -227,7 +233,13 @@ export function Popover({
 
   // Non-modal: no aria-modal and no inert background, so the editor stays usable underneath.
   return createPortal(
-    <div ref={panelRef} role="dialog" aria-label={label} tabIndex={-1} className="ds-popover">
+    <div
+      ref={panelRef}
+      role={role}
+      aria-label={role === 'dialog' ? label : undefined}
+      tabIndex={-1}
+      className="ds-popover"
+    >
       {children}
     </div>,
     document.body,
