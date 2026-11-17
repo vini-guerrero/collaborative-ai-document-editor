@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from '@/App';
 import { watchColorScheme } from '@/design-system';
+import { createLocalStorageStore, DocumentStoreProvider } from '@/features/documents';
 import './design-system/tokens.css';
 
 const ROOT_ELEMENT_ID = 'root';
@@ -17,8 +18,12 @@ function getRootElement(): HTMLElement {
 
 watchColorScheme(document.documentElement, window.matchMedia(DARK_SCHEME_QUERY));
 
+const store = createLocalStorageStore({ storage: window.localStorage });
+
 createRoot(getRootElement()).render(
   <StrictMode>
-    <App />
+    <DocumentStoreProvider store={store}>
+      <App />
+    </DocumentStoreProvider>
   </StrictMode>,
 );
