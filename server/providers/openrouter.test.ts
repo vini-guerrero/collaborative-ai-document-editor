@@ -7,12 +7,52 @@ const MODEL = 'test/analyze-model';
 const MAX_OUTPUT_TOKENS = 512;
 const SYSTEM = 'You are a careful editor.';
 const USER = 'We did it in order to win.';
+// Mirrors MAX_RESPONSE_BYTES in the adapter; a test must fail if the cap ever changes silently.
+const MAX_RESPONSE_BYTES = 256 * 1024;
 
 const jsonResponse = (body: unknown, status = 200): Response =>
   new Response(JSON.stringify(body), {
     status,
     headers: { 'Content-Type': 'application/json' },
   });
+
+// A response whose body stream reports cancellation, so a test can see the socket being released.
+const cancellableResponse = (
+  status: number,
+  cancel: () => void,
+  headers: Record<string, string> = {},
+): Response => new Response(new ReadableStream({ cancel }), { status, headers });
+
+// A chunked reply with no Content-Length: one stream chunk per entry, then the stream closes.
+const chunkedResponse = (chunks: Uint8Array[]): Response => {
+  let next = 0;
+  return new Response(
+    new ReadableStream<Uint8Array>({
+      pull(controller) {
+        const chunk = chunks[next];
+        next += 1;
+        if (chunk === undefined) {
+          controller.close();
+        } else {
+          controller.enqueue(chunk);
+        }
+      },
+    }),
+    { status: 200 },
+  );
+};
+
+// A reply that never ends, so only cancellation can stop the reader.
+const endlessResponse = (cancel: () => void): Response =>
+  new Response(
+    new ReadableStream<Uint8Array>({
+      pull(controller) {
+        controller.enqueue(new Uint8Array(64 * 1024).fill(0x20));
+      },
+      cancel,
+    }),
+    { status: 200 },
+  );
 
 const completion = (content: unknown): unknown => ({
   choices: [{ message: { role: 'assistant', content } }],
@@ -134,6 +174,86 @@ describe('createOpenRouterProvider', () => {
     const provider = createOpenRouterProvider({
       apiKey: API_KEY,
       fetchImpl: scriptedFetch(new Response('<html>gateway</html>', { status: 200 })),
+    });
+
+    expect(await provider.complete(makeRequest())).toEqual({ ok: false, kind: 'unavailable' });
+  });
+
+  it.each([
+    [402, 'out_of_credit'],
+    [500, 'unavailable'],
+  ] as const)('cancels the body of a failed HTTP %i reply', async (status, kind) => {
+    const cancel = vi.fn();
+    const provider = createOpenRouterProvider({
+      apiKey: API_KEY,
+      fetchImpl: scriptedFetch(cancellableResponse(status, cancel)),
+    });
+
+    expect(await provider.complete(makeRequest())).toEqual({ ok: false, kind });
+    expect(cancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('rejects an oversize declared Content-Length and cancels the body', async () => {
+    const cancel = vi.fn();
+    const provider = createOpenRouterProvider({
+      apiKey: API_KEY,
+      fetchImpl: scriptedFetch(
+        cancellableResponse(200, cancel, { 'content-length': String(MAX_RESPONSE_BYTES + 1) }),
+      ),
+    });
+
+    expect(await provider.complete(makeRequest())).toEqual({ ok: false, kind: 'unavailable' });
+    expect(cancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('rejects a 2xx reply whose actual text is over the cap', async () => {
+    const provider = createOpenRouterProvider({
+      apiKey: API_KEY,
+      fetchImpl: scriptedFetch(new Response('x'.repeat(MAX_RESPONSE_BYTES + 1), { status: 200 })),
+    });
+
+    expect(await provider.complete(makeRequest())).toEqual({ ok: false, kind: 'unavailable' });
+  });
+
+  it('measures the cap in bytes, not characters', async () => {
+    // Each euro sign is 3 UTF-8 bytes: under the cap in characters, over it in bytes.
+    const oversizeInBytes = '€'.repeat(Math.ceil(MAX_RESPONSE_BYTES / 3) + 1);
+    const provider = createOpenRouterProvider({
+      apiKey: API_KEY,
+      fetchImpl: scriptedFetch(new Response(oversizeInBytes, { status: 200 })),
+    });
+
+    expect(await provider.complete(makeRequest())).toEqual({ ok: false, kind: 'unavailable' });
+  });
+
+  it('reads a chunked reply without Content-Length, decoding text split across chunks', async () => {
+    const reply = 'Café — 日本語 🙂';
+    const bytes = new TextEncoder().encode(JSON.stringify(completion(reply)));
+    // One byte per chunk splits every multi-byte character across chunk boundaries.
+    const chunks = Array.from(bytes, (byte) => new Uint8Array([byte]));
+    const provider = createOpenRouterProvider({
+      apiKey: API_KEY,
+      fetchImpl: scriptedFetch(chunkedResponse(chunks)),
+    });
+
+    expect(await provider.complete(makeRequest())).toEqual({ ok: true, text: reply });
+  });
+
+  it('cancels an endless chunked reply as soon as it passes the cap', async () => {
+    const cancel = vi.fn();
+    const provider = createOpenRouterProvider({
+      apiKey: API_KEY,
+      fetchImpl: scriptedFetch(endlessResponse(cancel)),
+    });
+
+    expect(await provider.complete(makeRequest())).toEqual({ ok: false, kind: 'unavailable' });
+    expect(cancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('maps a 2xx reply with no body to unavailable', async () => {
+    const provider = createOpenRouterProvider({
+      apiKey: API_KEY,
+      fetchImpl: scriptedFetch(new Response(null, { status: 200 })),
     });
 
     expect(await provider.complete(makeRequest())).toEqual({ ok: false, kind: 'unavailable' });

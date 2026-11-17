@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import type { Context } from 'hono';
+import type { Context, MiddlewareHandler } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import {
   AiRequestSchema,
@@ -11,16 +11,24 @@ import {
 } from '@shared/schemas';
 import type { AiResult, AiService } from '../ai/service';
 
+type LogFn = (line: Record<string, unknown>) => void;
+
 export interface AiRouteDeps {
   // MAX_INPUT_CHARS from config: the cap on text characters across one request (T7).
   maxInputChars: number;
   ai: AiService;
   timeoutMs: number;
   // Receives structured log lines. Only task, status and duration are ever logged (T10).
-  log: (line: Record<string, unknown>) => void;
+  log: LogFn;
 }
 
-type ErrorStatus = 400 | 402 | 413 | 503;
+// Per-request state: the recorder sets the start time, the handler sets the task (Hono Variables).
+interface AiEnv {
+  Variables: { startedAt: number; task: AiTask | null };
+}
+type AiContext = Context<AiEnv>;
+
+type ErrorStatus = 400 | 402 | 403 | 413 | 503;
 
 // Messages are fixed strings, so no document text or provider detail reaches a client (T10).
 const ERRORS: Record<ErrorCode, { status: ErrorStatus; message: string }> = {
@@ -41,10 +49,45 @@ const BODY_OVERHEAD_BYTES = 64 * 1024;
 const bodyLimitBytes = (maxInputChars: number): number =>
   maxInputChars * MAX_JSON_BYTES_PER_CHAR + BODY_OVERHEAD_BYTES;
 
-const fail = (c: Context, code: ErrorCode): Response => {
-  const { status, message } = ERRORS[code];
+const respondWith = (
+  c: AiContext,
+  status: ErrorStatus,
+  code: ErrorCode,
+  message: string,
+): Response => {
   const body: ErrorBody = { error: { code, message } };
   return c.json(body, status);
+};
+
+const fail = (c: AiContext, code: ErrorCode): Response => {
+  const { status, message } = ERRORS[code];
+  return respondWith(c, status, code, message);
+};
+
+// Only loopback hosts reach the proxy: the dev server and tests, on any port. The Vite dev
+// server runs on localhost, so the same rule covers it (T4).
+const LOOPBACK_HOST = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/;
+const LOOPBACK_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/;
+
+// A Host must name loopback (blocks DNS rebinding). An Origin, when sent, must be loopback
+// (blocks cross-site requests). Real clients always send a Host, so a missing one is refused.
+const isLocalSource = (host: string | undefined, origin: string | undefined): boolean =>
+  host !== undefined &&
+  LOOPBACK_HOST.test(host) &&
+  (origin === undefined || LOOPBACK_ORIGIN.test(origin));
+
+const isJsonContentType = (contentType: string | undefined): boolean =>
+  contentType?.split(';', 1)[0]?.trim().toLowerCase() === 'application/json';
+
+// Runs before the body is read, so a rejected request costs no parsing and no provider call.
+const rejectUnsafeRequest = (c: AiContext): Response | undefined => {
+  if (!isLocalSource(c.req.header('host'), c.req.header('origin'))) {
+    return respondWith(c, 403, 'invalid_request', 'The request source is not allowed.');
+  }
+  if (!isJsonContentType(c.req.header('content-type'))) {
+    return respondWith(c, 400, 'invalid_request', 'The request must be JSON.');
+  }
+  return undefined;
 };
 
 const charsOf = (values: readonly (string | undefined)[]): number =>
@@ -82,7 +125,7 @@ const createCreditLatch = (): CreditLatch => {
 };
 
 const runService = async (
-  c: Context,
+  c: AiContext,
   request: AiRequest,
   deps: AiRouteDeps,
   credit: CreditLatch,
@@ -93,8 +136,13 @@ const runService = async (
   let result: AiResult;
   try {
     result = await deps.ai.run(request, signal);
-  } catch {
-    // An unexpected throw is an outage to the client. Its details stay out of the response and log.
+  } catch (error: unknown) {
+    // An unexpected throw is an outage to the client. Only the error name is logged (T10).
+    deps.log({
+      level: 'error',
+      event: 'unhandled',
+      name: error instanceof Error ? error.name : 'unknown',
+    });
     return fail(c, 'unavailable');
   }
 
@@ -114,60 +162,70 @@ const runService = async (
   return c.json(parsed.data, 200);
 };
 
-interface Outcome {
-  response: Response;
-  task: AiTask | null;
-}
-
-const answer = async (c: Context, deps: AiRouteDeps, credit: CreditLatch): Promise<Outcome> => {
+const answer = async (c: AiContext, deps: AiRouteDeps, credit: CreditLatch): Promise<Response> => {
   let body: unknown;
   try {
     body = await c.req.json<unknown>();
   } catch {
-    return { response: fail(c, 'invalid_request'), task: null };
+    return fail(c, 'invalid_request');
   }
 
   // Strict schemas reject unknown fields, so a client cannot choose a model (T7).
   const parsed = AiRequestSchema.safeParse(body);
   if (!parsed.success) {
-    return { response: fail(c, 'invalid_request'), task: null };
+    return fail(c, 'invalid_request');
   }
 
   const request = parsed.data;
+  c.set('task', request.task);
   if (countInputChars(request) > deps.maxInputChars) {
-    return { response: fail(c, 'too_large'), task: request.task };
+    return fail(c, 'too_large');
   }
   if (credit.isStopped()) {
-    return { response: fail(c, 'out_of_credit'), task: request.task };
+    return fail(c, 'out_of_credit');
   }
-  return { response: await runService(c, request, deps, credit), task: request.task };
+  return runService(c, request, deps, credit);
+};
+
+// Times every request and writes its one log line, including guard and size rejections.
+const recordRequest = (log: LogFn): MiddlewareHandler<AiEnv> => {
+  return async (c, next) => {
+    c.set('startedAt', performance.now());
+    c.set('task', null);
+    await next();
+    log({
+      level: 'info',
+      event: 'ai_request',
+      task: c.get('task'),
+      status: c.res.status,
+      duration_ms: Math.round(performance.now() - c.get('startedAt')),
+    });
+  };
 };
 
 // The route is mounted by createApp and owns its credit latch. Tests build it through createApp.
-export const createAiRoute = (deps: AiRouteDeps): Hono => {
-  const route = new Hono();
+export const createAiRoute = (deps: AiRouteDeps): Hono<AiEnv> => {
+  const route = new Hono<AiEnv>();
   const credit = createCreditLatch();
 
-  route.use(
+  const guard: MiddlewareHandler<AiEnv> = async (c, next) => {
+    const rejected = rejectUnsafeRequest(c);
+    if (rejected) {
+      return rejected;
+    }
+    await next();
+  };
+
+  route.post(
     '/api/ai',
+    recordRequest(deps.log),
+    guard,
     bodyLimit({
       maxSize: bodyLimitBytes(deps.maxInputChars),
-      onError: (c) => fail(c, 'too_large'),
+      onError: (c: AiContext) => fail(c, 'too_large'),
     }),
+    (c) => answer(c, deps, credit),
   );
-
-  route.post('/api/ai', async (c) => {
-    const startedAt = performance.now();
-    const { response, task } = await answer(c, deps, credit);
-    deps.log({
-      level: 'info',
-      event: 'ai_request',
-      task,
-      status: response.status,
-      duration_ms: Math.round(performance.now() - startedAt),
-    });
-    return response;
-  });
 
   return route;
 };

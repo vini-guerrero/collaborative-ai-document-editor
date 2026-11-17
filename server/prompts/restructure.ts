@@ -7,6 +7,8 @@ export const buildRestructurePrompt = (request: RestructureRequest, nonce: strin
     'You are an editing assistant. The author chose one restructuring action for a section.',
     `Action: ${request.action}. Section index: ${String(request.section)}.`,
     'Section indexes start at 0 and refer to the sections in the data.',
+    'A split atParagraph is the index of the paragraph that starts the new section; paragraphs',
+    'are separated by blank lines and the index starts at 0.',
     'Reply with exactly one operation whose "op" equals the action:',
     '{"op":"move","from":0,"to":1} moves a section;',
     '{"op":"split","section":0,"atParagraph":1} splits a section before a paragraph index;',

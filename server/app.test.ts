@@ -104,12 +104,18 @@ const expectErrorBody = (body: unknown, code: ErrorCode): void => {
   expect(parsed).toMatchObject({ success: true, data: { error: { code } } });
 };
 
-const postAi = async (app: Hono, body: string, init: RequestInit = {}): Promise<Response> =>
+interface PostOptions {
+  headers?: Record<string, string>;
+  signal?: AbortSignal;
+}
+
+// Sends as a local JSON client by default: Host on loopback, JSON content type, no Origin.
+const postAi = async (app: Hono, body: string, options: PostOptions = {}): Promise<Response> =>
   await app.request('/api/ai', {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: { host: 'localhost:8787', 'content-type': 'application/json', ...options.headers },
     body,
-    ...init,
+    signal: options.signal ?? null,
   });
 
 const analyzeBody = { task: 'analyze', paragraph: 'The report was late again.' };
@@ -138,7 +144,7 @@ describe('createApp', () => {
     const body: unknown = await readBody(response);
 
     expect(response.status).toBe(404);
-    expect(body).toEqual({ error: 'not_found' });
+    expectErrorBody(body, 'invalid_request');
   });
 
   it('returns a fixed 500 body and logs only the error name, never the message (T10)', async () => {
@@ -152,7 +158,7 @@ describe('createApp', () => {
     const body: unknown = JSON.parse(text);
 
     expect(response.status).toBe(500);
-    expect(body).toEqual({ error: 'internal' });
+    expectErrorBody(body, 'unavailable');
     expect(text).not.toContain(SENTINEL);
     expect(JSON.stringify(logged)).not.toContain(SENTINEL);
     expect(logged).toEqual([{ level: 'error', event: 'unhandled', name: 'Error' }]);
@@ -168,7 +174,7 @@ describe('createApp', () => {
     const body: unknown = await readBody(response);
 
     expect(response.status).toBe(413);
-    expect(body).toEqual({ error: 'http_error' });
+    expectErrorBody(body, 'invalid_request');
   });
 });
 
@@ -232,6 +238,7 @@ describe('POST /api/ai', () => {
     expectErrorBody(body, 'unavailable');
     expect(text).not.toContain(SENTINEL);
     expect(JSON.stringify(logged)).not.toContain(SENTINEL);
+    expect(logged).toContainEqual({ level: 'error', event: 'unhandled', name: 'Error' });
   });
 
   it('answers 503 when the service output fails the task response schema (T10)', async () => {
@@ -245,8 +252,81 @@ describe('POST /api/ai', () => {
     expectErrorBody(await readBody(response), 'unavailable');
   });
 
-  it('rejects a body larger than the limit with 413 too_large before parsing', async () => {
+  it('rejects a body that is not sent as JSON before reading it (T7)', async () => {
+    const { app, calls, logged } = buildApp();
+
+    const response = await postAi(app, JSON.stringify(analyzeBody), {
+      headers: { 'content-type': 'text/plain' },
+    });
+
+    expect(response.status).toBe(400);
+    expectErrorBody(await readBody(response), 'invalid_request');
+    expect(calls).toHaveLength(0);
+    expect(logged).toMatchObject([{ event: 'ai_request', task: null, status: 400 }]);
+  });
+
+  it('rejects a request without a Content-Type (T7)', async () => {
     const { app, calls } = buildApp();
+
+    const response = await postAi(app, JSON.stringify(analyzeBody), {
+      headers: { 'content-type': '' },
+    });
+
+    expect(response.status).toBe(400);
+    expectErrorBody(await readBody(response), 'invalid_request');
+    expect(calls).toHaveLength(0);
+  });
+
+  it('rejects a foreign or null Origin with 403 before calling the service (T7)', async () => {
+    const { app, calls, logged } = buildApp();
+
+    const foreign = await postAi(app, JSON.stringify(analyzeBody), {
+      headers: { origin: 'https://evil.example' },
+    });
+    expect(foreign.status).toBe(403);
+    expectErrorBody(await readBody(foreign), 'invalid_request');
+
+    const opaque = await postAi(app, JSON.stringify(analyzeBody), {
+      headers: { origin: 'null' },
+    });
+    expect(opaque.status).toBe(403);
+    expectErrorBody(await readBody(opaque), 'invalid_request');
+
+    expect(calls).toHaveLength(0);
+    expect(logged).toMatchObject([
+      { event: 'ai_request', task: null, status: 403 },
+      { event: 'ai_request', task: null, status: 403 },
+    ]);
+  });
+
+  it('rejects a Host that is not loopback, which blocks DNS rebinding (T4, T7)', async () => {
+    const { app, calls } = buildApp();
+
+    for (const host of ['evil.example:8787', 'localhost.evil.example', 'example.com']) {
+      const response = await postAi(app, JSON.stringify(analyzeBody), { headers: { host } });
+      expect(response.status).toBe(403);
+      expectErrorBody(await readBody(response), 'invalid_request');
+    }
+    expect(calls).toHaveLength(0);
+  });
+
+  it('accepts loopback hosts and origins on any port, including the Vite dev server (T4)', async () => {
+    const { app, calls } = buildApp();
+    const sources = [
+      { host: 'localhost:8787', origin: 'http://localhost:5173' },
+      { host: '127.0.0.1:8787', origin: 'http://127.0.0.1:3000' },
+      { host: '[::1]:8787', origin: 'http://[::1]:5173' },
+    ];
+
+    for (const source of sources) {
+      const response = await postAi(app, JSON.stringify(analyzeBody), { headers: source });
+      expect(response.status).toBe(200);
+    }
+    expect(calls).toHaveLength(sources.length);
+  });
+
+  it('rejects a body larger than the limit with 413 too_large before parsing', async () => {
+    const { app, calls, logged } = buildApp();
     const sections = Array.from({ length: 50 }, () => ({ heading: '', body: 'x'.repeat(4000) }));
 
     const response = await postAi(
@@ -258,6 +338,7 @@ describe('POST /api/ai', () => {
     expect(response.status).toBe(413);
     expectErrorBody(body, 'too_large');
     expect(calls).toHaveLength(0);
+    expect(logged).toMatchObject([{ event: 'ai_request', task: null, status: 413 }]);
   });
 
   it('rejects text over MAX_INPUT_CHARS with 413 and accepts text at the cap', async () => {

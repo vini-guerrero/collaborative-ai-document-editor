@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+import type { ErrorBody } from '@shared/schemas';
 import type { AiService } from './ai/service';
 import type { Config } from './config';
 import { createAiRoute } from './routes/ai';
@@ -30,16 +31,28 @@ export const createApp = (deps: AppDeps): Hono => {
     }),
   );
 
-  app.notFound((c) => c.json({ error: 'not_found' }, 404));
+  app.notFound((c) => {
+    const body: ErrorBody = {
+      error: { code: 'invalid_request', message: 'The route does not exist.' },
+    };
+    return c.json(body, 404);
+  });
 
-  // Deliberate HTTP errors keep their status and a fixed body. Anything else becomes a 500 with
-  // no stack trace. Only the error name is logged, because the message may contain document text (T10).
+  // Every error body uses the shared ErrorBody shape. Deliberate HTTP errors keep their status.
+  // Anything else becomes a 500 unavailable with no stack trace. Only the error name is logged,
+  // because the message may contain document text (T10).
   app.onError((error, c) => {
     if (error instanceof HTTPException) {
-      return c.json({ error: 'http_error' }, error.status);
+      const body: ErrorBody = {
+        error: { code: 'invalid_request', message: 'The request failed.' },
+      };
+      return c.json(body, error.status);
     }
     deps.log({ level: 'error', event: 'unhandled', name: error.name });
-    return c.json({ error: 'internal' }, 500);
+    const body: ErrorBody = {
+      error: { code: 'unavailable', message: 'The server could not complete the request.' },
+    };
+    return c.json(body, 500);
   });
 
   return app;

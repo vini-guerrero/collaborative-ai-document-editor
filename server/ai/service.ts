@@ -52,6 +52,7 @@ const checkAnalyze = (
     return undefined;
   }
   // A quote that is not verbatim in the paragraph would underline the wrong text (D2, T10).
+  // A quote that appears more than once keeps every match here; the client anchors the first one.
   const flags = parsed.data.flags
     .filter((flag) => request.paragraph.includes(flag.quote))
     .slice(0, MAX_FLAGS_PER_PARAGRAPH);
@@ -59,6 +60,12 @@ const checkAnalyze = (
 };
 
 const isIndexInRange = (index: number, count: number): boolean => index < count;
+
+// A split point is a paragraph after the first, so it needs 1 <= atParagraph < count. Paragraphs
+// are counted by splitting the body on blank lines. This is approximate: blank lines inside a
+// code fence or a list split a paragraph in two, so the count can be high there.
+const countParagraphs = (body: string): number =>
+  body.split(/\n\s*\n/).filter((paragraph) => paragraph.trim() !== '').length;
 
 // The operation must answer the requested action and point at sections that exist.
 const checkRestructure = (
@@ -73,11 +80,20 @@ const checkRestructure = (
   const count = request.sections.length;
   switch (operation.op) {
     case 'move':
-      return isIndexInRange(operation.from, count) && isIndexInRange(operation.to, count)
+      return isIndexInRange(operation.from, count) &&
+        isIndexInRange(operation.to, count) &&
+        operation.from !== operation.to
         ? operation
         : undefined;
-    case 'split':
-      return isIndexInRange(operation.section, count) ? operation : undefined;
+    case 'split': {
+      const body = request.sections[operation.section]?.body;
+      if (body === undefined) {
+        return undefined;
+      }
+      return operation.atParagraph >= 1 && operation.atParagraph < countParagraphs(body)
+        ? operation
+        : undefined;
+    }
     case 'merge':
       return isIndexInRange(operation.first, count) &&
         isIndexInRange(operation.second, count) &&
