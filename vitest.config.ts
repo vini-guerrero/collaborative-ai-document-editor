@@ -1,5 +1,5 @@
 import { defineConfig, mergeConfig } from 'vitest/config';
-import viteConfig from './vite.config';
+import viteConfig from './vite.config.ts';
 
 // T9: Vitest runs unit tests for pure logic only. Tests never call the real model.
 export default mergeConfig(

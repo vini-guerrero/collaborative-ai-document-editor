@@ -13,9 +13,9 @@ Updated in the same commit as each phase.
 | 1 | Package baseline: pnpm, exact pins, Node, env example | Done |
 | 2 | Web shell: Vite, React, strict TypeScript | Done |
 | 3 | Format and lint (TypeScript pinned to 6.0.x, see T13) | Done |
-| 4 | Vitest (no tests yet; `pnpm test` fails until phase 5) | Done |
-| 5 | Hono server and config | Next |
-| 6 | License check and the `pnpm check` gate | Planned |
+| 4 | Vitest | Done |
+| 5 | Hono server and config (binds 127.0.0.1, `/api/health`) | Done |
+| 6 | License check and the `pnpm check` gate | Next |
 
 ## What it is
 
