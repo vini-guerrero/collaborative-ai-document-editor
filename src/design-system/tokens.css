@@ -1,0 +1,55 @@
+/* ADS tokens (S1) are vendored unmodified; see vendor/ads-tokens/SOURCE.md. */
+@import './vendor/ads-tokens/atlassian-light.css';
+@import './vendor/ads-tokens/atlassian-dark.css';
+@import './vendor/ads-tokens/atlassian-spacing.css';
+@import './vendor/ads-tokens/atlassian-typography.css';
+@import './vendor/ads-tokens/atlassian-shape.css';
+@import './vendor/ads-tokens/atlassian-motion.css';
+
+/* Product semantic aliases (S2). Feature code uses these or --ds-* tokens, never raw values. */
+:root {
+  --app-surface: var(--ds-surface);
+  --app-surface-raised: var(--ds-surface-raised);
+  --app-text: var(--ds-text);
+  --app-text-subtle: var(--ds-text-subtle);
+  --app-border: var(--ds-border);
+  --app-focus-ring: var(--ds-border-focused);
+
+  /* AI co-author surfaces (D5, D6, D9). */
+  --ai-flag-underline: var(--ds-border-warning);
+  --ai-diff-insert-bg: var(--ds-background-accent-green-subtlest);
+  --ai-diff-delete-bg: var(--ds-background-accent-red-subtlest);
+
+  /*
+   * Breakpoints (S9). Custom properties cannot be used inside @media, so these values are
+   * duplicated in a future breakpoints.ts that the useBreakpoint hook reads. Keep them in sync.
+   */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--ds-surface);
+  color: var(--ds-text);
+  font: var(--ds-font-body);
+}
+
+*:focus-visible {
+  outline: 2px solid var(--ds-border-focused);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: var(--ds-duration-instant) !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: var(--ds-duration-instant) !important;
+    scroll-behavior: auto !important;
+  }
+}

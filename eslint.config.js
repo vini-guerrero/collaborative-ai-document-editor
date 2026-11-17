@@ -8,9 +8,8 @@ import tseslint from 'typescript-eslint';
 const FEATURE_DEEP_IMPORT_MESSAGE =
   "Import from the feature's index.ts, not its internals (T11). Example: @/features/<name>";
 const ATLASKIT_MESSAGE =
-  'Import UI only from src/design-system/ (S8). Never import @atlaskit/* directly.';
-const ATLASKIT_ICON_LOGO_MESSAGE =
-  '@atlaskit/icon and @atlaskit/logo are banned (S6, S8). Use Lucide or custom SVG.';
+  'No @atlaskit/* packages: use the vendored ADS tokens and custom components in src/design-system/ (S1, S8).';
+const LUCIDE_MESSAGE = 'Use Icon from src/design-system (S6, S8).';
 
 const featureDeepImportPattern = {
   group: ['@/features/*/*'],
@@ -22,9 +21,9 @@ const atlaskitPattern = {
   message: ATLASKIT_MESSAGE,
 };
 
-const atlaskitIconLogoPattern = {
-  group: ['@atlaskit/icon', '@atlaskit/icon/**', '@atlaskit/logo', '@atlaskit/logo/**'],
-  message: ATLASKIT_ICON_LOGO_MESSAGE,
+const lucidePattern = {
+  group: ['lucide-react', 'lucide-react/**'],
+  message: LUCIDE_MESSAGE,
 };
 
 export default tseslint.config(
@@ -85,7 +84,7 @@ export default tseslint.config(
     extends: [reactHooks.configs.flat.recommended],
   },
 
-  // Import bans. Everything except the design system may not import @atlaskit/*.
+  // Import bans everywhere: no @atlaskit/* (S1, S8) and no deep feature imports (T11).
   {
     files: ['**/*.{js,ts,tsx}'],
     rules: {
@@ -98,14 +97,16 @@ export default tseslint.config(
     },
   },
 
-  // The design system may import @atlaskit/*, but never the icon or logo packages.
+  // Outside the design system, Lucide is reached only through Icon (S6, S8). This block
+  // replaces the rule above for these files, so it repeats the other bans.
   {
-    files: ['src/design-system/**'],
+    files: ['**/*.{js,ts,tsx}'],
+    ignores: ['src/design-system/**'],
     rules: {
       'no-restricted-imports': [
         'error',
         {
-          patterns: [atlaskitIconLogoPattern, featureDeepImportPattern],
+          patterns: [atlaskitPattern, featureDeepImportPattern, lucidePattern],
         },
       ],
     },

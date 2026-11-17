@@ -18,7 +18,8 @@ Updated in the same commit as each phase.
 | 6 | License check and the `pnpm check` gate | Done |
 | 7 | Plan the home screen milestone; record design-system and storage decisions | Done |
 | 8 | Vitest projects: node and jsdom, Testing Library, App smoke test | Done |
-| 9-20 | Home screen milestone: design system, documents store, routing, home, delete (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 9 |
+| 9 | Design-system foundation: vendored ADS tokens, light/dark theme, Icon over Lucide, import bans | Done |
+| 10-20 | Home screen milestone: components, documents store, routing, home, delete (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 10 |
 
 ## What it is
 

@@ -1,8 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from '@/App';
+import { watchColorScheme } from '@/design-system';
+import './design-system/tokens.css';
 
 const ROOT_ELEMENT_ID = 'root';
+const DARK_SCHEME_QUERY = '(prefers-color-scheme: dark)';
 
 function getRootElement(): HTMLElement {
   const element = document.getElementById(ROOT_ELEMENT_ID);
@@ -11,6 +14,8 @@ function getRootElement(): HTMLElement {
   }
   return element;
 }
+
+watchColorScheme(document.documentElement, window.matchMedia(DARK_SCHEME_QUERY));
 
 createRoot(getRootElement()).render(
   <StrictMode>
