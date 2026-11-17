@@ -65,8 +65,7 @@ The client renders suggestions only as text through ProseMirror, never raw HTML.
 chiri/
 ├── README.md                    # install / run, what was built, what next
 ├── AGENTS.md                    # architecture map, conventions, commands (CLAUDE.md points here)
-├── PRODUCT-DIRECTION.md
-├── TECHNICAL-DIRECTION.md
+├── docs/                        # PRODUCT-, TECHNICAL-, DESIGN-DIRECTION.md
 ├── .env.example                 # OPENROUTER_API_KEY, model names, size cap
 ├── package.json  tsconfig.json  vite.config.ts  vitest.config.ts  eslint.config.js  index.html
 ├── Mockups/  +  assessment PDF
