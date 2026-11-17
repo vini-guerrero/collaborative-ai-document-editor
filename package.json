@@ -27,6 +27,7 @@
     "@floating-ui/dom": "1.8.0",
     "@hono/node-server": "2.1.8",
     "@tiptap/core": "3.34.0",
+    "@tiptap/extension-paragraph": "3.34.0",
     "@tiptap/extensions": "3.34.0",
     "@tiptap/markdown": "3.34.0",
     "@tiptap/pm": "3.34.0",

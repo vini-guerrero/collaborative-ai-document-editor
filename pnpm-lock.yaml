@@ -184,6 +184,9 @@ importers:
       '@tiptap/core':
         specifier: 3.34.0
         version: 3.34.0(@tiptap/pm@3.34.0)
+      '@tiptap/extension-paragraph':
+        specifier: 3.34.0
+        version: 3.34.0(@tiptap/core@3.34.0(@tiptap/pm@3.34.0))
       '@tiptap/extensions':
         specifier: 3.34.0
         version: 3.34.0(@tiptap/core@3.34.0(@tiptap/pm@3.34.0))(@tiptap/pm@3.34.0)
