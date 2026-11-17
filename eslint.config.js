@@ -26,6 +26,16 @@ const lucidePattern = {
   message: LUCIDE_MESSAGE,
 };
 
+// shared/ and server/ run without the web app: they may not reach into src/, by alias or
+// by relative path (T11). Shared contracts flow the other way, through @shared/.
+const SRC_BOUNDARY_MESSAGE =
+  'shared/ and server/ must not import src/ (T11). Move the code into shared/ or import via @shared/.';
+
+const srcBoundaryPattern = {
+  group: ['@/**', '**/src', '**/src/**'],
+  message: SRC_BOUNDARY_MESSAGE,
+};
+
 export default tseslint.config(
   {
     ignores: ['dist', 'node_modules', 'mockups', 'docs', 'guidelines'],
@@ -107,6 +117,20 @@ export default tseslint.config(
         'error',
         {
           patterns: [atlaskitPattern, featureDeepImportPattern, lucidePattern],
+        },
+      ],
+    },
+  },
+
+  // Last block wins for these files: shared/ and server/ may not import src/ (T11). It
+  // repeats the other bans, since this block replaces the rule for these files.
+  {
+    files: ['shared/**/*.{js,ts,tsx}', 'server/**/*.{js,ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [atlaskitPattern, featureDeepImportPattern, lucidePattern, srcBoundaryPattern],
         },
       ],
     },
