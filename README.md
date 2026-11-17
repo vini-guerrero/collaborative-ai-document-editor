@@ -27,7 +27,8 @@ Updated in the same commit as each phase.
 | 13 | Responsive layout: useBreakpoint, AppShell (sidebar, rail, drawer), NavItem, IconLink (reviewed) | Done |
 | 16 | Routing, route error boundaries, editor placeholder (textarea) with serialized autosave (reviewed) | Done |
 | 17 | Home shell: navbar, sidebar (disabled items with Soon), loading/error/empty/ready, New document | Done |
-| 18-20 | Home screen milestone: grid/list views and cards, delete flow, milestone close (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 18 |
+| 18 | Grid/List views: ViewToggle, DocumentCard, DocumentRow | Done |
+| 19-20 | Home screen milestone: delete flow, milestone close (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 19 |
 
 ## What it is
 

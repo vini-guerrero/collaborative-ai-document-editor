@@ -1,0 +1,138 @@
+/* S2: tokens only. The only literals are the S9 line clamp, the md breakpoint and the S9 touch target. */
+
+/* H4 grid: one column at 360px (S9), more columns as the width grows. */
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: var(--ds-space-150);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-inline-size: 0;
+}
+
+.doc-card,
+.doc-row {
+  position: relative;
+  min-inline-size: 0;
+  border: var(--ds-border-width) solid var(--ds-border);
+  background: var(--ds-surface-raised);
+}
+
+.doc-card:hover,
+.doc-row:hover {
+  background: var(--ds-background-neutral-subtle-hovered);
+}
+
+/* Focus is shown on the whole card or row, not only the title link (S7). */
+.doc-card:has(.doc-card__link:focus-visible),
+.doc-row:has(.doc-row__link:focus-visible) {
+  outline: var(--ds-border-width) solid var(--app-focus-ring);
+  outline-offset: var(--ds-space-025);
+}
+
+.doc-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-050);
+  padding: var(--ds-space-150);
+  border-radius: var(--ds-radius-medium);
+}
+
+/* Stretched link: the title link's ::after covers the card, so the whole card opens the editor. */
+.doc-card__link,
+.doc-row__link {
+  overflow-wrap: anywhere;
+  color: var(--ds-text);
+  text-decoration: underline;
+}
+
+.doc-card__link::after,
+.doc-row__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.doc-card__title,
+.doc-row__title {
+  margin: 0;
+  min-inline-size: 0;
+  font: var(--ds-font-heading-xsmall);
+}
+
+.doc-card__preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+  overflow-wrap: anywhere;
+  font: var(--ds-font-body-small);
+  color: var(--ds-text-subtle);
+}
+
+.doc-card__meta,
+.doc-row__meta {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font: var(--ds-font-body-small);
+  color: var(--ds-text-subtle);
+}
+
+/* H4 list: compact rows, title first, edit time right aligned. */
+.doc-list {
+  display: grid;
+  gap: var(--ds-space-050);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-inline-size: 0;
+}
+
+.doc-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-space-100);
+  padding-block: var(--ds-space-050);
+  padding-inline: var(--ds-space-150);
+  border-radius: var(--ds-radius-medium);
+}
+
+.doc-row__title {
+  flex: 1 1 auto;
+}
+
+.doc-row__preview {
+  display: none;
+  flex: 2 1 0;
+  min-inline-size: 0;
+  margin: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  font: var(--ds-font-body-small);
+  color: var(--ds-text-subtle);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.doc-row__meta {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+  text-align: end;
+}
+
+/* The 768px value mirrors --bp-md in tokens.css; custom properties cannot be used in media queries. */
+@media (min-width: 768px) {
+  .doc-row__preview {
+    display: block;
+  }
+}
+
+/* S9: touch targets are at least 44px on coarse pointers; the whole row is the target. */
+@media (pointer: coarse) {
+  .doc-row {
+    min-block-size: 44px;
+  }
+}

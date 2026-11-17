@@ -69,6 +69,30 @@ describe('HomePage', () => {
     expect(screen.getByText(/Edited /)).toBeTruthy();
   });
 
+  // H4: cards are the default view; the toggle switches to rows and keeps the same links.
+  it('shows cards by default and switches to rows with the view toggle (H4, S7)', async () => {
+    const user = userEvent.setup();
+    renderHome(fakeStore([{ ok: true, value: [PLAN] }]));
+
+    await screen.findByRole('link', { name: 'Plan' });
+    const toggle = screen.getByRole('group', { name: 'Document view' });
+    const gridButton = within(toggle).getByRole('button', { name: 'Grid' });
+    const listButton = within(toggle).getByRole('button', { name: 'List' });
+    expect(gridButton.getAttribute('aria-pressed')).toBe('true');
+    expect(listButton.getAttribute('aria-pressed')).toBe('false');
+    expect(screen.getByTestId('document-grid')).toBeTruthy();
+
+    await user.click(listButton);
+
+    expect(listButton.getAttribute('aria-pressed')).toBe('true');
+    expect(gridButton.getAttribute('aria-pressed')).toBe('false');
+    expect(screen.queryByTestId('document-grid')).toBeNull();
+    expect(screen.getByTestId('document-list')).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Plan' }).getAttribute('href')).toBe(
+      '/documents/doc-plan',
+    );
+  });
+
   // H6: with no documents, an invitation replaces the list.
   it('shows the empty invitation with a New document action (H6)', async () => {
     renderHome(fakeStore([{ ok: true, value: [] }]));
