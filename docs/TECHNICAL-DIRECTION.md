@@ -24,6 +24,8 @@ The proxy is a small Hono (Node) server in `server/`. Vite proxies `/api` to it,
 **T6. Documents and history persist in localStorage behind a `DocumentStore` interface.**
 An index plus one entry per document holds Markdown, title, updatedAt and history, saved debounced as the user types (D17, H5). The interface lets a SQLite-backed store replace it later without touching the UI.
 
+*Layout, decided 2026-11-17:* one index key (list of document summaries) plus one key per document, each carrying `schemaVersion`. The zod document schema is feature-local (`src/features/documents/schema.ts`), because the server never sees documents (T11). The store is async, returns typed results (`not-found`, `corrupt`, `quota`), parses at the boundary and drops corrupt entries. A new document is persisted only once its body is non-blank (H5).
+
 **T7. Proxy protection, Phase 1: input size cap, server-side model allowlist, and a stop on out-of-credit that feeds D14.**
 All are env-configured through a config module that can become app settings later. The per-IP rate limit is deferred to Phase 2, because the product record doesn't require it and the $5 key cap bounds the worst case.
 

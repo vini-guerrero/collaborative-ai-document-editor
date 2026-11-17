@@ -17,6 +17,7 @@ Read only what the task needs, not everything.
 | What the product does (D1-D17 editor, H1-H7 home) | `docs/PRODUCT-DIRECTION.md` |
 | Stack, AI contract, storage, security, structure, packages, gates (T1-T13) | `docs/TECHNICAL-DIRECTION.md` |
 | Tokens, components, licenses, responsive (S1-S9) | `docs/DESIGN-DIRECTION.md` |
+| Current milestone: ordered phases, scope per phase | `docs/PLAN-HOME-MILESTONE.md` |
 
 Product decisions are settled. Do not re-open them; if code contradicts one, flag it. Cite decision IDs (`D4`, `H5`, `T7`, `S8`) in code comments and test names.
 

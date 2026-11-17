@@ -6,16 +6,17 @@ Design system direction for the product in `PRODUCT-DIRECTION.md` (D1-D17, H1-H7
 
 ## Decisions
 
-**S1. Foundation: Atlassian Design System (ADS).**
-Standard UI is built from ADS components and tokens, which are React-based and fit T1, limited to packages that pass the commercial-use policy in S8. Product-specific AI surfaces that ADS does not provide (see S5) are custom components built only from ADS tokens, so the whole app reads as one system.
+**S1. Foundation: Atlassian Design System (ADS) tokens, custom components.** *(Amended 2026-11-17.)*
+The look comes from ADS design tokens (color, spacing, typography, radius, elevation, motion). The ADS component packages cannot be used: `@atlaskit/button`, `modal-dialog`, `avatar` and `empty-state` all depend on `@atlaskit/icon`, which S8 bans, and the rest pull in `@compiled/react`, `@emotion` and a feature-gate client. No `@atlaskit/*` package is installed at all. Instead the Apache-2.0 token CSS (light, dark, typography, spacing) is vendored into `src/design-system/vendor/ads-tokens/` with its LICENSE and a note of the source package and version, and every component is custom, plain CSS plus React, in `src/design-system/`. Product-specific AI surfaces (S5) are built the same way, so the whole app reads as one system. Updating the vendored tokens is a deliberate, dated change (S8 re-check).
 
 **S2. Tokens first.**
-All color, spacing, typography, radius, elevation and motion values come from ADS design tokens, exposed as CSS variables. No hard-coded hex or pixel values in feature code. Product-specific values (flag underline, diff insert/delete, restructure accent bar) are defined once as semantic aliases of ADS tokens in `src/design-system/tokens.css`, for example `--ai-flag-underline` and `--ai-diff-insert-bg`.
+All color, spacing, typography, radius, elevation and motion values come from the vendored ADS design tokens (S1), exposed as CSS variables. No hard-coded hex or pixel values in feature code. Product-specific values (flag underline, diff insert/delete, restructure accent bar) are defined once as semantic aliases of ADS tokens in `src/design-system/tokens.css`, for example `--ai-flag-underline` and `--ai-diff-insert-bg`.
 
 **S3. Theming: light and dark from day one through tokens.**
 ADS theming switches the token set; no component carries its own theme logic. Light is the default (matching the mockup); dark is a token swap with no per-component work.
 
 **S4. Component inventory (mapped from the product record).**
+*Amended 2026-11-17: the "Source" column below names the ADS component each custom one is modelled on; none of the `@atlaskit/*` component packages is installed (S1). Each is a custom component in `src/design-system/components/`.*
 
 | Product need | Source |
 |---|---|

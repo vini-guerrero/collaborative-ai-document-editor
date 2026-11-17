@@ -16,6 +16,8 @@ Updated in the same commit as each phase.
 | 4 | Vitest | Done |
 | 5 | Hono server and config (binds 127.0.0.1, `/api/health`) | Done |
 | 6 | License check and the `pnpm check` gate | Done |
+| 7 | Plan the home screen milestone; record design-system and storage decisions | Done |
+| 8-20 | Home screen milestone: test setup, design system, documents store, routing, home, delete (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 8 |
 
 ## What it is
 
@@ -62,7 +64,7 @@ Listed in `.env.example` once scaffolded: `OPENROUTER_API_KEY`, one model name p
 
 | Path | Purpose |
 |---|---|
-| `docs/` | Product, technical and design direction |
+| `docs/` | Product, technical and design direction; milestone plan |
 | `mockups/` | Medium-fidelity prototype (visual reference only) |
 | `AGENTS.md` | Working rules for AI agents and contributors (adapted from `guidelines/`) |
 | `guidelines/` | Full general coding, Node, React and UI/UX guidelines (reference) |
