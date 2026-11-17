@@ -1,0 +1,64 @@
+.ds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-050);
+  min-block-size: 32px;
+  padding-inline: var(--ds-space-150);
+  border: 1px solid transparent;
+  border-radius: var(--ds-radius-small);
+  font: var(--ds-font-body);
+  font-weight: var(--ds-font-weight-medium);
+  cursor: pointer;
+}
+
+.ds-button--primary {
+  background: var(--ds-background-brand-bold);
+  color: var(--ds-text-inverse);
+}
+
+.ds-button--subtle {
+  background: transparent;
+  color: var(--ds-text);
+}
+
+.ds-button--danger {
+  background: var(--ds-background-danger-bold);
+  color: var(--ds-text-inverse);
+}
+
+.ds-button--primary:not(:disabled):hover {
+  background: var(--ds-background-brand-bold-hovered);
+}
+
+.ds-button--primary:not(:disabled):active {
+  background: var(--ds-background-brand-bold-pressed);
+}
+
+.ds-button--subtle:not(:disabled):hover {
+  background: var(--ds-background-neutral-hovered);
+}
+
+.ds-button--subtle:not(:disabled):active {
+  background: var(--ds-background-neutral-pressed);
+}
+
+.ds-button--danger:not(:disabled):hover {
+  background: var(--ds-background-danger-bold-hovered);
+}
+
+.ds-button--danger:not(:disabled):active {
+  background: var(--ds-background-danger-bold-pressed);
+}
+
+/* Disabled is shown by opacity and cursor, not by color alone (S7). */
+.ds-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (pointer: coarse) {
+  .ds-button {
+    min-block-size: 44px;
+  }
+}

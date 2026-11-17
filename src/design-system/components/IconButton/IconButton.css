@@ -1,0 +1,11 @@
+/* Variant colors come from Button.css; this file adds only the square icon-only sizing. */
+.ds-icon-button {
+  inline-size: 32px;
+  padding-inline: 0;
+}
+
+@media (pointer: coarse) {
+  .ds-icon-button {
+    inline-size: 44px;
+  }
+}

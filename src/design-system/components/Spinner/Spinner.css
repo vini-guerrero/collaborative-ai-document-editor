@@ -1,0 +1,29 @@
+.ds-spinner {
+  position: relative;
+  display: inline-flex;
+  inline-size: var(--ds-space-200);
+  block-size: var(--ds-space-200);
+}
+
+/* A partly colored ring: the static form that reduced-motion users see. */
+.ds-spinner__ring {
+  inline-size: 100%;
+  block-size: 100%;
+  box-sizing: border-box;
+  border: var(--ds-border-width-focused) solid var(--ds-border-bold);
+  border-block-start-color: var(--ds-icon-brand);
+  border-radius: var(--ds-radius-full);
+  animation: ds-spinner-rotate var(--ds-duration-xlong) linear infinite;
+}
+
+@keyframes ds-spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-spinner__ring {
+    animation: none;
+  }
+}
