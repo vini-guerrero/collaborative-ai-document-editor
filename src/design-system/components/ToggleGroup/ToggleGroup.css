@@ -1,0 +1,46 @@
+.ds-toggle-group {
+  display: inline-flex;
+  gap: var(--ds-space-025);
+  padding: var(--ds-space-025);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-small);
+}
+
+.ds-toggle-group__button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-050);
+  min-block-size: 32px;
+  padding-inline: var(--ds-space-100);
+  border: 0;
+  border-radius: var(--ds-radius-small);
+  background: transparent;
+  color: var(--ds-text-subtle);
+  font: var(--ds-font-body);
+  cursor: pointer;
+}
+
+.ds-toggle-group__button:hover {
+  background: var(--ds-background-neutral-hovered);
+  color: var(--ds-text);
+}
+
+.ds-toggle-group__button:active {
+  background: var(--ds-background-neutral-pressed);
+}
+
+/* Selected is shown by background, text color and weight, not by color alone (S7). */
+.ds-toggle-group__button--selected,
+.ds-toggle-group__button--selected:hover {
+  background: var(--ds-background-brand-subtlest);
+  color: var(--ds-text-brand);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+@media (pointer: coarse) {
+  .ds-toggle-group__button {
+    min-block-size: 44px;
+  }
+}

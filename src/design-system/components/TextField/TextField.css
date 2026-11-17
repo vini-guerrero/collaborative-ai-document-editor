@@ -1,0 +1,52 @@
+.ds-text-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-050);
+  inline-size: 100%;
+}
+
+.ds-text-field__label {
+  font: var(--ds-font-body);
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--ds-text);
+}
+
+.ds-text-field__input {
+  inline-size: 100%;
+  min-block-size: 32px;
+  padding-inline: var(--ds-space-100);
+  border: var(--ds-border-width) solid var(--ds-border-input);
+  border-radius: var(--ds-radius-small);
+  background: var(--ds-background-input);
+  color: var(--ds-text);
+  font: var(--ds-font-body);
+}
+
+.ds-text-field__input:not(:disabled):hover {
+  background: var(--ds-background-input-hovered);
+}
+
+/* Error is shown by the border and by the message text, never by color alone (S7). */
+.ds-text-field__input--error {
+  border-color: var(--ds-border-danger);
+}
+
+.ds-text-field__error {
+  margin: 0;
+  font: var(--ds-font-body-small);
+  color: var(--ds-text-danger);
+}
+
+/* Disabled is shown by background, text color and cursor, not by color alone (S7). */
+.ds-text-field__input:disabled {
+  border-color: var(--ds-border-disabled);
+  background: var(--ds-background-neutral);
+  color: var(--ds-text-disabled);
+  cursor: not-allowed;
+}
+
+@media (pointer: coarse) {
+  .ds-text-field__input {
+    min-block-size: 44px;
+  }
+}

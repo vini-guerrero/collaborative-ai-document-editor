@@ -1,0 +1,23 @@
+.ds-avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-background-brand-bold);
+  color: var(--ds-text-inverse);
+  font-weight: var(--ds-font-weight-medium);
+  user-select: none;
+}
+
+.ds-avatar--sm {
+  inline-size: var(--ds-space-300);
+  block-size: var(--ds-space-300);
+  font: var(--ds-font-body-small);
+}
+
+.ds-avatar--md {
+  inline-size: var(--ds-space-400);
+  block-size: var(--ds-space-400);
+  font: var(--ds-font-body);
+}

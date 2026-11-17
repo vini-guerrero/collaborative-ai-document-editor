@@ -20,7 +20,8 @@ Updated in the same commit as each phase.
 | 8 | Vitest projects: node and jsdom, Testing Library, App smoke test | Done |
 | 9 | Design-system foundation: vendored ADS tokens, light/dark theme, Icon over Lucide, import bans | Done |
 | 10 | Components: Button, IconButton, Lozenge, Spinner, VisuallyHidden | Done |
-| 11-20 | Home screen milestone: more components, documents store, routing, home, delete (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 11 |
+| 11 | Components: TextField, Avatar, ToggleGroup, EmptyState | Done |
+| 12-20 | Home screen milestone: dialog, layout, documents store, routing, home, delete (see [docs/PLAN-HOME-MILESTONE.md](docs/PLAN-HOME-MILESTONE.md)) | Next: phase 12 |
 
 ## What it is
 
