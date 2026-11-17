@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Medium-fidelity prototype</title>
+<style>
+/* Medium-fidelity prototype. Visual validation only. */
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+:root{--bg:#fff;--side:#fff;--ink:#1f2430;--mute:#667085;--line:#e4e7ec;--acc:#2f6fed;--accbg:#e8f0fe;--hover:#f2f4f8;--shadow:0 8px 24px #0000001a}
+body{margin:0;font:14px/1.5 -apple-system,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:var(--bg);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* Prototype control strip (not part of the product) */
+.mk{flex:none;background:#2b2a27;color:#ddd;font:12px system-ui;padding:6px 14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.mk b{color:#fff;font-weight:600}
+.mk .grp{display:flex;gap:4px;align-items:center}
+.mk button{color:#ddd;border:1px solid #666;background:transparent;border-radius:999px;padding:1px 10px;font:12px system-ui}
+.mk .on{background:#fff;color:#222;border-color:#fff}
+.mk .sep{color:#888}
+.app{flex:1;display:flex;flex-direction:column;min-height:0}
+
+/* Shared controls */
+.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 11px;font-size:13px}
+.btn:hover{background:var(--hover)}
+.btn.go,.go{background:var(--acc);border:1px solid var(--acc);color:#fff;border-radius:8px;padding:5px 14px;font-weight:500}
+.btn.go{padding:4px 11px;font-weight:400}
+.btn.danger{background:#b3261e;border-color:#b3261e;color:#fff}
+
+/* ---------- Home ---------- */
+.nav{flex:none;height:58px;display:flex;align-items:center;gap:14px;padding:0 18px;background:var(--side);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600;width:204px;color:var(--ink);text-decoration:none;cursor:pointer}
+.logo i{width:28px;height:28px;border-radius:8px;background:var(--acc);color:#fff;display:grid;place-items:center;font:600 14px/1 system-ui;font-style:normal}
+.search{flex:1;max-width:560px;display:flex;align-items:center;gap:10px;background:var(--hover);border:1px solid transparent;border-radius:10px;padding:0 14px;height:38px;color:var(--mute);cursor:not-allowed;opacity:.7}
+.search input{flex:1;border:0;background:transparent;font:inherit;outline:0;cursor:not-allowed}
+.who{margin-left:auto}
+.av{width:32px;height:32px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;font-weight:500}
+.shell{flex:1;display:flex;min-height:0}
+.side{flex:none;width:236px;padding:16px 12px;background:var(--side);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
+.newbtn{display:flex;align-items:center;justify-content:center;gap:8px;border:0;background:var(--acc);color:#fff;border-radius:10px;padding:10px 14px;font-weight:500;margin-bottom:14px}
+.newbtn:hover{background:#2560d6}
+.item{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px}
+.item.cur{background:var(--accbg);color:var(--acc);font-weight:500}
+.item.off{color:var(--mute);opacity:.7;cursor:not-allowed}
+.item.off em{margin-left:auto;font-size:10px;font-style:normal;border:1px solid var(--line);border-radius:8px;padding:0 6px}
+.main{flex:1;overflow:auto;padding:24px 32px}
+.mhead{display:flex;align-items:center;margin-bottom:16px}
+.mhead h2{margin:0;font-size:16px;font-weight:600;flex:1}
+.tog{display:inline-flex;background:var(--hover);border-radius:8px;padding:2px}
+.tog button{border:0;background:transparent;padding:4px 9px;display:flex;color:var(--mute);border-radius:6px}
+.tog button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px #0002}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
+.card{position:relative;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;transition:box-shadow .15s}
+.card:hover{box-shadow:var(--shadow)}
+.card>a{display:block;color:inherit;text-decoration:none}
+.pv{height:140px;background:#faf9f7;padding:14px 16px;overflow:hidden;font:11px/1.55 system-ui;color:#6b6860;border-bottom:1px solid var(--line)}
+.pv b{display:block;font:600 13px system-ui;color:var(--ink);margin-bottom:4px}
+.cmeta{padding:10px 14px}
+.cmeta strong{display:flex;gap:8px;align-items:center;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmeta strong svg{color:var(--acc)}
+.cmeta small{color:var(--mute);font-size:12px}
+.del{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:#fff;display:none;place-items:center;color:var(--mute)}
+.card:hover .del,.del:focus-visible{display:grid}
+.del:hover{color:#b3261e;border-color:#b3261e}
+.list{border-top:1px solid var(--line)}
+.row{position:relative;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line);padding:0 8px}
+.row:hover{background:var(--hover)}
+.row>a{flex:1;display:flex;gap:14px;align-items:center;padding:11px 0;color:inherit;text-decoration:none;min-width:0}
+.row .t{font-weight:500;min-width:170px}
+.row .p{flex:1;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .d{color:var(--mute);font-size:12px;width:120px;text-align:right}
+.row .del{position:static;display:grid;visibility:hidden}
+.row:hover .del{visibility:visible}
+.empty{max-width:420px;margin:12vh auto 0;text-align:center}
+.empty .ill{width:96px;height:112px;margin:0 auto 18px;border:1px solid var(--line);border-radius:10px;background:#faf9f7;position:relative}
+.empty .ill:before,.empty .ill:after{content:"";position:absolute;left:14px;right:14px;height:4px;border-radius:2px;background:var(--line)}
+.empty .ill:before{top:22px;right:40px}.empty .ill:after{top:38px;box-shadow:0 14px 0 var(--line),0 28px 0 var(--line)}
+.empty h3{font-size:20px;font-weight:600;margin:0 0 6px}
+.empty p{color:var(--mute);margin:0 0 18px}
+.scrim{position:fixed;inset:0;background:#0006;display:grid;place-items:center;z-index:10}
+.dlg{background:#fff;border-radius:14px;padding:20px 22px;width:min(380px,90vw);box-shadow:0 12px 40px #0005}
+.dlg h3{margin:0 0 6px;font-size:16px;font-weight:600}
+.dlg p{margin:0 0 16px;color:var(--mute)}
+.dlg .acts{display:flex;justify-content:flex-end;gap:8px}
+
+/* ---------- Editor ---------- */
+.ebar{display:flex;align-items:center;gap:10px;padding:8px 16px;font-size:12px}
+.ebar .iconbtn{border:0;background:transparent;width:32px;height:32px;border-radius:50%;display:grid;place-items:center}
+.ebar .iconbtn:hover{background:var(--hover)}
+.ebar .brand{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--ink);text-decoration:none;cursor:pointer}
+.ebar .brand i{width:22px;height:22px;border-radius:6px;background:var(--acc);color:#fff;display:grid;place-items:center;font:600 11px/1 system-ui;font-style:normal}
+.ebar .title{font:500 14px system-ui;border:1px solid transparent;border-radius:6px;padding:3px 8px;background:transparent;color:var(--ink);width:240px;margin-left:6px}
+.ebar .title:hover{border-color:var(--line)}.ebar .title:focus{outline:2px solid var(--acc);border-color:transparent}
+.grow{flex:1}
+.seg{display:inline-flex;background:var(--hover);border-radius:8px;padding:2px}
+.seg span{padding:3px 10px;border-radius:6px;color:var(--mute)}
+.seg span:first-child{background:#fff;color:var(--ink);box-shadow:0 1px 2px #0002}
+.chip{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;padding:3px 10px;border-radius:999px;background:#ecfdf3;color:#15803d}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.ebody{flex:1;display:flex;position:relative;overflow:auto}
+.page{flex:1;padding:56px 0 80px;font:17px/1.75 -apple-system,"Segoe UI",system-ui,sans-serif;position:relative;min-width:0}
+.page>*{max-width:740px;margin:0 auto 14px;padding:0 24px}
+.ph:empty:before{content:attr(data-ph);color:#b4b2ab}
+.ph{outline:0;min-height:1.75em}
+h1.dt{font:700 36px/1.2 system-ui;letter-spacing:-.02em;margin-bottom:18px}
+.gut{position:absolute;left:calc(50% - 400px);font:13px system-ui;color:#b0ada5;letter-spacing:2px}
+.ul{border-bottom:2px dotted var(--acc);cursor:pointer}
+mark{background:#c9dcfb;border-radius:3px}
+del{background:#fee2e2;color:#b91c1c;border-radius:3px;padding:0 2px}
+ins{background:#dcfce7;color:#15803d;text-decoration:none;border-radius:3px;padding:0 2px}
+.pop{position:relative;font:13px/1.45 system-ui,sans-serif;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;width:380px;max-width:100%;box-shadow:var(--shadow);margin-top:6px}
+.pop::before{content:"";position:absolute;left:34px;top:-6px;width:10px;height:10px;background:#fff;border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
+.ph2{display:flex;align-items:center;gap:8px}.why{flex:1}.rnd{color:var(--mute);white-space:nowrap}
+.ctl{display:flex;gap:6px;margin-top:10px}.dw{position:relative}
+.ddm{position:absolute;top:30px;left:0;z-index:3;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:4px;min-width:180px}
+.ddm div{padding:5px 9px;border-radius:6px;cursor:pointer}.ddm div:hover,.ddm .on{background:var(--hover)}
+.foot{display:flex;gap:6px;align-items:center;margin-top:12px}.hint{margin-left:auto;color:var(--mute);font-size:12px}
+kbd{font:11px ui-monospace,monospace;border:1px solid var(--line);border-radius:4px;padding:0 4px;background:#faf9f7}
+.pill{font-size:11px;font-weight:500;background:var(--accbg);color:var(--acc);border-radius:999px;padding:1px 8px;margin-right:4px}
+.row2{display:flex;gap:6px;align-items:center;margin-top:10px}
+.row2 input{flex:1;font:12px system-ui;padding:5px 8px;border:1px solid var(--line);border-radius:8px}
+.menu{display:inline-block;font:13px system-ui;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;width:280px;box-shadow:var(--shadow)}
+.menu div{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px}
+.menu div:first-child{background:var(--hover)}
+.menu i{font-style:normal;display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--line);border-radius:6px;color:var(--acc);font-size:12px;flex:none}
+.menu small{display:block;color:var(--mute);font-size:12px}
+.bub{display:inline-flex;gap:2px;align-items:center;background:#2b2a27;color:#fff;border-radius:10px;padding:4px;font:12px system-ui;box-shadow:0 6px 16px #0003}
+.bub span{padding:4px 9px;border-radius:6px}
+.bub .vr{width:1px;height:16px;background:#ffffff40;padding:0;margin:0 4px}
+.bub input{width:140px;font:12px system-ui;padding:4px 8px;border-radius:6px;border:0;background:#ffffff1f;color:#fff}
+.raw{font:13px/1.7 ui-monospace,Menlo,monospace;white-space:pre-wrap;background:#faf9f7;border:1px solid var(--line);border-radius:8px;padding:16px!important}
+.hist{position:absolute;right:16px;top:8px;width:250px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:var(--shadow);padding:14px;font:12px system-ui}
+.hist div{border-left:2px solid var(--line);padding:2px 0 8px 10px}.hist .ai{border-color:var(--acc)}.hist small{display:block;color:var(--mute)}
+.note{font:12px system-ui;color:var(--mute);text-align:center;margin:30px 0 0}
+</style>
+<body>
+<script>
+/* Navigable prototype: home screen (H1-H7) -> editor (D1-D17) and back. Data lives in memory only; reload resets it. */
+const NAME = 'WebApp'; // placeholder app name
+
+const I = {
+  back: '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
+  search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4-4"/></svg>',
+  plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  home: '<svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/></svg>',
+  star: '<svg viewBox="0 0 24 24"><path d="M12 4l2.4 5 5.6.7-4.1 3.8 1.1 5.5L12 16.3 7 19l1.1-5.5L4 9.7 9.6 9z"/></svg>',
+  users: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5M16 5a3 3 0 010 6M18 14c2 .5 3 2 3 5"/></svg>',
+  trash: '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+  grid: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg>',
+  list: '<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
+  doc: '<svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v4h4"/></svg>',
+  archive: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4"/><path d="M5 8v11h14V8M10 12h4"/></svg>',
+};
+
+const SUPPORT = [
+  'Our team ships weekly releases and keeps a public changelog so customers always know what changed.',
+  'In order to be able to provide our customers with the best possible service, we have made the decision to restructure our support rotation.',
+];
+const seed = () => [
+  { id: 'support', title: 'Support rotation', edited: 'Edited 2 min ago', demo: true, body: ['Support rotation'].concat(SUPPORT) },
+  { id: 'launch', title: 'Q3 launch plan', edited: 'Edited yesterday', body: ['Q3 launch plan', 'We aim to ship the first version of the new onboarding flow by the end of September, with a limited beta in August.', 'Risks: pricing page copy is not final, and the analytics events still need review.'] },
+  { id: 'notes', title: 'Meeting notes', edited: 'Edited Nov 12', body: ['Meeting notes', 'Tuesday sync. Agreed to cut the scope of the first release and move the integrations work to next quarter.'] },
+  { id: 'untitled', title: 'Untitled document', edited: 'Edited Nov 3', body: ['Untitled document', 'Some rough thoughts about how the weekly report could be shorter.'] },
+];
+let docs = seed();
+let homeView = 'grid';
+let draft = null; // a new document that has not been written in yet (not kept, D22)
+let state = 'flag'; // demo state of the sample document
+
+/* Suggestion card refine (D6): tone and length combine, each pick is a new round */
+const TONES = ['Auto (document tone)', 'Formal', 'Casual', 'Friendly', 'Confident', 'Neutral'];
+const LENS = ['Same length', 'Shorter', 'Longer'];
+const TEXT = { Formal: 'we have restructured', Casual: 'we reworked', Friendly: "we reorganized, and we think you'll feel it", Longer: 'we restructured, rotating shifts each quarter' };
+let tone = TONES[0], len = LENS[0], round = 1, openDd = null;
+const sug = () => TEXT[len] || TEXT[tone] || 'we restructured';
+const dd = (k, label, val, opts) => `<span class="dw"><button class="btn" data-dd="${k}">${label}: ${val.split(' ')[0]} &#9662;</button>${openDd === k
+  ? `<div class="ddm">${opts.map(o => `<div data-opt="${k}" data-val="${o}" class="${o === val ? 'on' : ''}">${o}</div>`).join('')}</div>` : ''}</span>`;
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const go = h => { location.hash = h; };
+
+/* ---------- Mockup control strip ---------- */
+function strip(route) {
+  let extra = '';
+  if (route.v === 'home') {
+    extra = `<span class="grp">Home data:
+      <button data-seed="1" class="${docs.length ? 'on' : ''}">With documents</button>
+      <button data-seed="0" class="${docs.length ? '' : 'on'}">Empty</button></span>`;
+  } else if (route.doc && route.doc.demo) {
+    const S = [['empty', 'First open'], ['flag', 'Ambient flag'], ['card', 'Suggestion card'], ['question', 'Question card'], ['select', 'Selection menu'], ['slash', 'Slash menu'], ['history', 'History'], ['raw', 'Markdown']];
+    extra = `<span class="grp">AI state:${S.map(([s, l]) => `<button data-st="${s}" class="${s === state ? 'on' : ''}">${l}</button>`).join('')}</span>`;
+  }
+  return `<b>Medium-fidelity prototype</b>${extra}`;
+}
+
+/* ---------- Home (D18-D24) ---------- */
+function preview(d) { return `<b>${esc(d.body[0])}</b>${esc(d.body.slice(1).join(' '))}`; }
+
+function homeHTML() {
+  const items = docs.map(d => homeView === 'grid'
+    ? `<div class="card"><a href="#/doc/${d.id}"><div class="pv">${preview(d)}</div><div class="cmeta"><strong>${I.doc}${esc(d.title)}</strong><small>${d.edited}</small></div></a>
+        <button class="del" data-del="${d.id}" aria-label="Delete ${esc(d.title)}" title="Delete">${I.trash}</button></div>`
+    : `<div class="row"><a href="#/doc/${d.id}"><span class="t">${esc(d.title)}</span><span class="p">${esc(d.body.slice(1).join(' '))}</span><span class="d">${d.edited.replace('Edited ', '')}</span></a>
+        <button class="del" data-del="${d.id}" aria-label="Delete ${esc(d.title)}" title="Delete">${I.trash}</button></div>`).join('');
+  const main = docs.length
+    ? `<div class="mhead"><h2>Recent documents</h2><span class="tog">
+         <button data-view="grid" class="${homeView === 'grid' ? 'on' : ''}" aria-label="Grid view" title="Grid">${I.grid}</button>
+         <button data-view="list" class="${homeView === 'list' ? 'on' : ''}" aria-label="List view" title="List">${I.list}</button></span></div>
+       <div class="${homeView === 'grid' ? 'grid' : 'list'}">${items}</div>`
+    : `<div class="empty"><div class="ill"></div><h3>Start your first document</h3><p>Write something and let the AI help you shape it.</p>
+         <button class="go" data-new>New document</button></div>`;
+  const off = (ic, l) => `<div class="item off" aria-disabled="true" title="Coming later">${ic}${l}<em>Soon</em></div>`;
+  return `<header class="nav"><a class="logo" data-home><i>W</i>${NAME}</a>
+      <div class="search" title="Search is coming later">${I.search}<input disabled placeholder="Search documents" aria-label="Search (disabled)"></div>
+      <div class="who"><span class="av" title="Placeholder user">G</span></div></header>
+    <div class="shell"><nav class="side"><button class="newbtn" data-new>${I.plus}New document</button>
+      <div class="item cur">${I.doc}Documents</div>${off(I.star, 'Pinned')}${off(I.users, 'Collaborations')}${off(I.archive, 'Archive')}</nav>
+      <main class="main">${main}</main></div>`;
+}
+
+/* ---------- Editor (D1-D17) ---------- */
+function editorHTML(d, isNew) {
+  const demo = !!d.demo;
+  const bar = `<div class="ebar"><button class="iconbtn" data-home aria-label="Back to home" title="Back to home">${I.back}</button>
+    <a class="brand" data-home><i>W</i>${NAME}</a>
+    <input class="title" value="${esc(d.title)}" aria-label="Document title">
+    <span class="grow"></span><span class="seg"><span>Ambient</span><span>On demand</span></span>
+    <span class="seg"><span>Visual</span><span>Markdown</span></span><button class="btn">History</button><span class="chip">&#9679; AI ready</span></div>`;
+  let page;
+  if (demo) {
+    page = `<div class="ph" data-ph="Write something, or press / for AI commands" data-show="empty"></div>
+      <div class="raw" data-show="raw"># Support rotation\n\n${SUPPORT[0]}\n\n${SUPPORT[1]}</div>
+      <h1 class="dt" data-show="flag card question select slash history">Support rotation</h1>
+      <div class="gut" data-show="flag card question select slash history">+ &nbsp;&#8942;&#8942;</div>
+      <p data-show="flag card question select slash history">${SUPPORT[0]}</p>
+      <div data-show="select"><span class="bub"><span>Rewrite</span><span>Fix tone</span><span>Shorten</span><span class="vr"></span><input placeholder="Ask the AI to..."></span></div>
+      <p data-show="flag card question select slash history">In order to be able to provide our customers with the best possible service,
+        <span data-show="flag"><span class="ul">we have made the decision to restructure</span></span><span data-show="card"><del>we have made the decision to restructure</del> <ins>${sug()}</ins></span><mark data-show="select">we have made the decision to restructure</mark><span data-show="question slash history">we have made the decision to restructure</span> our support rotation.</p>
+      <div data-show="flag"><div class="pop"><div class="ph2"><span class="pill">Clarity</span><span class="why">Wordy: same meaning in 3 words.</span></div><div class="row2"><button class="btn go">View suggestion</button></div></div></div>
+      <div data-show="card"><div class="pop"><div class="ph2"><span class="pill">Clarity</span><span class="why">Wordy: same meaning in 3 words.</span><span class="rnd">&lsaquo; ${round} / ${round} &rsaquo;</span></div>
+        <div class="ctl">${dd('tone', 'Tone', tone, TONES)}${dd('len', 'Length', len, LENS)}</div>
+        <div class="row2"><input placeholder="Try: make it sound less corporate"><button class="btn">Refine</button></div>
+        <div class="foot"><button class="btn go">Accept</button><button class="btn">Dismiss</button><span class="hint"><kbd>Tab</kbd> accept &middot; <kbd>Esc</kbd> dismiss</span></div></div></div>
+      <p data-show="question">Many customers asked for faster replies, so the rotation had to change.</p>
+      <div data-show="question"><div class="pop"><div class="ph2"><span class="pill">Question</span><span class="why">Which customers do you mean? A number would make this concrete.</span></div>
+        <div class="row2"><input placeholder="Your answer, for example: 40% of enterprise accounts"></div>
+        <div class="foot"><button class="btn go">Answer</button><button class="btn">Dismiss</button><span class="hint">The AI rewrites using your answer</span></div></div></div>
+      <p data-show="slash">/</p>
+      <div data-show="slash"><div class="menu"><div><i>Aa</i><span>Rewrite paragraph<small>Rewrite the paragraph above</small></span></div><div><i>Tn</i><span>Change tone</span></div><div><i>?</i><span>Ask what's missing</span></div><div><i>&#8645;</i><span>Restructure section<small>Move, split or merge</small></span></div></div></div>`;
+  } else if (isNew) {
+    page = `<div class="ph" id="ed" contenteditable="true" data-ph="Write something, or press / for AI commands"></div>
+      <p class="note">New document: type to save it to your list. A document left empty is not kept.</p>`;
+  } else {
+    page = `<h1 class="dt">${esc(d.body[0])}</h1>${d.body.slice(1).map(p => `<p>${esc(p)}</p>`).join('')}
+      <p class="note">Only "Support rotation" has the AI states demo in this mockup.</p>`;
+  }
+  const hist = demo ? `<aside class="hist" data-show="history"><b>History</b><br><br>
+      <div class="ai">Clarity accepted, paragraph 2<small>14:02 &middot; AI &middot; Restore</small></div>
+      <div>Typed 3 sentences<small>13:58 &middot; You</small></div>
+      <div class="ai">Tone accepted, paragraph 3<small>13:51 &middot; AI</small></div>
+      <div>Started document<small>13:40 &middot; You</small></div></aside>` : '';
+  return `${bar}<div class="ebody"><div class="page">${page}</div>${hist}</div>`;
+}
+
+function applyState() {
+  document.querySelectorAll('[data-show]').forEach(e => { e.hidden = !e.dataset.show.split(' ').includes(state); });
+}
+
+/* ---------- Router ---------- */
+function route() {
+  const m = location.hash.match(/^#\/doc\/(.+)$/);
+  if (!m) return { v: 'home' };
+  if (draft && draft.id === m[1] && !docs.includes(draft)) return { v: 'edit', doc: draft, isNew: true };
+  const doc = docs.find(d => d.id === m[1]);
+  return doc ? { v: 'edit', doc } : { v: 'home' };
+}
+
+function render() {
+  const r = route();
+  document.title = `${NAME} (prototype, ${r.v === 'home' ? 'home' : 'editor'})`;
+  document.body.innerHTML = `<div class="mk">${strip(r)}</div><div class="app">${r.v === 'home' ? homeHTML() : editorHTML(r.doc, r.isNew)}</div>`;
+  if (r.v === 'edit') {
+    if (r.doc.demo) applyState();
+    const ed = $('#ed');
+    if (ed) ed.addEventListener('input', () => { // first text commits the draft to the list (D22)
+      if (!ed.textContent.trim()) return;
+      if (draft && !docs.includes(draft)) docs.unshift(draft);
+      draft.body = [draft.title].concat(ed.textContent.trim().split(/\n+/));
+      draft.edited = 'Edited just now';
+    });
+    const t = $('.title');
+    t.addEventListener('input', () => { r.doc.title = t.value || 'Untitled document'; if (r.doc.body) r.doc.body[0] = r.doc.title; });
+  }
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-new],[data-home],[data-view],[data-del],[data-seed],[data-st],[data-confirm],[data-cancel],[data-dd],[data-opt]');
+  if (!t) return;
+  if (t.matches('[data-dd]')) { openDd = openDd === t.dataset.dd ? null : t.dataset.dd; return render(); }
+  if (t.matches('[data-opt]')) { if (t.dataset.opt === 'tone') tone = t.dataset.val; else len = t.dataset.val; round++; openDd = null; return render(); }
+  if (t.matches('[data-new]')) {
+    draft = { id: 'new' + Date.now(), title: 'Untitled document', edited: 'Edited just now', body: ['Untitled document'] };
+    go('#/doc/' + draft.id);
+  } else if (t.matches('[data-home]')) go('#/');
+  else if (t.matches('[data-view]')) { homeView = t.dataset.view; render(); }
+  else if (t.matches('[data-seed]')) { docs = t.dataset.seed === '1' ? seed() : []; render(); }
+  else if (t.matches('[data-st]')) { state = t.dataset.st; render(); }
+  else if (t.matches('[data-del]')) {
+    const d = docs.find(x => x.id === t.dataset.del);
+    const o = document.createElement('div'); o.className = 'scrim'; o.id = 'dlg';
+    o.innerHTML = `<div class="dlg" role="dialog" aria-modal="true"><h3>Delete "${esc(d.title)}"?</h3><p>This can't be undone.</p>
+      <div class="acts"><button class="btn" data-cancel>Cancel</button><button class="btn danger" data-confirm="${d.id}">Delete</button></div></div>`;
+    document.body.append(o);
+  } else if (t.matches('[data-cancel]')) $('#dlg').remove();
+  else if (t.matches('[data-confirm]')) { docs = docs.filter(x => x.id !== t.dataset.confirm); render(); }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#dlg')) $('#dlg').remove(); });
+window.addEventListener('hashchange', render);
+render();
+</script>
+</html>
