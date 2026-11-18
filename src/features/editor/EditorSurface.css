@@ -107,6 +107,10 @@
   content: attr(data-placeholder);
   float: inline-start;
   block-size: 0;
+  /* The surface sets overflow-wrap: anywhere, which shrinks a float to one character wide, so the
+     hint would wrap letter by letter and grow the empty page. It stays on one line. */
+  overflow-wrap: normal;
+  white-space: nowrap;
   color: var(--ds-text-subtle);
   pointer-events: none;
 }
