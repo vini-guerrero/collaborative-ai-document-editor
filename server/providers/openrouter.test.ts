@@ -110,6 +110,7 @@ describe('createOpenRouterProvider', () => {
       ],
       max_tokens: MAX_OUTPUT_TOKENS,
       temperature: 0.2,
+      reasoning: { effort: 'low' },
     });
   });
 

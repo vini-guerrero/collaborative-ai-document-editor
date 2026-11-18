@@ -36,6 +36,9 @@ const buildBody = (request: ProviderRequest) => ({
   ],
   max_tokens: request.maxOutputTokens,
   temperature: TEMPERATURE,
+  // Reasoning models spend max_tokens thinking and can return an empty reply (looks like an outage).
+  // Low effort keeps the budget for the JSON answer; models without reasoning ignore the field.
+  reasoning: { effort: 'low' },
 });
 
 // Releases the socket for a body we will not read. Cancel fails only when the stream is already

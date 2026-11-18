@@ -18,6 +18,9 @@ export const BASE_COOLDOWN_MS = 30_000;
 export const MAX_COOLDOWN_MS = 300_000;
 // Paragraphs left while a call is in flight. Only the newest few are kept; older ones are dropped.
 export const QUEUE_CAPACITY = 3;
+// After an outage the same text is retried when the wait ends, at most this many times in a row;
+// after that only a new edit or caret leave tries again, so a long outage costs a bounded few calls.
+export const MAX_AUTO_RETRIES = 3;
 
 export interface AnalyzeClient {
   run: (
@@ -74,6 +77,8 @@ export const createAnalyzeScheduler = (deps: AnalyzeSchedulerDeps): AnalyzeSched
   // Paragraphs waiting for the call in flight, oldest first, one per text hash.
   const queue: ParagraphContext[] = [];
   let idle: { readonly handle: unknown } | undefined;
+  // The one timer that retries held-back or failed text when the cooldown ends.
+  let wake: { readonly handle: unknown } | undefined;
   let inFlight: AbortController | undefined;
   let failures = 0;
   let cooldownEnds_ms = 0;
@@ -87,6 +92,14 @@ export const createAnalyzeScheduler = (deps: AnalyzeSchedulerDeps): AnalyzeSched
     idle = undefined;
   };
 
+  const clearWake = (): void => {
+    if (wake === undefined) {
+      return;
+    }
+    timers.clearTimeout(wake.handle);
+    wake = undefined;
+  };
+
   const inCooldown = (): boolean => now() < cooldownEnds_ms;
 
   // Copies the flags so a listener cannot mutate the cached array.
@@ -95,6 +108,22 @@ export const createAnalyzeScheduler = (deps: AnalyzeSchedulerDeps): AnalyzeSched
       onFlags(hash, [...flags]);
     }
   };
+
+  // Retries one paragraph when the cooldown ends, if its text is still owed an attempt.
+  function scheduleWake(ctx: ParagraphContext): void {
+    clearWake();
+    const hash = hashOfText(ctx.text);
+    const handle = timers.setTimeout(
+      () => {
+        wake = undefined;
+        if (edited.has(hash)) {
+          request(ctx);
+        }
+      },
+      Math.max(cooldownEnds_ms - now(), 0),
+    );
+    wake = { handle };
+  }
 
   const enqueue = (ctx: ParagraphContext): void => {
     const hash = hashOfText(ctx.text);
@@ -108,7 +137,8 @@ export const createAnalyzeScheduler = (deps: AnalyzeSchedulerDeps): AnalyzeSched
     }
   };
 
-  const record = (hash: string, result: AiClientResult<'analyze'>): void => {
+  const record = (ctx: ParagraphContext, result: AiClientResult<'analyze'>): void => {
+    const hash = hashOfText(ctx.text);
     if (result.ok) {
       failures = 0;
       cooldownEnds_ms = 0;
@@ -122,14 +152,25 @@ export const createAnalyzeScheduler = (deps: AnalyzeSchedulerDeps): AnalyzeSched
     }
     failures += 1;
     cooldownEnds_ms = now() + cooldownAfter(failures);
+    // The text was not analyzed, so it is still owed an attempt: when the wait ends it is sent again
+    // (bounded by MAX_AUTO_RETRIES), so a short outage does not leave Ambient silent until the next edit.
+    edited.set(hash, true);
+    if (failures <= MAX_AUTO_RETRIES) {
+      scheduleWake(ctx);
+    }
   };
 
   // The next queued paragraph to send, or undefined. Held-back work is dropped, and its text stays
   // edited, so only a later trigger sends it (no automatic retry, D14).
   const nextToSend = (): ParagraphContext | undefined => {
     for (let next = queue.shift(); next !== undefined; next = queue.shift()) {
-      if (disposed || isPaused() || isHidden() || inCooldown()) {
+      if (disposed || isPaused() || isHidden()) {
         queue.length = 0;
+        return undefined;
+      }
+      if (inCooldown()) {
+        queue.length = 0;
+        scheduleWake(next);
         return undefined;
       }
       const hash = hashOfText(next.text);
@@ -157,7 +198,7 @@ export const createAnalyzeScheduler = (deps: AnalyzeSchedulerDeps): AnalyzeSched
       if (disposed) {
         return;
       }
-      record(hash, result);
+      record(ctx, result);
       ctx = nextToSend();
     }
   };
@@ -179,6 +220,7 @@ export const createAnalyzeScheduler = (deps: AnalyzeSchedulerDeps): AnalyzeSched
       return;
     }
     if (inCooldown()) {
+      scheduleWake(ctx);
       return;
     }
     void callAndQueue(ctx);
@@ -215,6 +257,7 @@ export const createAnalyzeScheduler = (deps: AnalyzeSchedulerDeps): AnalyzeSched
 
   const pause = (): void => {
     clearIdle();
+    clearWake();
     queue.length = 0;
   };
 

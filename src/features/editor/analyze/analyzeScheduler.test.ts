@@ -207,34 +207,38 @@ describe('analyze scheduler (D4, D1, D14, T10)', () => {
     expect(onFlags).toHaveBeenCalledWith(fnv1a32(PARAGRAPH), [FLAG]);
   });
 
-  it('backs off after an outage: no call during the cooldown, which doubles up to 5 min (D14)', async () => {
+  it('retries the failed text when the cooldown ends, backing off and stopping after a few tries (D14)', async () => {
     const { scheduler, client } = createHarness();
-    const cooldowns_ms = [30_000, 60_000, 120_000, 240_000, 300_000, 300_000];
-    for (const [attempt, cooldown_ms] of cooldowns_ms.entries()) {
-      const before = client.run.mock.calls.length;
-      editAndLeave(scheduler, ctxOf({ text: textOf(attempt) }));
-      expect(client.run).toHaveBeenCalledTimes(before + 1);
-      callAt(client.calls, before).respond(UNAVAILABLE);
+    editAndLeave(scheduler, ctxOf());
+    // Each failure waits twice as long as the one before; the call count shows when it retried.
+    const waits_ms = [30_000, 60_000, 120_000];
+    for (const [index, wait_ms] of waits_ms.entries()) {
+      callAt(client.calls, index).respond(UNAVAILABLE);
       await settle();
-      // One millisecond before the cooldown ends, a new edit is still held back.
-      await vi.advanceTimersByTimeAsync(cooldown_ms - 1);
-      editAndLeave(scheduler, ctxOf({ text: textOf(100 + attempt) }));
-      expect(client.run).toHaveBeenCalledTimes(before + 1);
+      await vi.advanceTimersByTimeAsync(wait_ms - 1);
+      expect(client.run).toHaveBeenCalledTimes(index + 1);
       await vi.advanceTimersByTimeAsync(1);
+      expect(client.run).toHaveBeenCalledTimes(index + 2);
     }
-    expect(client.run).toHaveBeenCalledTimes(cooldowns_ms.length);
+    // The fourth failure is not retried by itself: only a new edit tries again.
+    callAt(client.calls, 3).respond(UNAVAILABLE);
+    await settle();
+    await vi.advanceTimersByTimeAsync(600_000);
+    expect(client.run).toHaveBeenCalledTimes(4);
+    editAndLeave(scheduler, ctxOf());
+    expect(client.run).toHaveBeenCalledTimes(5);
   });
 
-  it('a failed paragraph is resent only after the cooldown and a new edit (D14)', async () => {
+  it('holds an edit made during the cooldown and sends it when the cooldown ends (D14)', async () => {
     const { scheduler, client } = createHarness();
     editAndLeave(scheduler, ctxOf());
     callAt(client.calls, 0).respond(UNAVAILABLE);
     await settle();
-    await vi.advanceTimersByTimeAsync(30_001);
-    scheduler.paragraphLeft(ctxOf());
+    editAndLeave(scheduler, ctxOf({ id: 'p2', text: OTHER }));
     expect(client.run).toHaveBeenCalledTimes(1);
-    editAndLeave(scheduler, ctxOf());
+    await vi.advanceTimersByTimeAsync(30_000);
     expect(client.run).toHaveBeenCalledTimes(2);
+    expect(callAt(client.calls, 1).request.paragraph).toBe(OTHER);
   });
 
   it('sends nothing while the tab is hidden, and sends the kept edit once visible (D4)', () => {
