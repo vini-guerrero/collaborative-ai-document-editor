@@ -125,7 +125,9 @@ Revisit when the product grows (Phase 2: sign-in, sync, real users).
 | **Planner / Reviewer** | Opus | Plans non-trivial or cross-cutting work; reviews diffs against these rules and the decision IDs | Write the implementation; run long builds |
 | **Builder** | Haiku | Implements one well-bounded task from a brief; writes its tests | Make design decisions, change contracts, touch files outside its brief |
 
-Flow: Orchestrator -> (Opus plan, if needed) -> Haiku build -> Opus review (non-trivial changes, or anything touching `shared/`, `server/` or the editor plugins) -> Orchestrator integrates.
+Flow per phase: Orchestrator -> (Opus plan, if needed) -> Haiku build -> orchestrator runs the scoped checks (format, lint, types, tests of the touched folders) -> commit and push. No per-phase Opus review and no per-phase browser pass.
+
+Checkpoints (a milestone, or the end of a parallel set): one full `pnpm check`, one Opus review of everything since the last checkpoint (mandatory for `shared/`, `server/` and editor plugins, and always before the first live key use), and one browser pass at 360, 768 and 1280px, light and dark. Findings become one fix round. Run builds, reviews and browser checks in the background while the next phase is built.
 
 Escalate instead of guessing: a builder that hits an ambiguity, a contract change or a rule conflict stops and reports to the orchestrator.
 
