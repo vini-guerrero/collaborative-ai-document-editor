@@ -2,6 +2,15 @@
 
 A Markdown editor in the browser with an AI co-author. The AI flags passages and suggests rewrites; nothing changes in the document without a visible diff and your explicit Accept.
 
+## Preview
+
+| | |
+|---|---|
+| ![Home: the document list](screenshots/home.jpg) | ![Editor: AI underlines and the AI bubble](screenshots/editor-ambient.jpg) |
+| **Home.** Documents as a grid or list. | **Editor.** The AI underlines passages and shows a bubble with the suggestion count. |
+| ![Suggestion card with a live word diff](screenshots/suggestion-card.jpg) | ![Dark theme with the selection actions](screenshots/editor-dark-selection.jpg) |
+| **Suggestion.** A live diff in the text; Accept, Dismiss or Refine. | **Dark theme.** Selection actions (Rewrite, Fix Tone, Shorten, or a free instruction). |
+
 ## Features
 
 - **Home:** list, create, open and delete documents (grid or list).
