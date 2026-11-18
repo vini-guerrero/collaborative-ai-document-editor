@@ -126,8 +126,9 @@
   color: var(--ds-text-subtle);
 }
 
-.doc-card__action .ds-icon-button:hover,
-.doc-row__action .ds-icon-button:hover {
+.doc-card__action .ds-icon-button:not(:disabled):hover,
+.doc-row__action .ds-icon-button:not(:disabled):hover {
+  background: var(--ds-background-danger-subtlest);
   border-color: var(--ds-border-danger);
   color: var(--ds-text-danger);
 }

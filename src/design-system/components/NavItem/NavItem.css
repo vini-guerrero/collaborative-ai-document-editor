@@ -20,7 +20,8 @@
 }
 
 .ds-nav-item:not(.ds-nav-item--disabled):hover {
-  background: var(--ds-background-neutral-subtle-hovered);
+  background: var(--ds-background-brand-subtlest);
+  color: var(--ds-text-brand);
 }
 
 .ds-nav-item__label {

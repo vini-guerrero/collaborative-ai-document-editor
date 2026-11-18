@@ -19,7 +19,8 @@
 }
 
 .ds-menu__item:hover {
-  background: var(--ds-background-neutral-hovered);
+  background: var(--ds-background-brand-subtlest);
+  color: var(--ds-text-brand);
 }
 
 .ds-menu__item:active {

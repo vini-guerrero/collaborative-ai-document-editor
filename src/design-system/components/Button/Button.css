@@ -52,11 +52,12 @@
 }
 
 .ds-button--subtle:not(:disabled):hover {
-  background: var(--ds-background-neutral-hovered);
+  background: var(--ds-background-brand-subtlest);
+  color: var(--ds-text-brand);
 }
 
 .ds-button--subtle:not(:disabled):active {
-  background: var(--ds-background-neutral-pressed);
+  background: var(--ds-background-brand-subtlest-pressed);
 }
 
 .ds-button--danger:not(:disabled):hover {

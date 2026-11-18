@@ -43,22 +43,22 @@
   min-inline-size: 0;
 }
 
-/* The title is borderless until the user points at it or focuses it (prototype .title). */
+/* The title always shows its box, so it reads as an input without pointing at it. */
 .editor-top-bar__title .ds-text-field__input {
   box-sizing: border-box;
   inline-size: 100%;
   min-block-size: 32px;
   padding: 0 var(--ds-space-100);
-  border: var(--ds-border-width) solid transparent;
-  border-radius: var(--ds-radius-small);
-  background: transparent;
+  border: var(--ds-border-width) solid var(--ds-border-input);
+  border-radius: var(--ds-radius-large);
+  background: var(--ds-surface);
   color: var(--ds-text);
   font: var(--ds-font-body);
   font-weight: var(--ds-font-weight-medium);
 }
 
 .editor-top-bar__title .ds-text-field__input:hover {
-  border-color: var(--ds-border);
+  border-color: var(--ds-border-brand);
 }
 
 .editor-top-bar__title .ds-text-field__input:focus {
