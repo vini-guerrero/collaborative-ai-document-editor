@@ -36,3 +36,11 @@
   flex-wrap: wrap;
   gap: var(--ds-space-100);
 }
+
+/* The refine form is a fieldset so it is disabled as one while a round is in flight (D14). */
+.suggestion-card__refine {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}

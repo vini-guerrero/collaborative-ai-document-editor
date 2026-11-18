@@ -76,7 +76,9 @@ export function suggestionDecorations(doc: Node, suggestion: Suggestion): Decora
       );
       pos += op.text.length;
     } else {
-      decorations.push(insertWidget(pos, op.text, `suggestion-insert-${String(index)}`));
+      // The key includes the text: ProseMirror reuses a widget with an equal key, so a new round's
+      // words would otherwise keep showing the previous round's text.
+      decorations.push(insertWidget(pos, op.text, `suggestion-insert-${String(index)}-${op.text}`));
     }
   });
   return DecorationSet.create(doc, decorations);

@@ -266,7 +266,10 @@ describe('EditorPage', () => {
       expect(store.saves).toHaveLength(1);
     });
     expect(store.saves[0]?.createdAt).toBe(100);
-    expect(store.saves[0]?.history).toEqual(existing.history);
+    // The earlier entry is kept as it was; an edit may add a "You" checkpoint after it (D7).
+    const history = store.saves[0]?.history ?? [];
+    expect(history[0]).toEqual(existing.history[0]);
+    expect(history.slice(1).every((entry) => entry.author === 'user')).toBe(true);
     expect(store.saves[0]?.updatedAt).toBe(NOW);
     expect(store.saves[0]?.markdown).toContain('more');
   });
@@ -443,13 +446,11 @@ describe('EditorPage', () => {
   });
 
   // S9: from md the view toggle and History are inline; below md they move into More actions.
-  it('keeps History inline from md and has no overflow menu there (S9)', async () => {
+  it('keeps History inline from md and has no overflow menu there (S9, D7)', async () => {
     renderEditor(createFakeStore());
 
     expect(await screen.findByRole('button', { name: 'Markdown' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'History (Soon)' }).hasAttribute('disabled')).toBe(
-      true,
-    );
+    expect(screen.getByRole('button', { name: 'History' }).hasAttribute('disabled')).toBe(false);
     expect(screen.queryByRole('button', { name: 'More actions' })).toBeNull();
   });
 
@@ -460,8 +461,8 @@ describe('EditorPage', () => {
 
     await user.click(await screen.findByRole('button', { name: 'More actions' }));
     expect(screen.queryByRole('button', { name: 'Markdown' })).toBeNull();
-    const history = screen.getByRole('menuitem', { name: 'History (Soon)' });
-    expect(history.getAttribute('aria-disabled')).toBe('true');
+    const history = screen.getByRole('menuitem', { name: 'History' });
+    expect(history.getAttribute('aria-disabled')).not.toBe('true');
 
     await user.click(screen.getByRole('menuitem', { name: 'Raw' }));
 

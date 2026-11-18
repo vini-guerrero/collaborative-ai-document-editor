@@ -73,3 +73,15 @@
   color: var(--ds-text-subtle);
   pointer-events: none;
 }
+
+/* The frame holds the editor and its floating controls (heading actions), positioned against it. */
+.editor-surface-frame {
+  position: relative;
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  min-block-size: 0;
+  min-inline-size: 0;
+  max-inline-size: 75ch;
+  inline-size: 100%;
+}

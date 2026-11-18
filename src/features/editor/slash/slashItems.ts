@@ -15,6 +15,8 @@ export interface SlashItem {
   readonly label: string;
   readonly description?: string;
   readonly icon: IconName;
+  // True while the action is not built yet: shown with a "Soon" label and never run (H2, H3).
+  readonly soon?: boolean;
 }
 
 export const SLASH_ITEMS: readonly SlashItem[] = [
@@ -25,7 +27,7 @@ export const SLASH_ITEMS: readonly SlashItem[] = [
     icon: 'file-text',
   },
   { id: 'change-tone', label: 'Change tone', icon: 'users' },
-  { id: 'ask-missing', label: "Ask what's missing", icon: 'search' },
+  { id: 'ask-missing', label: "Ask what's missing", icon: 'search', soon: true },
   {
     id: 'restructure-section',
     label: 'Restructure section',

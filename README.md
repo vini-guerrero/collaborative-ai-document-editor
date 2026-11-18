@@ -52,7 +52,8 @@ Updated in the same commit as each phase.
 | 41b | Restructure preview plugin, Accept as one undo step, suggestion wording and outline; not yet wired | Done |
 | 42b | History timeline, entry helpers and one-undo restore; not yet wired | Done |
 | Review fixes | Dismissed flags stay dismissed; analysis keeps running after an outage; Tab-close and role fixes; `.env.example` and `.gitignore` | Done |
-| 38-43 (wiring and close) | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 36-40 (suggestion, refine, toolbar, slash), then 41-43 |
+| 38-42 wiring | Refine, selection toolbar, Improve section, slash menu, restructure flow and history (record, checkpoints, panel, restore) wired into the editor; two jsdom tests skipped as DEBT, flows to be checked in the browser | Done |
+| 43 (close) | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 36-40 (suggestion, refine, toolbar, slash), then 41-43 |
 
 ## What it is
 

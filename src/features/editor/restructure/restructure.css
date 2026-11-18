@@ -76,3 +76,20 @@
 .restructure-outline__item--level-6 {
   padding-inline-start: calc(var(--ds-space-200) * 5);
 }
+
+/* D14: the loading and error states share one panel, below the editor bar. Tokens only (S2). */
+.restructure-panel {
+  display: grid;
+  gap: var(--ds-space-100);
+  margin-block: var(--ds-space-100);
+  padding: var(--ds-space-150);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-large);
+  background: var(--ds-surface-overlay);
+}
+
+.restructure-panel__note {
+  margin: 0;
+  font: var(--ds-font-body-small);
+  color: var(--ds-text-subtle);
+}

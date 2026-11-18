@@ -1,0 +1,5 @@
+/* D9, S2: the controls sit at the frame's inline end, out of the text column. Tokens only. */
+.heading-actions__item {
+  position: absolute;
+  inset-inline-end: 0;
+}

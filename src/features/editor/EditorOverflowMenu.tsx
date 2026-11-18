@@ -5,17 +5,18 @@ import type { ViewMode } from './editorModes';
 export interface EditorOverflowMenuProps {
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
+  onHistory: () => void;
 }
 
-// S9: below md the Raw view and History move here from the bar. History is built in phase 42, so
-// it stays visible and disabled, and says so in its label (H2, H3).
+// S9: below md the Raw view and History move here from the bar (D7).
 export function EditorOverflowMenu({
   viewMode,
   onViewModeChange,
+  onHistory,
 }: EditorOverflowMenuProps): JSX.Element {
   const items: readonly MenuItem[] = [
     { id: 'toggle-raw', label: viewMode === 'markdown' ? 'Visual' : 'Raw' },
-    { id: 'history', label: 'History (Soon)', disabled: true },
+    { id: 'history', label: 'History' },
   ];
   return (
     <Menu
@@ -25,6 +26,8 @@ export function EditorOverflowMenu({
       onSelect={(id) => {
         if (id === 'toggle-raw') {
           onViewModeChange(viewMode === 'markdown' ? 'visual' : 'markdown');
+        } else if (id === 'history') {
+          onHistory();
         }
       }}
     />

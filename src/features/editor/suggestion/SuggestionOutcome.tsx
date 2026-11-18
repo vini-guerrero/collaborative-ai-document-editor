@@ -1,8 +1,8 @@
 import type { JSX } from 'react';
 import { Spinner } from '@/design-system';
-import type { SuggestionFailure, SuggestionRequest } from './useSuggestionRequest';
+import type { SuggestionFailure, SuggestionRequest } from './suggestionRequest';
 
-export type SuggestionOutcomeRequest = Exclude<SuggestionRequest, { kind: 'idle' }>;
+export type SuggestionOutcomeRequest = SuggestionRequest;
 
 // D14: plain, factual one-liners. The model's text is never shown here.
 const FAILURE_TEXT: Record<SuggestionFailure, string> = {

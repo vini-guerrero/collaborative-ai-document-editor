@@ -1,6 +1,8 @@
 /* D12, S2, S9: the prototype's menu panel and item rows, in tokens. Active item is tinted, not
    coloured alone (S7). */
 .slash-menu {
+  position: fixed;
+  z-index: var(--app-z-drawer);
   box-sizing: border-box;
   inline-size: 280px;
   max-inline-size: calc(100vw - 2 * var(--ds-space-200));

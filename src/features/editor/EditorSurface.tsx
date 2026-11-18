@@ -4,6 +4,13 @@ import { createEditorExtensions } from './markdown/extensions';
 import { createFlagsPlugin } from './flags/flagsPlugin';
 import { bindFlagOpener, createFlagNavigation } from './flagNavigation';
 import { createSuggestionPlugin } from './suggestion/suggestionPlugin';
+import { createRestructurePreviewExtension } from './restructure/restructurePreviewPlugin';
+import { createSlashExtension } from './slash/slashExtension';
+import { SlashMenu } from './slash/SlashMenu';
+import { slashOptionDomId, type SlashItem } from './slash/slashItems';
+import { useSlashMenu } from './slash/useSlashMenu';
+import { HeadingActions } from './toolbar/HeadingActions';
+import { useHeadingBoxes } from './toolbar/useHeadingBoxes';
 import { useFlagAnalysis } from './useFlagAnalysis';
 import './flags/flags.css';
 import './suggestion/suggestion.css';
@@ -23,6 +30,10 @@ export interface EditorSurfaceProps {
   aiPaused: boolean;
   // Asked to open a flag's popover by keyboard or pointer (D17).
   onFlagOpen: (flagId: string) => void;
+  // The slash menu item the author chose (D12).
+  onSlashChoose: (item: SlashItem) => void;
+  // "Improve section" was pressed for the heading at this position (D9).
+  onImprove: (headingPos: number) => void;
 }
 
 // T1, D13: TipTap owns the editing state; the document leaves it only as Markdown. The editor is
@@ -34,13 +45,22 @@ export function EditorSurface({
   onReady,
   aiPaused,
   onFlagOpen,
+  onSlashChoose,
+  onImprove,
 }: EditorSurfaceProps): JSX.Element {
   // Refs keep the latest callbacks without recreating the editor on every render.
   const onChangeRef = useRef(onChange);
   const onReadyRef = useRef(onReady);
+  const actionsRef = useRef({ onSlashChoose, onImprove });
   useEffect(() => {
     onChangeRef.current = onChange;
     onReadyRef.current = onReady;
+    actionsRef.current = { onSlashChoose, onImprove };
+  });
+
+  // The menu's handlers are stable, so the extension built once below keeps working.
+  const slash = useSlashMenu((item) => {
+    actionsRef.current.onSlashChoose(item);
   });
 
   // Built once per mount. TipTap compares options on every render, so a new object or callback
@@ -51,6 +71,8 @@ export function EditorSurface({
       createFlagsPlugin(),
       createSuggestionPlugin(),
       createFlagNavigation(),
+      createSlashExtension(slash.handlers),
+      createRestructurePreviewExtension(),
     ],
     contentType: 'markdown',
     content: initialMarkdown,
@@ -67,6 +89,18 @@ export function EditorSurface({
   }));
   const editor = useEditor(options);
   useFlagAnalysis(editor, aiPaused);
+  const headings = useHeadingBoxes(editor);
+
+  // The keyboard's active menu item is announced through the editor, which keeps focus (D12).
+  const activeItem = slash.view === null ? undefined : slash.view.items[slash.view.activeIndex];
+  const activeId = activeItem === undefined ? null : slashOptionDomId(activeItem.id);
+  useEffect(() => {
+    if (activeId === null) {
+      editor.view.dom.removeAttribute('aria-activedescendant');
+    } else {
+      editor.view.dom.setAttribute('aria-activedescendant', activeId);
+    }
+  }, [editor, activeId]);
 
   // The extension reads its callback from editor storage; this effect keeps it current (D17).
   useEffect(() => {
@@ -77,5 +111,23 @@ export function EditorSurface({
     onReadyRef.current?.(editor);
   }, [editor]);
 
-  return <EditorContent editor={editor} className="editor-surface" />;
+  return (
+    <div className="editor-surface-frame">
+      <EditorContent editor={editor} className="editor-surface" />
+      <HeadingActions
+        boxes={headings}
+        onImprove={(headingPos) => {
+          actionsRef.current.onImprove(headingPos);
+        }}
+      />
+      {slash.view === null ? null : (
+        <SlashMenu
+          items={slash.view.items}
+          activeIndex={slash.view.activeIndex}
+          position={slash.view.position}
+          onSelect={slash.choose}
+        />
+      )}
+    </div>
+  );
 }

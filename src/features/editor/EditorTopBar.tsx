@@ -12,6 +12,8 @@ export interface EditorViewControls {
   onViewModeChange: (mode: ViewMode) => void;
   aiMode: AiMode;
   onAiModeChange: (mode: AiMode) => void;
+  // Opens the version history (D7).
+  onHistory: () => void;
 }
 
 export interface EditorTopBarProps {
@@ -53,7 +55,11 @@ export function EditorTopBar({
       </Link>
       {view !== undefined && compact ? (
         <div className="editor-top-bar__overflow">
-          <EditorOverflowMenu viewMode={view.viewMode} onViewModeChange={view.onViewModeChange} />
+          <EditorOverflowMenu
+            viewMode={view.viewMode}
+            onViewModeChange={view.onViewModeChange}
+            onHistory={view.onHistory}
+          />
         </div>
       ) : null}
       {title === undefined ? null : <div className="editor-top-bar__title">{title}</div>}
@@ -64,7 +70,7 @@ export function EditorTopBar({
         {view !== undefined ? (
           <AiModeToggle value={view.aiMode} onChange={view.onAiModeChange} />
         ) : null}
-        {view !== undefined && !compact ? <Button disabled>History (Soon)</Button> : null}
+        {view !== undefined && !compact ? <Button onClick={view.onHistory}>History</Button> : null}
       </div>
       <div className="editor-top-bar__flags">{flagControl ?? null}</div>
       <div className="editor-top-bar__ai">{aiStatus ?? null}</div>

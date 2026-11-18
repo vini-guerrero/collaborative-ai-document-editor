@@ -2,25 +2,27 @@ import { useRef, useState, type JSX } from 'react';
 import type { Editor } from '@tiptap/react';
 import { TextField, VisuallyHidden } from '@/design-system';
 import { StatusIndicator } from '@/features/ai';
-import {
-  toStoredDocument,
-  useDocumentStore,
-  type Result,
-  type StoreError,
-  type StoredDocument,
-} from '@/features/documents';
+import type { HistoryEntry, StoredDocument } from '@/features/documents';
+import { EditorOverlays } from './EditorOverlays';
 import { EditorSurface } from './EditorSurface';
 import { EditorTopBar } from './EditorTopBar';
-import { FlagPopover } from './FlagPopover';
 import { NextFlagButton } from './NextFlagButton';
 import type { ViewMode } from './editorModes';
 import { MarkdownSource } from './MarkdownSource';
 import { serializeMarkdown } from './markdown/markdown';
 import { applyMarkdownSource } from './applyMarkdownSource';
+import { useRestructureFlow } from './restructure/useRestructureFlow';
+import { rewriteActionsFor } from './suggestion/rewriteActions';
+import { useRewriteSession } from './suggestion/useRewriteSession';
+import type { SlashItem } from './slash/slashItems';
 import { useAiMode } from './useAiMode';
-import { useAutosave, type AutosaveFailure, type AutosaveStatus } from './useAutosave';
+import { useDocumentPersistence } from './useDocumentPersistence';
+import type { AutosaveFailure, AutosaveStatus } from './useAutosave';
 
 const DEFAULT_TITLE = 'Untitled document';
+// DEBT: the slash item restructures with "move". The user's choice of move, split or merge (D10)
+// needs a sub-choice in the slash menu; revisit with the restructure-choice phase.
+const SLASH_RESTRUCTURE_ACTION = 'move';
 
 export interface EditorFormProps {
   documentId: string;
@@ -28,11 +30,6 @@ export interface EditorFormProps {
   initial: StoredDocument | null;
   now: () => number;
   onReady?: ((editor: Editor) => void) | undefined;
-}
-
-interface EditorDraft {
-  readonly title: string;
-  readonly body: string;
 }
 
 // Only "Saved" and failures are announced; "Saving" on every keystroke would be noise.
@@ -54,13 +51,20 @@ function saveMessage(status: AutosaveStatus, failure: AutosaveFailure | null): s
 // no copy of the document is mirrored in React state. The raw Markdown view (D15) keeps the
 // editor mounted but hidden, so its undo history survives a switch.
 export function EditorForm({ documentId, initial, now, onReady }: EditorFormProps): JSX.Element {
-  const store = useDocumentStore();
-  const initialTitle = initial?.title ?? '';
-  const initialBody = initial?.markdown ?? '';
-  const persistedRef = useRef<StoredDocument | null>(initial);
-  const latestRef = useRef<EditorDraft>({ title: initialTitle, body: initialBody });
   const editorRef = useRef<Editor | null>(null);
-  const [title, setTitle] = useState(initialTitle);
+  const initialBody = initial?.markdown ?? '';
+  const persistence = useDocumentPersistence({ documentId, initial, now, editorRef });
+  const {
+    status,
+    failure,
+    schedule,
+    latestRef,
+    scheduleBody,
+    recordAiAccept,
+    restoreFromHistory,
+    historyRef,
+  } = persistence;
+  const [title, setTitle] = useState(initial?.title ?? '');
   const [viewMode, setViewMode] = useState<ViewMode>('visual');
   // The raw Markdown being edited while the Markdown view is shown (D15).
   const [source, setSource] = useState('');
@@ -68,35 +72,31 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
   const [mountedEditor, setMountedEditor] = useState<Editor | null>(null);
   // The flag whose popover is open, by id (D17).
   const [openFlagId, setOpenFlagId] = useState<string | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  // Read from the ref when the panel opens (an event), not during render.
+  const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
+  // The rewrite in progress, from a flag, a selection, a slash command or a section (D5, D9).
+  const rewrite = useRewriteSession(mountedEditor);
+  const actions = rewriteActionsFor(mountedEditor, rewrite);
+  const restructure = useRestructureFlow(mountedEditor, recordAiAccept);
   const { aiMode, setAiMode } = useAiMode();
   // D1, D15: nothing is analyzed in On demand mode or while the raw Markdown is shown.
   const aiPaused = aiMode === 'on-demand' || viewMode === 'markdown';
 
-  const persist = async (draft: EditorDraft): Promise<Result<void, StoreError>> => {
-    const doc = toStoredDocument(
-      persistedRef.current,
-      {
-        id: documentId,
-        title: draft.title.trim() === '' ? DEFAULT_TITLE : draft.title,
-        markdown: draft.body,
-      },
-      now(),
-    );
-    const result = await store.save(doc);
-    if (result.ok) {
-      persistedRef.current = doc;
+  // Opening another flag ends a rewrite that belongs to a different popover (D5).
+  const openFlag = (flagId: string | null): void => {
+    if (rewrite.target !== null && rewrite.target.flagId !== flagId) {
+      rewrite.stop();
     }
-    return result;
+    setOpenFlagId(flagId);
   };
 
-  const { status, failure, schedule } = useAutosave<EditorDraft>({
-    save: persist,
-    isNew: initial === null,
-  });
-
-  const scheduleBody = (body: string): void => {
-    latestRef.current = { ...latestRef.current, body };
-    schedule(latestRef.current);
+  const chooseSlashItem = (item: SlashItem): void => {
+    if (item.id === 'restructure-section') {
+      restructure.run(SLASH_RESTRUCTURE_ACTION);
+      return;
+    }
+    actions.chooseSlashItem(item);
   };
 
   const handleReady = (ready: Editor): void => {
@@ -122,6 +122,13 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
     setViewMode(next);
   };
 
+  // D7: closes the timeline once the entry is restored.
+  const restoreVersion = (entryId: string): void => {
+    if (restoreFromHistory(entryId)) {
+      setHistoryOpen(false);
+    }
+  };
+
   const titleField = (
     <TextField
       label="Document title"
@@ -145,7 +152,7 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
         aiStatus={<StatusIndicator />}
         flagControl={
           mountedEditor === null ? null : (
-            <NextFlagButton editor={mountedEditor} onOpenFlag={setOpenFlagId} />
+            <NextFlagButton editor={mountedEditor} onOpenFlag={openFlag} />
           )
         }
         view={{
@@ -153,6 +160,10 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
           onViewModeChange: changeViewMode,
           aiMode,
           onAiModeChange: setAiMode,
+          onHistory: () => {
+            setHistoryEntries([...historyRef.current]);
+            setHistoryOpen(true);
+          },
         }}
       />
       <main className="editor-page-main">
@@ -174,18 +185,30 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
             onChange={scheduleBody}
             onReady={handleReady}
             aiPaused={aiPaused}
-            onFlagOpen={setOpenFlagId}
+            onFlagOpen={openFlag}
+            onSlashChoose={chooseSlashItem}
+            onImprove={actions.improveSection}
           />
         </div>
-        {mountedEditor === null ? null : (
-          <FlagPopover
-            editor={mountedEditor}
-            flagId={openFlagId}
-            onClose={() => {
-              setOpenFlagId(null);
-            }}
-          />
-        )}
+        <EditorOverlays
+          editor={mountedEditor}
+          selectionEnabled={viewMode === 'visual' && rewrite.target === null}
+          session={rewrite}
+          actions={actions}
+          restructure={restructure}
+          flagId={openFlagId}
+          onFlagClose={() => {
+            openFlag(null);
+          }}
+          onAccepted={recordAiAccept}
+          historyOpen={historyOpen}
+          historyEntries={historyEntries}
+          now={now()}
+          onHistoryClose={() => {
+            setHistoryOpen(false);
+          }}
+          onRestoreVersion={restoreVersion}
+        />
       </main>
     </div>
   );
