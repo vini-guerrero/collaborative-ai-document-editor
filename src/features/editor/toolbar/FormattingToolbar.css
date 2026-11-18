@@ -31,7 +31,8 @@
   inline-size: 32px;
   block-size: 32px;
   padding: 0;
-  border: 0;
+  /* A real border, not a shadow: borders snap to whole pixels, so no edge goes missing. */
+  border: var(--ds-border-width) solid transparent;
   border-radius: var(--ds-radius-large);
   background: transparent;
   color: var(--ds-icon);
@@ -50,7 +51,7 @@
 .formatting-toolbar__button[aria-pressed='true']:hover {
   background: var(--ds-background-selected);
   color: var(--ds-icon-selected);
-  box-shadow: inset 0 0 0 var(--ds-border-width) var(--ds-border-selected);
+  border-color: var(--ds-border-selected);
 }
 
 .formatting-toolbar__button:disabled {
