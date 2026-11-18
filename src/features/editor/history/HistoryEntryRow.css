@@ -9,8 +9,9 @@
   border-inline-start: 2px solid var(--ds-border);
 }
 
+/* AI entries take the accent rule (prototype .hist .ai), so AI work reads apart from the author's. */
 .history-entry--ai {
-  border-inline-start-color: var(--ds-border-bold);
+  border-inline-start-color: var(--ds-border-information);
 }
 
 .history-entry__body {

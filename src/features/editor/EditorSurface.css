@@ -21,13 +21,23 @@
   border-radius: 0;
   background: transparent;
   color: var(--ds-text);
-  /* Document text is 16px (AGENTS UI/UX); the body token is 14px, so the large body token is used. */
+  /* Document text is 16px (AGENTS UI/UX); the body token is 14px, so the large body token is used.
+     The reading line height (1.75) is set after the shorthand, which would otherwise reset it. */
   font: var(--ds-font-body-large);
+  line-height: 1.75;
   overflow-wrap: anywhere;
 }
 
 .editor-surface .ProseMirror > * + * {
   margin-block-start: var(--ds-space-100);
+}
+
+/* Headings keep clear of the "Improve section" control at the inline end (HeadingActions), so the
+   control never sits over the heading text. The reserved width is two tokens: 80px plus 48px. */
+.editor-surface .ProseMirror h1,
+.editor-surface .ProseMirror h2,
+.editor-surface .ProseMirror h3 {
+  padding-inline-end: calc(var(--ds-space-1000) + var(--ds-space-600));
 }
 
 .editor-surface .ProseMirror h1 {
@@ -47,6 +57,13 @@
 
 .editor-surface .ProseMirror h3 {
   font: var(--ds-font-heading-small);
+}
+
+/* Highlighted text (prototype mark) uses the accent tint, not the browser's yellow. */
+.editor-surface .ProseMirror mark {
+  background-color: var(--ds-background-accent-blue-subtler);
+  color: inherit;
+  border-radius: var(--ds-radius-small);
 }
 
 .editor-surface .ProseMirror ul,
@@ -86,13 +103,10 @@
   inline-size: 100%;
 }
 
-/* The document is a clean page: no box while focused (prototype). Keyboard focus gets a thin,
-   light caret-area outline only (S7). */
-.editor-surface .ProseMirror:focus {
-  outline: none;
-}
-
+/* The document is a clean page (prototype .ph): no outline in any focus state. The caret and the
+   selection show where the author is writing (S7). */
+.editor-surface .ProseMirror,
+.editor-surface .ProseMirror:focus,
 .editor-surface .ProseMirror:focus-visible {
-  outline: var(--ds-border-width) solid var(--ds-border);
-  outline-offset: var(--ds-space-025);
+  outline: none;
 }

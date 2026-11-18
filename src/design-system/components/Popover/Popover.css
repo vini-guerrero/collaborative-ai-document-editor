@@ -14,6 +14,7 @@
   color: var(--ds-text);
   box-shadow: var(--ds-shadow-overlay);
   overflow-wrap: anywhere;
+  overflow-y: auto;
 }
 
 /* Motion (S5): 150ms, transform and opacity only. It starts once the panel is placed, so the

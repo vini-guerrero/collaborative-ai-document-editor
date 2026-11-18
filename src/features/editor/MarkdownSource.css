@@ -1,16 +1,25 @@
-/* Tokens only (S2). The source is document text, so it uses the large body size (at least 16px). */
+/* Tokens only (S2). The source is document text, so it uses the large body size (at least 16px).
+   The subtle fill and border mark it as a code view (prototype .raw). Focus changes the border
+   colour only, with no thick ring, so the page keeps its calm look (S7 still shows focus). */
 .markdown-source {
   box-sizing: border-box;
   inline-size: 100%;
   max-inline-size: 75ch;
   min-block-size: 60dvh;
   margin: 0;
-  padding: var(--ds-space-150);
+  padding: var(--ds-space-200);
   border: var(--ds-border-width) solid var(--ds-border);
-  border-radius: var(--ds-radius-small);
-  background: transparent;
+  border-radius: var(--ds-radius-large);
+  background: var(--ds-background-neutral);
   color: var(--ds-text);
   font: var(--ds-font-body-large);
+  line-height: 1.7;
   overflow-wrap: anywhere;
   resize: vertical;
+}
+
+.markdown-source:focus,
+.markdown-source:focus-visible {
+  outline: none;
+  border-color: var(--ds-border-focused);
 }

@@ -62,7 +62,7 @@
   border-radius: var(--ds-radius-small);
   background: transparent;
   color: var(--ds-text);
-  font: var(--ds-font-body-large);
+  font: var(--ds-font-body);
   font-weight: var(--ds-font-weight-medium);
 }
 
@@ -114,19 +114,26 @@
   text-align: end;
 }
 
-/* The page column: centred, about 46rem (the prototype's 740px), with generous top space. */
+/* The page column: centred at the prototype's 740px, with generous top space (56px) and 80px at the
+   bottom. The 16px side gutter holds at phone width; from md the column gets the 24px side space. */
 .editor-page-main {
   display: flex;
   flex: 1 0 auto;
   flex-direction: column;
   gap: var(--ds-space-100);
   inline-size: 100%;
-  max-inline-size: 46rem;
+  max-inline-size: 46.25rem;
   margin-inline: auto;
   padding-inline: var(--ds-space-200);
-  padding-block: var(--ds-space-600) var(--ds-space-800);
+  padding-block: calc(var(--ds-space-600) + var(--ds-space-100)) var(--ds-space-1000);
   min-inline-size: 0;
   box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .editor-page-main {
+    padding-inline: var(--ds-space-300);
+  }
 }
 
 /* The editing body fills the viewport below the bar (the hidden raw view keeps the same box). */

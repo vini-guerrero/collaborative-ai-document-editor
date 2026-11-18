@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useRef, useState, type JSX } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+import { Select } from '../Select/Select';
 import { Popover, type PopoverProps } from './Popover';
 
 const LABEL = 'Suggestion for this sentence';
@@ -397,6 +398,40 @@ describe('Popover (S5, S7, S9, D17)', () => {
     await user.keyboard('{Escape}');
     await user.click(document.body);
 
+    expect(onClose).not.toHaveBeenCalled();
+  });
+});
+
+// A Select inside a card opens its own popover in a portal; choosing there must not close the card.
+describe('nested popover (D6)', () => {
+  function Nested({ onClose }: { onClose: () => void }): JSX.Element {
+    const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+    return (
+      <>
+        <button ref={setAnchor} type="button">
+          anchor
+        </button>
+        <Popover anchor={anchor} open onClose={onClose} label="Card">
+          <Select
+            label="Tone"
+            value="auto"
+            onChange={vi.fn()}
+            options={[
+              { value: 'auto', label: 'Auto' },
+              { value: 'casual', label: 'Casual' },
+            ]}
+          />
+        </Popover>
+      </>
+    );
+  }
+
+  it('keeps the parent open when an option in the child popover is pressed', async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    render(<Nested onClose={onClose} />);
+    await user.click(await screen.findByRole('button', { name: 'Tone: Auto' }));
+    await user.click(await screen.findByRole('option', { name: 'Casual' }));
     expect(onClose).not.toHaveBeenCalled();
   });
 });

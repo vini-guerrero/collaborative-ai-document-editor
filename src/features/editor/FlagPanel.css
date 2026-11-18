@@ -46,6 +46,7 @@
 .ds-popover:has(> .flag-panel),
 .ds-popover:has(> .suggestion-card) {
   border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-xlarge);
 }
 
 .ds-popover:has(> .flag-panel)::before,

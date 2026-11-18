@@ -50,3 +50,14 @@
     min-block-size: 44px;
   }
 }
+
+/* Prototype .bub input: a soft fill inside the pill, no box around it. */
+.selection-toolbar .ds-text-field__input {
+  border-color: transparent;
+  background: var(--ds-background-neutral);
+}
+
+.selection-toolbar .ds-text-field__input:focus-visible {
+  outline: none;
+  border-color: var(--ds-border-focused);
+}

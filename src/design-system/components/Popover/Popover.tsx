@@ -1,5 +1,14 @@
 import { autoUpdate, computePosition, flip, offset, shift, size } from '@floating-ui/dom';
-import { useEffect, useLayoutEffect, useRef, type JSX, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type JSX,
+  type ReactNode,
+} from 'react';
 import { createPortal } from 'react-dom';
 import './Popover.css';
 
@@ -37,6 +46,10 @@ export interface PopoverProps {
   returnFocusTo?: (() => HTMLElement | null) | undefined;
   children: ReactNode;
 }
+
+// A popover opened from inside another one (a Select in a card) registers its panel here, so a
+// press or Esc in the child does not dismiss the parent.
+const NestedPanels = createContext<Set<HTMLElement> | null>(null);
 
 // S5, S9: 8px is --ds-space-100. CSS custom properties cannot be read during positioning, so the
 // value is repeated here. Keep it in sync with tokens.css.
@@ -127,6 +140,9 @@ export function Popover({
   // Set by an outside press, so focus is not pulled back to the anchor from where the user clicked.
   const keepFocusOnCloseRef = useRef(false);
   const isShown = open && anchor !== null;
+  const parentPanels = useContext(NestedPanels);
+  // The open panels of popovers opened from inside this one.
+  const [childPanels] = useState(() => new Set<HTMLElement>());
 
   useLayoutEffect(() => {
     returnFocusToRef.current = returnFocusTo;
@@ -148,6 +164,17 @@ export function Popover({
     };
   }, [open, anchor]);
 
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!isShown || panel === null || parentPanels === null) {
+      return undefined;
+    }
+    parentPanels.add(panel);
+    return () => {
+      parentPanels.delete(panel);
+    };
+  }, [isShown, parentPanels]);
+
   // Esc and Tab are handled in the capture phase on document. Esc is stopped there because the
   // popover has consumed it: without stopPropagation, the editor and window-level shortcuts would
   // also react to the same keypress. Keyboard closes always return focus, so the flag is reset.
@@ -157,6 +184,9 @@ export function Popover({
     }
     function handleKeyDown(event: KeyboardEvent): void {
       if (event.key === 'Escape') {
+        if (childPanels.size > 0) {
+          return;
+        }
         event.stopPropagation();
         keepFocusOnCloseRef.current = false;
         onClose();
@@ -173,7 +203,12 @@ export function Popover({
       if (!(target instanceof Node)) {
         return;
       }
-      if (panelRef.current?.contains(target) === true || anchor?.contains(target) === true) {
+      const inChild = Array.from(childPanels).some((child) => child.contains(target));
+      if (
+        panelRef.current?.contains(target) === true ||
+        anchor?.contains(target) === true ||
+        inChild
+      ) {
         keepFocusOnCloseRef.current = false;
         return;
       }
@@ -186,7 +221,7 @@ export function Popover({
       document.removeEventListener('keydown', handleKeyDown, true);
       document.removeEventListener('pointerdown', handlePointerDown, true);
     };
-  }, [open, anchor, onClose]);
+  }, [open, anchor, onClose, childPanels]);
 
   // autoUpdate reruns the position on scroll, resize and layout shift; its cleanup removes every
   // listener and observer it added. The cancelled flag drops a result that resolves after close.
@@ -207,8 +242,9 @@ export function Popover({
           shift({ padding: VIEWPORT_PADDING_PX }),
           size({
             padding: VIEWPORT_PADDING_PX,
-            apply({ availableWidth, elements }) {
+            apply({ availableWidth, availableHeight, elements }) {
               elements.floating.style.maxInlineSize = `${String(availableWidth)}px`;
+              elements.floating.style.maxBlockSize = `${String(availableHeight)}px`;
             },
           }),
         ],
@@ -240,8 +276,10 @@ export function Popover({
       tabIndex={role === 'dialog' ? -1 : undefined}
       className="ds-popover"
     >
-      {children}
+      <NestedPanels value={childPanels}>{children}</NestedPanels>
     </div>,
-    document.body,
+    // Inside a modal dialog (the mobile bottom sheet) the page behind is inert, so a popover opened
+    // from there must live in that dialog to be clickable.
+    anchor.closest('dialog') ?? document.body,
   );
 }

@@ -32,6 +32,16 @@
   background: var(--ds-background-neutral-hovered);
 }
 
+/* Items marked "Soon" stay visible (a promise of a later feature) but read as disabled (H2, H3). */
+.slash-menu__item[aria-disabled='true'] {
+  color: var(--ds-text-disabled);
+  cursor: default;
+}
+
+.slash-menu__item[aria-disabled='true'] .slash-menu__hint {
+  color: var(--ds-text-disabled);
+}
+
 .slash-menu__icon {
   display: grid;
   flex: none;
