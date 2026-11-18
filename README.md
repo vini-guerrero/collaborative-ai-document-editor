@@ -5,11 +5,12 @@ A Markdown editor in the browser with an AI co-author. The AI flags passages and
 ## Features
 
 - **Home:** list, create, open and delete documents (grid or list).
-- **Editor:** Markdown in a rich editor, with a raw Markdown view. Autosave and version history with restore.
+- **Editor:** Markdown in a rich editor with a formatting toolbar (undo, redo, headings, bold, italic, strikethrough, code, lists, quote, code block) and a raw Markdown view. Autosave and version history with restore. A footer shows the last edit, the revision count and the save status, with a standard or wide layout, History and the theme switch.
+- **Export:** download the document as a `.md` file from the button beside the title.
 - **Ambient mode:** the AI underlines passages (clarity, tone, grammar, questions to the author) after you pause typing. **On Demand mode:** you invoke it on a selection, a section, or with `/`.
 - **Suggestions:** an anchored card with a live word diff. Accept, Dismiss or Refine (tone, length, free instruction).
 - **Restructure:** move, split or merge sections, with the same preview-then-accept flow.
-- **Theme:** light and dark, following the system or set with the toggle.
+- **Theme:** light and dark, following the system or set with the toggle. The brand colour is Atlassian purple, derived from the ADS purple scale, with AAA text contrast on filled and text colours.
 
 Documents and history are stored in the browser (localStorage). No account, no database.
 
@@ -89,8 +90,7 @@ pnpm format       # apply Prettier
 - Add browser-level tests (Playwright) for the flows that jsdom cannot cover well, such as selection, focus and popovers.
 - Add sync and accounts, then move storage off localStorage: real data models for documents and history in a database, a migrations setup, and a persistence layer behind the existing storage interface.
 - Add more slash actions, including ones focused on code blocks (explain, fix, add comments).
-- Export and download a document as a Markdown file.
 - Add richer structured logging on the server, with the same redaction rules.
 - Add a settings screen to tweak AI options, such as the model per task and the idle pause.
-- Add better formatting controls in the editor (bold, italic, lists, links, code) beyond the selection bar.
+- Add links and horizontal rules to the formatting toolbar, which needs a small URL input.
 - Let the user pick the restructure operation (move, split, merge) in the slash menu.

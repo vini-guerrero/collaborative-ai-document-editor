@@ -12,6 +12,9 @@ The look comes from ADS design tokens (color, spacing, typography, radius, eleva
 **S2. Tokens first.**
 All color, spacing, typography, radius, elevation and motion values come from the vendored ADS design tokens (S1), exposed as CSS variables. No hard-coded hex or pixel values in feature code. Product-specific values (flag underline, diff insert/delete, restructure accent bar) are defined once as semantic aliases of ADS tokens in `src/design-system/tokens.css`, for example `--ai-flag-underline` and `--ai-diff-insert-bg`.
 
+**S2a. Brand colour and type scale.** *(Added 2026-11-18.)*
+The brand is Atlassian purple. `src/design-system/brand.css` overrides only the ADS brand, selected, focus and link tokens for both themes, using steps of the ADS purple scale (Color Anatomy roles: bold, subtlest, text, icon, border, link). Filled brand pairs meet AAA (white on `#673286` in light, the dark surface on `#D8A0F7` in dark); secondary text uses the subtle tokens at 7:1. Semantic colours (danger, warning, success, information) stay as ADS defines them. AI flag and suggestion underlines use the brand colour; flag kinds differ by line style. `src/design-system/typography.css` defines the type roles (page title, section, subsection, label, overline, body, secondary) over the ADS typography tokens, so size, weight and line height always move together.
+
 **S3. Theming: light and dark from day one through tokens.**
 ADS theming switches the token set; no component carries its own theme logic. Light is the default (matching the mockup); dark is a token swap with no per-component work.
 
@@ -22,7 +25,9 @@ ADS theming switches the token set; no component carries its own theme logic. Li
 |---|---|
 | Navbar, left menu, disabled items (H2, H3) | ADS primitives + menu/navigation components |
 | Buttons (New document, Accept, Dismiss, Refine) | ADS Button |
-| Grid / List toggle (H4), Raw Markdown toggle (D15) | ADS toggle / button group |
+| Grid / List toggle (H4) | ADS toggle / button group |
+| Either-or mode toggles: view (Visual or Markdown, D15), AI mode (Ambient or On Demand, D1), layout width | One icon button each; the icon shows the mode a press switches to, the tooltip names both |
+| Formatting toolbar | One ARIA toolbar of icon buttons with a roving tab stop |
 | Document card and list row (H4) | Custom, ADS primitives + tokens |
 | Empty state (H6) | ADS Empty state |
 | Delete confirmation (H5) | ADS Modal dialog |
@@ -77,6 +82,8 @@ Enforcement:
 ```
 src/design-system/
 ├── tokens.css          # ADS token import + product semantic aliases + breakpoints (S2, S9)
+├── brand.css           # Atlassian purple overrides of the ADS brand tokens (S2a)
+├── typography.css      # type roles over the ADS typography tokens (S2a)
 ├── theme.ts            # light/dark switch (S3)
 ├── responsive/         # useBreakpoint hook, bottom-sheet, drawer (S9)
 ├── components/         # wrappers over ADS (S4), each with index.ts, types.ts, test
@@ -88,7 +95,6 @@ scripts/check-licenses.*  # permissive-license allowlist, run by pnpm check (S8)
 ## Open questions (not blocking until the first UI work)
 
 - Final flag-type visual language: color plus underline style per type (D3), to be drawn on the editor mockup.
-- Whether ADS typography replaces the system font stack used in the prototype.
 - Wordmark and app name; "WebApp" remains the placeholder (H1).
 
 ## Phase 2
