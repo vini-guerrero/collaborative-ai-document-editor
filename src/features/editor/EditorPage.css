@@ -124,7 +124,7 @@
   max-inline-size: 46.25rem;
   margin-inline: auto;
   padding-inline: var(--ds-space-200);
-  padding-block: calc(var(--ds-space-600) + var(--ds-space-100)) var(--ds-space-1000);
+  padding-block: calc(var(--ds-space-600) + var(--ds-space-100)) var(--ds-space-800);
   min-inline-size: 0;
   box-sizing: border-box;
 }
