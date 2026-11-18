@@ -79,3 +79,11 @@
   font: var(--ds-font-body-small);
   font-family: var(--ds-font-family-code);
 }
+
+.suggestion-card__loading {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  color: var(--ds-text-subtle);
+  font: var(--ds-font-body-small);
+}

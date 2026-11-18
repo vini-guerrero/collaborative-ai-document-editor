@@ -19,7 +19,12 @@ export interface SuggestionOutcomeProps {
 export function SuggestionOutcome({ request }: SuggestionOutcomeProps): JSX.Element {
   switch (request.kind) {
     case 'loading':
-      return <Spinner label="Writing a suggestion" />;
+      return (
+        <div className="suggestion-card__loading">
+          <Spinner label="Writing a suggestion" />
+          <span aria-hidden="true">Writing a suggestion…</span>
+        </div>
+      );
     case 'ready':
       return <p className="suggestion-card__note">The change is shown in the text.</p>;
     case 'empty':

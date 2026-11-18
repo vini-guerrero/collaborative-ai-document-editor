@@ -80,6 +80,12 @@
    right. 768px mirrors BREAKPOINTS.md (S9). */
 @media (min-width: 768px) {
   .editor-top-bar__title {
+    flex: 0 1 10rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .editor-top-bar__title {
     flex: 0 1 15rem;
   }
 }
@@ -108,7 +114,10 @@
   .editor-top-bar__toggles {
     margin-inline-start: auto;
   }
+}
 
+/* The reserved widths need room: below lg they would push the status chip onto its own row. */
+@media (min-width: 1024px) {
   .editor-top-bar__flags {
     min-inline-size: 7.5rem;
   }
