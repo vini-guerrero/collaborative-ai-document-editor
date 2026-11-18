@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from '@/App';
 import { AiServicesProvider } from '@/app/AiServicesProvider';
-import { watchColorScheme } from '@/design-system';
+import { ThemeProvider, createThemeController } from '@/design-system';
 import { createLocalStorageStore, DocumentStoreProvider } from '@/features/documents';
 import './design-system/tokens.css';
 
@@ -17,16 +17,22 @@ function getRootElement(): HTMLElement {
   return element;
 }
 
-watchColorScheme(document.documentElement, window.matchMedia(DARK_SCHEME_QUERY));
+const theme = createThemeController(
+  document.documentElement,
+  window.matchMedia(DARK_SCHEME_QUERY),
+  window.localStorage,
+);
 
 const store = createLocalStorageStore({ storage: window.localStorage });
 
 createRoot(getRootElement()).render(
   <StrictMode>
-    <DocumentStoreProvider store={store}>
-      <AiServicesProvider>
-        <App />
-      </AiServicesProvider>
-    </DocumentStoreProvider>
+    <ThemeProvider controller={theme}>
+      <DocumentStoreProvider store={store}>
+        <AiServicesProvider>
+          <App />
+        </AiServicesProvider>
+      </DocumentStoreProvider>
+    </ThemeProvider>
   </StrictMode>,
 );

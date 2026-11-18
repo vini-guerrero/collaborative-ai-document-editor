@@ -8,18 +8,19 @@
   min-block-size: 60dvh;
   margin: 0;
   padding: var(--ds-space-200);
-  border: var(--ds-border-width) solid var(--ds-border);
+  border: 0;
   border-radius: var(--ds-radius-large);
   background: var(--ds-background-neutral);
   color: var(--ds-text);
   font: var(--ds-font-body-large);
+  font-family: var(--ds-font-family-code);
   line-height: 1.7;
   overflow-wrap: anywhere;
-  resize: vertical;
+  resize: none;
 }
 
 .markdown-source:focus,
 .markdown-source:focus-visible {
   outline: none;
-  border-color: var(--ds-border-focused);
+  background: var(--ds-background-neutral-hovered);
 }

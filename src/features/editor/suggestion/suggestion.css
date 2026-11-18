@@ -87,3 +87,8 @@
   color: var(--ds-text-subtle);
   font: var(--ds-font-body-small);
 }
+
+/* Prototype .btn: the card's secondary action keeps a visible edge, like a button, not bare text. */
+.suggestion-card__actions .ds-button--subtle {
+  border-color: var(--ds-border);
+}

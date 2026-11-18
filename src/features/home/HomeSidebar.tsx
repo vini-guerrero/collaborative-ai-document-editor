@@ -43,9 +43,9 @@ export function HomeSidebar({ onNewDocument }: HomeSidebarProps): JSX.Element {
   return (
     <div className="home-sidebar">
       <div className="home-sidebar__new">
-        <Button variant="primary" onClick={startNewDocument}>
+        <Button variant="primary" aria-label="New document" onClick={startNewDocument}>
           <Icon name="plus" />
-          New document
+          <span className="home-sidebar__label">New document</span>
         </Button>
       </div>
       <NavItem icon="file-text" label="Documents" href="/" current onClick={goHome} />

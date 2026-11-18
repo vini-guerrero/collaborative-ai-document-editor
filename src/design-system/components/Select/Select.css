@@ -4,11 +4,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--ds-space-050);
+  gap: var(--ds-space-100);
   min-block-size: 32px;
-  padding-inline: var(--ds-space-150) var(--ds-space-100);
+  padding-inline: var(--ds-space-150);
   border: var(--ds-border-width) solid var(--ds-border-input);
-  border-radius: var(--ds-radius-small);
+  border-radius: var(--ds-radius-large);
   background: var(--ds-background-input);
   color: var(--ds-text);
   font: var(--ds-font-body);

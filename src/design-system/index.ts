@@ -23,6 +23,7 @@ export {
   iconLinkClassName,
   Spinner,
   TextField,
+  ThemeSwitcher,
   ToggleGroup,
   VisuallyHidden,
   useShell,
@@ -53,4 +54,16 @@ export {
   type ToggleGroupProps,
   type VisuallyHiddenProps,
 } from './components';
+export {
+  THEME_PREFERENCES,
+  THEME_STORAGE_KEY,
+  createThemeController,
+  parseThemePreference,
+  resolveColorMode,
+  type ThemeController,
+  type ThemePreference,
+  type ThemeStorage,
+} from './themePreference';
+export { ThemeProvider, type ThemeProviderProps } from './ThemeProvider';
+export { useThemePreference } from './useThemePreference';
 export { BREAKPOINTS, useBreakpoint, type Breakpoint, type ViewportBreakpoint } from './responsive';

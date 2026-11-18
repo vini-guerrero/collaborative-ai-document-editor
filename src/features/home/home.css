@@ -77,6 +77,9 @@
 }
 
 .home-navbar__user {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
   flex: 0 0 auto;
   margin-inline-start: auto;
 }
@@ -147,4 +150,13 @@
   inline-size: 100%;
   min-block-size: var(--ds-space-500);
   padding-inline: var(--ds-space-200);
+}
+
+/* In the narrow rail only the plus shows, as the navigation entries do. */
+.ds-app-shell--rail .home-sidebar__label {
+  display: none;
+}
+
+.ds-app-shell--rail .home-sidebar__new .ds-button {
+  padding-inline: 0;
 }

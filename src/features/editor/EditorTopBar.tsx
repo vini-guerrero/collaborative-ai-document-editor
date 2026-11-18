@@ -1,6 +1,6 @@
 import type { JSX, ReactNode } from 'react';
 import { Link } from 'react-router';
-import { Button, Icon, iconLinkClassName, useBreakpoint } from '@/design-system';
+import { Button, Icon, ThemeSwitcher, iconLinkClassName, useBreakpoint } from '@/design-system';
 import { AiModeToggle } from './AiModeToggle';
 import { EditorOverflowMenu } from './EditorOverflowMenu';
 import type { AiMode, ViewMode } from './editorModes';
@@ -74,6 +74,7 @@ export function EditorTopBar({
       </div>
       <div className="editor-top-bar__flags">{flagControl ?? null}</div>
       <div className="editor-top-bar__ai">{aiStatus ?? null}</div>
+      <ThemeSwitcher />
       <p role="status" className="editor-top-bar__status">
         {message}
       </p>

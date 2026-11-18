@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 import { Link } from 'react-router';
-import { Avatar, Icon, TextField } from '@/design-system';
+import { Avatar, Icon, TextField, ThemeSwitcher } from '@/design-system';
 
 const PRODUCT_NAME = 'WebApp';
 // The mark shows the first letter of the product name, so the two never drift apart.
@@ -35,6 +35,7 @@ export function HomeNavbar(): JSX.Element {
         </div>
       </div>
       <div className="home-navbar__user">
+        <ThemeSwitcher />
         <Avatar name="You" />
       </div>
     </div>
