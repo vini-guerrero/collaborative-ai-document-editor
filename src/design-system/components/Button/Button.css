@@ -17,6 +17,20 @@
   color: var(--ds-text-inverse);
 }
 
+.ds-button--secondary {
+  border-color: var(--ds-border-input);
+  background: var(--ds-background-neutral);
+  color: var(--ds-text);
+}
+
+.ds-button--secondary:not(:disabled):hover {
+  background: var(--ds-background-neutral-hovered);
+}
+
+.ds-button--secondary:not(:disabled):active {
+  background: var(--ds-background-neutral-pressed);
+}
+
 .ds-button--subtle {
   background: transparent;
   color: var(--ds-text);

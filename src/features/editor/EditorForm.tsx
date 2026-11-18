@@ -8,6 +8,7 @@ import { EditorOverlays } from './EditorOverlays';
 import { EditorSurface } from './EditorSurface';
 import { EditorTopBar } from './EditorTopBar';
 import { NextFlagButton } from './NextFlagButton';
+import { FormattingToolbar } from './toolbar/FormattingToolbar';
 import type { ViewMode } from './editorModes';
 import { MarkdownSource } from './MarkdownSource';
 import { serializeMarkdown } from './markdown/markdown';
@@ -184,6 +185,9 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
               scheduleBody(text);
             }}
           />
+        ) : null}
+        {mountedEditor !== null && viewMode === 'visual' ? (
+          <FormattingToolbar editor={mountedEditor} />
         ) : null}
         <div hidden={viewMode === 'markdown'} className="editor-page-body">
           <EditorSurface

@@ -1,0 +1,66 @@
+/* S2, S9: a quiet bar above the text. Groups are separated by a divider; a pressed button takes
+   the brand tint, a brand ring and a filled look, so state is not carried by colour alone (S7). */
+.formatting-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-space-100);
+  padding: var(--ds-space-050);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-xlarge);
+  background: var(--ds-surface-raised);
+  /* Leaves room for the selection bubble above the first line, so it never covers this bar. */
+  margin-block-end: var(--ds-space-600);
+}
+
+.formatting-toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-025);
+}
+
+.formatting-toolbar__group + .formatting-toolbar__group {
+  padding-inline-start: var(--ds-space-100);
+  border-inline-start: var(--ds-border-width) solid var(--ds-border);
+}
+
+.formatting-toolbar__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ds-radius-large);
+  background: transparent;
+  color: var(--ds-icon);
+  cursor: pointer;
+}
+
+.formatting-toolbar__button:not(:disabled):hover {
+  background: var(--ds-background-neutral-hovered);
+}
+
+.formatting-toolbar__button:not(:disabled):active {
+  background: var(--ds-background-neutral-pressed);
+}
+
+.formatting-toolbar__button[aria-pressed='true'],
+.formatting-toolbar__button[aria-pressed='true']:hover {
+  background: var(--ds-background-selected);
+  color: var(--ds-icon-selected);
+  box-shadow: inset 0 0 0 var(--ds-border-width) var(--ds-border-selected);
+}
+
+.formatting-toolbar__button:disabled {
+  color: var(--ds-text-disabled);
+  cursor: not-allowed;
+}
+
+@media (pointer: coarse) {
+  .formatting-toolbar__button {
+    inline-size: 44px;
+    block-size: 44px;
+  }
+}

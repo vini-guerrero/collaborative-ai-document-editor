@@ -4,7 +4,7 @@ import {
   type JSX,
   type KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
-import { Button, TextField } from '@/design-system';
+import { Button, Icon, TextField } from '@/design-system';
 import { keepEditorSelection } from './keepSelection';
 import { toolbarPosition, type Box } from './toolbarPosition';
 import './SelectionToolbar.css';
@@ -65,9 +65,18 @@ export function SelectionToolbar({
       onKeyDown={handleKeyDown}
       onMouseDown={keepEditorSelection}
     >
-      <Button onClick={onRewrite}>Rewrite</Button>
-      <Button onClick={onFixTone}>Fix Tone</Button>
-      <Button onClick={onShorten}>Shorten</Button>
+      <span className="selection-toolbar__mark">
+        <Icon name="sparkles" />
+      </span>
+      <Button variant="secondary" onClick={onRewrite}>
+        Rewrite
+      </Button>
+      <Button variant="secondary" onClick={onFixTone}>
+        Fix Tone
+      </Button>
+      <Button variant="secondary" onClick={onShorten}>
+        Shorten
+      </Button>
       <span className="selection-toolbar__divider" aria-hidden="true" />
       <form className="selection-toolbar__form" onSubmit={handleSubmit}>
         <div className="selection-toolbar__field">
@@ -81,7 +90,7 @@ export function SelectionToolbar({
             }}
           />
         </div>
-        <Button type="submit" disabled={trimmed.length === 0}>
+        <Button variant="primary" type="submit" disabled={trimmed.length === 0}>
           Apply
         </Button>
       </form>

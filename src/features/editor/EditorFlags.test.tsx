@@ -74,7 +74,7 @@ describe('flags in the editor', () => {
     const holder = renderEditorPage(fetchImpl);
     const editor = await readyEditor(holder);
 
-    await user.click(await screen.findByRole('button', { name: 'On Demand' }));
+    await user.click(await screen.findByRole('button', { name: 'Switch to On Demand' }));
     insertParagraph(editor, PARAGRAPH);
     await advancePastPause();
 
@@ -89,7 +89,7 @@ describe('flags in the editor', () => {
     const holder = renderEditorPage(fetchImpl);
     const editor = await readyEditor(holder);
 
-    await user.click(await screen.findByRole('button', { name: 'Markdown' }));
+    await user.click(await screen.findByRole('button', { name: 'Switch to Markdown' }));
     insertParagraph(editor, PARAGRAPH);
     await advancePastPause();
 

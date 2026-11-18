@@ -7,6 +7,7 @@
 
 .ProseMirror .suggestion-insert {
   text-decoration-line: underline;
+  text-decoration-color: var(--ai-flag-underline);
   background-color: var(--ai-diff-insert-bg);
 }
 

@@ -6,7 +6,7 @@
   z-index: var(--app-z-drawer);
   display: flex;
   align-items: center;
-  gap: var(--ds-space-025);
+  gap: var(--ds-space-050);
   box-sizing: border-box;
   inline-size: 560px;
   max-inline-size: calc(100vw - 2 * var(--ds-space-200));
@@ -17,6 +17,16 @@
   color: var(--ds-text);
   box-shadow: var(--ds-shadow-overlay);
   font: var(--ds-font-body);
+}
+
+.selection-toolbar__mark {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  color: var(--ds-icon-brand);
 }
 
 .selection-toolbar__divider {
@@ -43,10 +53,7 @@
 /* The bubble's buttons are all one height, so labels, field and Apply line up on one baseline. */
 .selection-toolbar .ds-button {
   min-block-size: 32px;
-  padding-inline: var(--ds-space-100);
-  border-radius: var(--ds-radius-large);
-  font: var(--ds-font-body);
-  font-weight: var(--ds-font-weight-medium);
+  padding-inline: var(--ds-space-150);
   white-space: nowrap;
 }
 

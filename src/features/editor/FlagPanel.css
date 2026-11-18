@@ -19,8 +19,8 @@
   margin: 0;
   padding: var(--ds-space-025) var(--ds-space-100);
   border-radius: var(--ds-radius-full);
-  background: var(--ds-background-accent-blue-subtler);
-  color: var(--ds-text-accent-blue-bolder);
+  background: var(--ds-background-accent-purple-subtler);
+  color: var(--ds-text-accent-purple-bolder);
   font: var(--ds-font-body-small);
   font-weight: var(--ds-font-weight-medium);
   white-space: nowrap;

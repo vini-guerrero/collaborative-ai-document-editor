@@ -1,5 +1,6 @@
 import type { JSX } from 'react';
 import { Icon, type IconName } from '../../icons';
+import { Tooltip } from '../Tooltip/Tooltip';
 import { VisuallyHidden } from '../VisuallyHidden/VisuallyHidden';
 import './ToggleGroup.css';
 
@@ -31,7 +32,7 @@ export function ToggleGroup({
     <div role="group" aria-label={label} className="ds-toggle-group">
       {options.map((option) => {
         const selected = option.value === value;
-        return (
+        const button = (
           <button
             key={option.value}
             type="button"
@@ -48,6 +49,14 @@ export function ToggleGroup({
             {option.icon !== undefined ? <Icon name={option.icon} /> : null}
             {iconOnly ? <VisuallyHidden>{option.label}</VisuallyHidden> : option.label}
           </button>
+        );
+        // An icon alone is not enough for sighted users, so the label shows as a tooltip (S7).
+        return iconOnly ? (
+          <Tooltip key={option.value} content={option.label}>
+            {button}
+          </Tooltip>
+        ) : (
+          button
         );
       })}
     </div>

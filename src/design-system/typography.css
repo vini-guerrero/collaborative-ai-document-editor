@@ -1,0 +1,63 @@
+/*
+ * Type scale (S2, S3). One ADS token per role, so size, weight and line height always travel
+ * together. Pick the role, not a size:
+ *   page title   heading-xlarge   28/32  the one h1 of a screen
+ *   section      heading-medium   20/24  h2, a group on a screen
+ *   subsection   heading-small    16/20  h3, a card or panel title
+ *   label        heading-xsmall   14/20  h4, form labels and control captions
+ *   overline     heading-xxsmall  12/16  h5/h6, small group names
+ *   body         body             14/20  UI text; documents use body-large 16/24
+ *   secondary    body-small       12/16  hints, meta, timestamps (subtle colour)
+ * Secondary text uses --ds-text-subtle (7:1 on the surface, AAA); the dimmer subtlest colour is
+ * for large or non-essential text only.
+ */
+:root {
+  --app-type-page-title: var(--ds-font-heading-xlarge);
+  --app-type-section: var(--ds-font-heading-medium);
+  --app-type-subsection: var(--ds-font-heading-small);
+  --app-type-label: var(--ds-font-heading-xsmall);
+  --app-type-overline: var(--ds-font-heading-xxsmall);
+  --app-type-body: var(--ds-font-body);
+  --app-type-body-large: var(--ds-font-body-large);
+  --app-type-secondary: var(--ds-font-body-small);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  color: var(--ds-text);
+}
+
+h1 {
+  font: var(--app-type-page-title);
+}
+
+h2 {
+  font: var(--app-type-section);
+}
+
+h3 {
+  font: var(--app-type-subsection);
+}
+
+h4 {
+  font: var(--app-type-label);
+}
+
+h5,
+h6 {
+  font: var(--app-type-overline);
+}
+
+small {
+  font: var(--app-type-secondary);
+  color: var(--ds-text-subtle);
+}
+
+label {
+  font: var(--app-type-label);
+}

@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, JSX } from 'react';
 import './Button.css';
 
-export type ButtonVariant = 'primary' | 'subtle' | 'danger';
+export type ButtonVariant = 'primary' | 'secondary' | 'subtle' | 'danger';
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
   variant?: ButtonVariant;

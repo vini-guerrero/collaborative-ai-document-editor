@@ -11,7 +11,7 @@
   inset-inline-start: calc(var(--ds-space-100) * -1);
   inline-size: var(--ds-space-050);
   border-radius: var(--ds-space-025);
-  background-color: var(--ds-border-accent-blue);
+  background-color: var(--ds-border-accent-purple);
 }
 
 .ProseMirror .restructure-ghost {

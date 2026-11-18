@@ -41,7 +41,7 @@
 }
 
 .editor-surface .ProseMirror h1 {
-  font: var(--ds-font-heading-large);
+  font: var(--app-type-page-title);
 }
 
 /* The document's first block reads as its title (prototype h1.dt): large, bold, tight tracking. */
@@ -52,16 +52,31 @@
 }
 
 .editor-surface .ProseMirror h2 {
-  font: var(--ds-font-heading-medium);
+  font: var(--app-type-section);
 }
 
 .editor-surface .ProseMirror h3 {
-  font: var(--ds-font-heading-small);
+  font: var(--app-type-subsection);
+}
+
+/* Headings open a section: more space above than below, so each one groups the text after it. */
+.editor-surface .ProseMirror > h1:not(:first-child),
+.editor-surface .ProseMirror > h2,
+.editor-surface .ProseMirror > h3 {
+  margin-block-start: var(--ds-space-300);
+  margin-block-end: var(--ds-space-050);
+}
+
+.editor-surface .ProseMirror blockquote {
+  margin-inline: 0;
+  padding-inline-start: var(--ds-space-200);
+  border-inline-start: var(--ds-space-050) solid var(--ds-border-brand);
+  color: var(--ds-text-subtle);
 }
 
 /* Highlighted text (prototype mark) uses the accent tint, not the browser's yellow. */
 .editor-surface .ProseMirror mark {
-  background-color: var(--ds-background-accent-blue-subtler);
+  background-color: var(--ds-background-accent-purple-subtler);
   color: inherit;
   border-radius: var(--ds-radius-small);
 }
@@ -113,7 +128,7 @@
 
 /* A selection stays readable in both themes: an accent tint with the normal text colour. */
 .editor-surface .ProseMirror ::selection {
-  background: var(--ds-background-accent-blue-subtler);
+  background: var(--ds-background-accent-purple-subtler);
   color: var(--ds-text);
 }
 

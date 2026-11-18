@@ -1,25 +1,22 @@
 import type { JSX } from 'react';
-import { ToggleGroup } from '@/design-system';
-import { AI_MODE_OPTIONS, toAiMode, type AiMode } from './editorModes';
+import { ModeToggle } from './ModeToggle';
+import type { AiMode } from './editorModes';
 
 export interface AiModeToggleProps {
   value: AiMode;
   onChange: (mode: AiMode) => void;
 }
 
-// D1: Ambient or On Demand. Only the state is set here; the AI behavior arrives in later phases.
+// D1: Ambient analyzes while the author writes; On Demand waits to be asked.
 export function AiModeToggle({ value, onChange }: AiModeToggleProps): JSX.Element {
   return (
-    <ToggleGroup
-      label="AI mode"
+    <ModeToggle
       value={value}
-      options={AI_MODE_OPTIONS}
-      onChange={(next) => {
-        const mode = toAiMode(next);
-        if (mode !== undefined) {
-          onChange(mode);
-        }
-      }}
+      options={[
+        { value: 'ambient', label: 'Ambient', icon: 'bot-check' },
+        { value: 'on-demand', label: 'On Demand', icon: 'bot-off' },
+      ]}
+      onChange={onChange}
     />
   );
 }

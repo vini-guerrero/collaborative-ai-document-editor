@@ -1,0 +1,65 @@
+/*
+ * Brand palette (S1, S2). The brand is Atlassian purple, built with the ADS Color Anatomy roles:
+ * bold (filled actions and selected state), subtlest/subtler (tinted surfaces), text, icon,
+ * border and link. The steps come from the ADS purple scale in the vendored tokens. Brand-bold
+ * pairs are picked for AAA text contrast (7:1): white on #673286 is 8.8:1 in light mode, the
+ * dark surface color on #D8A0F7 is 8.1:1 in dark mode. Neutral, danger, warning, success and
+ * information tokens are left as ADS defines them. Loaded after the vendored files so these win.
+ */
+html[data-color-mode='light'][data-theme~='light:light'] {
+  --ds-background-brand-subtlest: #f8eefe;
+  --ds-background-brand-subtlest-hovered: #eed7fc;
+  --ds-background-brand-subtlest-pressed: #e3bdfa;
+  --ds-background-brand-bold: #673286;
+  --ds-background-brand-bold-hovered: #48245d;
+  --ds-background-brand-bold-pressed: #35243f;
+  --ds-background-brand-boldest: #35243f;
+  --ds-background-brand-boldest-hovered: #48245d;
+  --ds-background-brand-boldest-pressed: #673286;
+  --ds-background-selected: #f8eefe;
+  --ds-background-selected-hovered: #eed7fc;
+  --ds-background-selected-pressed: #e3bdfa;
+  --ds-background-selected-bold: #673286;
+  --ds-background-selected-bold-hovered: #48245d;
+  --ds-background-selected-bold-pressed: #35243f;
+  --ds-border-brand: #803fa5;
+  --ds-border-selected: #803fa5;
+  --ds-border-focused: #964ac0;
+  --ds-text-brand: #673286;
+  --ds-text-selected: #673286;
+  --ds-icon-brand: #673286;
+  --ds-icon-selected: #673286;
+  --ds-link: #673286;
+  --ds-link-pressed: #48245d;
+  --ds-text-subtlest: #54565d;
+  --ds-icon-subtlest: #54565d;
+}
+
+html[data-color-mode='dark'][data-theme~='dark:dark'] {
+  --ds-background-brand-subtlest: #35243f;
+  --ds-background-brand-subtlest-hovered: #48245d;
+  --ds-background-brand-subtlest-pressed: #673286;
+  --ds-background-brand-bold: #d8a0f7;
+  --ds-background-brand-bold-hovered: #e3bdfa;
+  --ds-background-brand-bold-pressed: #eed7fc;
+  --ds-background-brand-boldest: #f8eefe;
+  --ds-background-brand-boldest-hovered: #eed7fc;
+  --ds-background-brand-boldest-pressed: #e3bdfa;
+  --ds-background-selected: #35243f;
+  --ds-background-selected-hovered: #48245d;
+  --ds-background-selected-pressed: #673286;
+  --ds-background-selected-bold: #d8a0f7;
+  --ds-background-selected-bold-hovered: #e3bdfa;
+  --ds-background-selected-bold-pressed: #eed7fc;
+  --ds-border-brand: #c97cf4;
+  --ds-border-selected: #c97cf4;
+  --ds-border-focused: #c97cf4;
+  --ds-text-brand: #d8a0f7;
+  --ds-text-selected: #d8a0f7;
+  --ds-icon-brand: #d8a0f7;
+  --ds-icon-selected: #d8a0f7;
+  --ds-link: #d8a0f7;
+  --ds-link-pressed: #e3bdfa;
+  --ds-text-subtlest: #b0b3b8;
+  --ds-icon-subtlest: #b0b3b8;
+}

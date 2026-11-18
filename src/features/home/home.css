@@ -107,7 +107,7 @@
 
 .home-page__title {
   margin: 0;
-  font: var(--ds-font-heading-small);
+  font: var(--app-type-section);
   color: var(--ds-text);
 }
 

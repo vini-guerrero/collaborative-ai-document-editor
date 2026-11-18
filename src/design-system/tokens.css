@@ -5,6 +5,9 @@
 @import './vendor/ads-tokens/atlassian-typography.css';
 @import './vendor/ads-tokens/atlassian-shape.css';
 @import './vendor/ads-tokens/atlassian-motion.css';
+/* Product brand: Atlassian purple, derived from the ADS purple scale. Overrides brand tokens only. */
+@import './brand.css';
+@import './typography.css';
 
 /* Product semantic aliases (S2). Feature code uses these or --ds-* tokens, never raw values. */
 :root {
@@ -17,7 +20,7 @@
   --app-focus-ring: var(--ds-border-focused);
 
   /* AI co-author surfaces (D5, D6, D9). */
-  --ai-flag-underline: var(--ds-border-warning);
+  --ai-flag-underline: var(--ds-border-brand);
   --ai-diff-insert-bg: var(--ds-background-accent-green-subtlest);
   --ai-diff-delete-bg: var(--ds-background-accent-red-subtlest);
 

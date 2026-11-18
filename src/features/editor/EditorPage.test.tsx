@@ -412,13 +412,13 @@ describe('EditorPage', () => {
     const { holder } = renderEditor(store);
     const editor = await readyEditor(holder);
 
-    await user.click(screen.getByRole('button', { name: 'Markdown' }));
+    await user.click(screen.getByRole('button', { name: 'Switch to Markdown' }));
     const source = await screen.findByRole('textbox', { name: 'Markdown source' });
     expect(valueOf(source)).toBe('Hello');
     expect(screen.queryByRole('textbox', { name: 'Document' })).toBeNull();
 
     await user.type(source, ' edited');
-    await user.click(screen.getByRole('button', { name: 'Visual' }));
+    await user.click(screen.getByRole('button', { name: 'Switch to Visual' }));
 
     await waitFor(() => {
       expect(editor.getMarkdown()).toBe('Hello edited');
@@ -434,22 +434,21 @@ describe('EditorPage', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderEditor(createFakeStore());
 
-    const ambient = await screen.findByRole('button', { name: 'Ambient' });
-    const onDemand = screen.getByRole('button', { name: 'On Demand' });
-    expect(ambient.getAttribute('aria-pressed')).toBe('true');
-    expect(onDemand.getAttribute('aria-pressed')).toBe('false');
+    // The icon button names the mode a press switches to; the other name appears after it.
+    const toOnDemand = await screen.findByRole('button', { name: 'Switch to On Demand' });
+    expect(screen.queryByRole('button', { name: 'Switch to Ambient' })).toBeNull();
 
-    await user.click(onDemand);
+    await user.click(toOnDemand);
 
-    expect(ambient.getAttribute('aria-pressed')).toBe('false');
-    expect(onDemand.getAttribute('aria-pressed')).toBe('true');
+    expect(await screen.findByRole('button', { name: 'Switch to Ambient' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Switch to On Demand' })).toBeNull();
   });
 
   // S9: from md the view toggle and History are inline; below md they move into More actions.
   it('keeps History inline from md and has no overflow menu there (S9, D7)', async () => {
     renderEditor(createFakeStore());
 
-    expect(await screen.findByRole('button', { name: 'Markdown' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Switch to Markdown' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'History' }).hasAttribute('disabled')).toBe(false);
     expect(screen.queryByRole('button', { name: 'More actions' })).toBeNull();
   });
@@ -460,7 +459,7 @@ describe('EditorPage', () => {
     renderEditor(createFakeStore());
 
     await user.click(await screen.findByRole('button', { name: 'More actions' }));
-    expect(screen.queryByRole('button', { name: 'Markdown' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Switch to Markdown' })).toBeNull();
     const history = screen.getByRole('menuitem', { name: 'History' });
     expect(history.getAttribute('aria-disabled')).not.toBe('true');
 

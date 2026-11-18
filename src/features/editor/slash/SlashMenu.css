@@ -50,7 +50,7 @@
   block-size: 30px;
   border: var(--ds-border-width) solid var(--ds-border);
   border-radius: var(--ds-radius-small);
-  color: var(--ds-text-accent-blue);
+  color: var(--ds-text-accent-purple);
 }
 
 .slash-menu__text {
