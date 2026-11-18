@@ -87,5 +87,10 @@ pnpm format       # apply Prettier
 
 - Run the AI against a real provider contract test in CI instead of fakes only.
 - Add browser-level tests (Playwright) for the flows that jsdom cannot cover well, such as selection, focus and popovers.
-- Add sync and accounts, then move storage off localStorage.
+- Add sync and accounts, then move storage off localStorage: real data models for documents and history in a database, a migrations setup, and a persistence layer behind the existing storage interface.
+- Add more slash actions, including ones focused on code blocks (explain, fix, add comments).
+- Export and download a document as a Markdown file.
+- Add richer structured logging on the server, with the same redaction rules.
+- Add a settings screen to tweak AI options, such as the model per task and the idle pause.
+- Add better formatting controls in the editor (bold, italic, lists, links, code) beyond the selection bar.
 - Let the user pick the restructure operation (move, split, merge) in the slash menu.
