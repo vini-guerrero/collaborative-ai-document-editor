@@ -9,6 +9,8 @@ import { setFlagsMeta } from './flags/flagsPlugin';
 
 // Applies one paragraph's flags to the paragraph whose text still has this hash (T10). The text is
 // looked up by hash, not by id, because inserting a paragraph above renumbers the ids.
+// DEBT: with two identical paragraphs only the first gets flags; applying to both would leave a
+// flag that Dismiss does not clear. Revisit with a per-paragraph flag identity.
 function showParagraphFlags(editor: Editor, hash: string, flags: readonly Flag[]): void {
   const paragraph = paragraphsOf(editor.state.doc).find((entry) => hashOfText(entry.text) === hash);
   if (paragraph === undefined) {

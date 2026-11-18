@@ -260,6 +260,11 @@ describe('flags in the editor', () => {
       });
       editor.view.focus();
     });
+    // A call for leaving a paragraph is sent at once, so a short wait is enough to see it. It stays
+    // well under the idle pause, which would send the edited paragraph for its own reason.
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1_000);
+    });
 
     expect(fetchImpl).not.toHaveBeenCalled();
   });

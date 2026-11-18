@@ -6,17 +6,14 @@ import type { HistoryEntry, StoredDocument } from '@/features/documents';
 import { useDocumentTitle } from '@/lib/useDocumentTitle';
 import { EditorFooter } from './EditorFooter';
 import { EditorOverlays } from './EditorOverlays';
-import { markdownFilename, downloadMarkdown } from './exportMarkdown';
 import { EditorSurface } from './EditorSurface';
 import { EditorTopBar } from './EditorTopBar';
 import { NextFlagButton } from './NextFlagButton';
 import { FormattingToolbar } from './toolbar/FormattingToolbar';
-import type { ViewMode } from './editorModes';
 import { MarkdownSource } from './MarkdownSource';
-import { serializeMarkdown } from './markdown/markdown';
-import { applyMarkdownSource } from './applyMarkdownSource';
 import { useRestructureFlow } from './restructure/useRestructureFlow';
 import { rewriteActionsFor } from './suggestion/rewriteActions';
+import { useMarkdownView } from './useMarkdownView';
 import { useWideLayout } from './useWideLayout';
 import { useRewriteSession } from './suggestion/useRewriteSession';
 import type { SlashItem } from './slash/slashItems';
@@ -72,9 +69,12 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
   } = persistence;
   const [title, setTitle] = useState(initial?.title ?? '');
   useDocumentTitle(title.trim() === '' ? DEFAULT_TITLE : title);
-  const [viewMode, setViewMode] = useState<ViewMode>('visual');
-  // The raw Markdown being edited while the Markdown view is shown (D15).
-  const [source, setSource] = useState('');
+  const { viewMode, source, setSource, changeViewMode, exportMarkdown } = useMarkdownView({
+    editorRef,
+    latestRef,
+    scheduleBody,
+    title,
+  });
   // The editor handle, once mounted, for the controls outside the surface (D17).
   const [mountedEditor, setMountedEditor] = useState<Editor | null>(null);
   // The flag whose popover is open, by id (D17).
@@ -113,38 +113,11 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
     onReady?.(ready);
   };
 
-  // D15: entering the raw view copies the document's Markdown; leaving it parses the text back.
-  const changeViewMode = (next: ViewMode): void => {
-    const editor = editorRef.current;
-    if (editor === null || next === viewMode) {
-      return;
-    }
-    if (next === 'markdown') {
-      setSource(serializeMarkdown(editor));
-    } else {
-      const body = applyMarkdownSource(editor, source);
-      if (body !== latestRef.current.body) {
-        scheduleBody(body);
-      }
-    }
-    setViewMode(next);
-  };
-
   // D7: closes the timeline once the entry is restored.
   const restoreVersion = (entryId: string): void => {
     if (restoreFromHistory(entryId)) {
       setHistoryOpen(false);
     }
-  };
-
-  // Exports what is on screen: the raw text in the Markdown view, otherwise the editor's Markdown.
-  const exportMarkdown = (): void => {
-    const editor = editorRef.current;
-    if (editor === null) {
-      return;
-    }
-    const body = viewMode === 'markdown' ? source : serializeMarkdown(editor);
-    downloadMarkdown(markdownFilename(title), body);
   };
 
   const titleField = (
