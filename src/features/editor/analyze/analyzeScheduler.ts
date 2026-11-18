@@ -143,7 +143,11 @@ export const createAnalyzeScheduler = (deps: AnalyzeSchedulerDeps): AnalyzeSched
       failures = 0;
       cooldownEnds_ms = 0;
       cache.set(hash, result.value.flags);
-      emitIfLive(hash, result.value.flags);
+      // A call that was already in flight is let finish, but its flags are not shown once analysis
+      // is paused (On Demand or the raw view, D1, D15); the cache keeps them for later.
+      if (!isPaused()) {
+        emitIfLive(hash, result.value.flags);
+      }
       return;
     }
     // Out of credit is handled by the status, which pauses analysis (D14).
@@ -161,7 +165,8 @@ export const createAnalyzeScheduler = (deps: AnalyzeSchedulerDeps): AnalyzeSched
   };
 
   // The next queued paragraph to send, or undefined. Held-back work is dropped, and its text stays
-  // edited, so only a later trigger sends it (no automatic retry, D14).
+  // edited. One wake slot exists, so the latest held paragraph is retried when the cooldown ends and the
+  // others wait for a new trigger (bounded by MAX_AUTO_RETRIES, D14).
   const nextToSend = (): ParagraphContext | undefined => {
     for (let next = queue.shift(); next !== undefined; next = queue.shift()) {
       if (disposed || isPaused() || isHidden()) {

@@ -3,9 +3,9 @@ import {
   MAX_HEADING_CHARS,
   MAX_SECTION_CHARS,
   MAX_SECTIONS,
+  type RestructureAction,
   type Section as RequestSection,
 } from '@shared/schemas';
-import type { RestructureAction } from '@shared/schemas/restructure';
 import { bodyBlocksOf, docSections } from './docSections';
 import type { Section } from './sections';
 

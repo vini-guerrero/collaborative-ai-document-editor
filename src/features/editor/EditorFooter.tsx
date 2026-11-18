@@ -24,6 +24,8 @@ const COUNT_FORMAT = new Intl.NumberFormat();
 // history holds (D7) on the left; the layout width, History and the theme on the right. The save
 // status sits beside them as the page's one live region. Below md History lives in the top
 // bar's More actions menu, so it is not repeated here (S9).
+// DEBT: "Last edited" is computed from the time at render, so it only refreshes on a save or other
+// re-render, not on a clock. Revisit with a minute-interval tick if it reads stale.
 export function EditorFooter({
   info,
   now,

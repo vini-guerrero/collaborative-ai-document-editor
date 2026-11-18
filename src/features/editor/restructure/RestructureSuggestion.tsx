@@ -1,6 +1,6 @@
 import { useId, type JSX } from 'react';
 import { Button, Icon, VisuallyHidden } from '@/design-system';
-import type { RestructureOperation } from '@shared/schemas/restructure';
+import type { RestructureOperation } from '@shared/schemas';
 import { describeOperation } from './describeOperation';
 import type { Section } from './sections';
 import './restructure.css';

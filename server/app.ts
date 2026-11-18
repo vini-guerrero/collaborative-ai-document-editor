@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import type { ErrorBody, ServerInfo } from '@shared/schemas';
+import { ServerInfoSchema, type ErrorBody, type ServerInfo } from '@shared/schemas';
 import type { AiService } from './ai/service';
 import type { Config } from './config';
 import { createAiRoute } from './routes/ai';
@@ -30,7 +30,7 @@ export const createApp = (deps: AppDeps): Hono => {
         restructure: deps.config.MODEL_RESTRUCTURE,
       },
     };
-    return c.json(info);
+    return c.json(ServerInfoSchema.parse(info));
   });
 
   app.route(

@@ -43,15 +43,25 @@ export function FormattingToolbar({ editor }: FormattingToolbarProps): JSX.Eleme
     equalityFn: (a, b) => b !== null && sameState(a, b),
   });
 
+  // A disabled button cannot take focus, so the tab stop moves to the first enabled control while
+  // the remembered one is disabled (Undo is disabled on a fresh document).
+  const tabStop = enabled[focusIndex] === true ? focusIndex : enabled.indexOf(true);
+
   const handleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>): void => {
     const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
     if (step === undefined) {
       return;
     }
     event.preventDefault();
-    const next = (focusIndex + step + CONTROL_COUNT) % CONTROL_COUNT;
-    setFocusIndex(next);
-    event.currentTarget.querySelectorAll<HTMLElement>('button')[next]?.focus();
+    let next = tabStop;
+    for (let tried = 0; tried < CONTROL_COUNT; tried += 1) {
+      next = (next + step + CONTROL_COUNT) % CONTROL_COUNT;
+      if (enabled[next] === true) {
+        setFocusIndex(next);
+        event.currentTarget.querySelectorAll<HTMLElement>('button')[next]?.focus();
+        return;
+      }
+    }
   };
 
   return (
@@ -76,7 +86,7 @@ export function FormattingToolbar({ editor }: FormattingToolbarProps): JSX.Eleme
                   aria-label={control.label}
                   aria-pressed={pressed}
                   disabled={enabled[position] !== true}
-                  tabIndex={position === focusIndex ? 0 : -1}
+                  tabIndex={position === tabStop ? 0 : -1}
                   className="formatting-toolbar__button"
                   onFocus={() => {
                     setFocusIndex(position);

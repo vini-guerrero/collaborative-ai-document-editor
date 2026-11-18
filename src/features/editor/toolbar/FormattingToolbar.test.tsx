@@ -42,17 +42,21 @@ describe('formatting toolbar', () => {
     });
   });
 
-  it('moves between controls with the arrow keys', async () => {
+  it('has one Tab stop on an enabled control and moves with the arrow keys', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     await readyEditor(renderEditorPage(fetchImpl));
-    const undo = await screen.findByRole('button', { name: 'Undo' });
-    const redo = screen.getByRole('button', { name: 'Redo' });
-    expect(undo.getAttribute('tabindex')).toBe('0');
-    expect(redo.getAttribute('tabindex')).toBe('-1');
-    // Undo and Redo are disabled on a fresh document, so focus the first enabled control instead.
-    const bold = screen.getByRole('button', { name: 'Bold' });
-    bold.focus();
+    await screen.findByRole('toolbar', { name: 'Formatting' });
+    // Undo and Redo are disabled on a fresh document, so the stop is the first enabled control.
+    expect(screen.getByRole('button', { name: 'Undo' }).hasAttribute('disabled')).toBe(true);
+    const stop = screen.getByRole('button', { name: 'Heading 1' });
+    expect(stop.getAttribute('tabindex')).toBe('0');
+    expect(screen.getByRole('button', { name: 'Bold' }).getAttribute('tabindex')).toBe('-1');
+
+    stop.focus();
     await user.keyboard('{ArrowRight}');
-    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Italic' }));
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Heading 2' }));
+    await user.keyboard('{ArrowLeft}{ArrowLeft}');
+    // Left of Heading 1 wraps past the disabled Undo and Redo to the last control.
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Code Block' }));
   });
 });

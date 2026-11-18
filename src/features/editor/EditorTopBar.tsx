@@ -29,8 +29,7 @@ export interface EditorTopBarProps {
   flagControl?: ReactNode;
 }
 
-// H5, D1, D15, H7, S9: the back arrow, the title, the AI status, the view and AI mode toggles, and the save
-// status. Below md the view toggle and History move into the overflow menu. The AI status and the
+// H5, D1, D15, H7, S9: the back arrow, the title, the AI status, the view and AI mode toggles. Below md the view toggle and History move into the overflow menu. The AI status and the
 // flag control have reserved widths, so their appearing or changing does not move the toggles.
 export function EditorTopBar({
   title,

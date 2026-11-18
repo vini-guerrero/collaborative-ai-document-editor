@@ -16,7 +16,7 @@ A flagged phrase gets a dotted underline. Hover shows a one-line reason and a "V
 Clarity/wordiness, tone consistency, grammar/typos, and **questions to the author** (the AI asks for missing facts instead of inventing them; the author answers, then gets a rewrite). Flags are cheap; the replacement text is generated only on click.
 
 **D4. Analysis runs when a paragraph is finished.**
-Triggered on leaving a paragraph or a ~3s pause. One paragraph per call, with heading and neighbors as context. Cached by content hash, capped flags per paragraph, never fires mid-typing.
+Triggered on leaving an edited paragraph or after an idle pause (amended 2026-11-18: 5 s by default, set with `VITE_AI_IDLE_PAUSE_SECONDS`, 1-60). One paragraph per call, with heading and neighbors as context. Cached by content hash, capped flags per paragraph, never fires mid-typing.
 
 **D5. Suggestion = anchored card + live inline preview.**
 Grammarly-style card on the phrase (type, reason, Accept / Dismiss / Refine). While open, the text shows word-level tracked changes in place. Nothing is written until Accept. Same card for On demand mode.
