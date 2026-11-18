@@ -40,11 +40,12 @@
 }
 
 .formatting-toolbar__button:not(:disabled):hover {
-  background: var(--ds-background-neutral-hovered);
+  background: var(--ds-background-brand-subtlest);
+  color: var(--ds-icon-brand);
 }
 
 .formatting-toolbar__button:not(:disabled):active {
-  background: var(--ds-background-neutral-pressed);
+  background: var(--ds-background-brand-subtlest-pressed);
 }
 
 .formatting-toolbar__button[aria-pressed='true'],

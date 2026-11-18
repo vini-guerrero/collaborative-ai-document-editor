@@ -71,15 +71,13 @@
    right. 768px mirrors BREAKPOINTS.md (S9). */
 @media (min-width: 768px) {
   .editor-top-bar__title {
-    flex: 1 1 10rem;
-    max-inline-size: 24rem;
+    flex: 0 1 10rem;
   }
 }
 
 @media (min-width: 1024px) {
   .editor-top-bar__title {
-    flex: 1 1 15rem;
-    max-inline-size: 28rem;
+    flex: 0 1 15rem;
   }
 }
 
@@ -104,7 +102,7 @@
 /* From md the controls sit at the right edge and keep reserved widths, so they can come and go
    without moving what sits beside them. Below md they wrap flush left, as one tidy block. */
 @media (min-width: 768px) {
-  .editor-top-bar__toggles {
+  .editor-top-bar__flags {
     margin-inline-start: auto;
   }
 }

@@ -44,7 +44,8 @@
 
 .doc-card__preview {
   block-size: calc(var(--ds-space-100) * 18);
-  padding: var(--ds-space-150) var(--ds-space-200);
+  /* The inline end keeps clear of the delete button (32px plus its 8px inset, then a gap). */
+  padding: var(--ds-space-150) var(--ds-space-600) var(--ds-space-150) var(--ds-space-200);
   overflow: hidden;
   overflow-wrap: anywhere;
   border-block-end: var(--ds-border-width) solid var(--ds-border);

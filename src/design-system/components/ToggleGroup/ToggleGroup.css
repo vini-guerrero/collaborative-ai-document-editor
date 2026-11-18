@@ -25,12 +25,12 @@
 }
 
 .ds-toggle-group__button:hover {
-  background: var(--ds-background-neutral-hovered);
-  color: var(--ds-text);
+  background: var(--ds-background-brand-subtlest);
+  color: var(--ds-text-brand);
 }
 
 .ds-toggle-group__button:active {
-  background: var(--ds-background-neutral-pressed);
+  background: var(--ds-background-brand-subtlest-pressed);
 }
 
 /* Selected takes the brand tint, a brand ring and semibold text, never colour alone (S7). */
