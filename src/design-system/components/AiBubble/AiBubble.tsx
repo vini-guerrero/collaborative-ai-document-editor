@@ -1,6 +1,9 @@
 import type { JSX } from 'react';
 import { Icon } from '../../icons';
+import { Tooltip } from '../Tooltip/Tooltip';
 import './AiBubble.css';
+
+const LOADING_LABEL = 'AI Is Analyzing This Paragraph';
 
 export type AiBubbleProps =
   | {
@@ -21,33 +24,36 @@ export type AiBubbleProps =
 export function AiBubble(props: AiBubbleProps): JSX.Element {
   if (props.state === 'loading') {
     return (
-      <span
-        role="status"
-        aria-label="AI Is Analyzing This Paragraph"
-        className="ds-ai-bubble ds-ai-bubble--loading"
-      >
-        <span className="ds-ai-bubble__ring" aria-hidden="true" />
-        <Icon name="sparkles" size={14} />
-      </span>
+      <Tooltip content={LOADING_LABEL}>
+        <span
+          role="status"
+          aria-label={LOADING_LABEL}
+          className="ds-ai-bubble ds-ai-bubble--loading"
+        >
+          <span className="ds-ai-bubble__ring" aria-hidden="true" />
+          <Icon name="sparkles" size={14} />
+        </span>
+      </Tooltip>
     );
   }
   const { count, onOpen } = props;
   const label = `Show AI Suggestions (${String(count)})`;
   return (
-    <button
-      type="button"
-      aria-label={label}
-      title={label}
-      className="ds-ai-bubble ds-ai-bubble--ready"
-      onClick={onOpen}
-    >
-      <span className="ds-ai-bubble__pulse" aria-hidden="true" />
-      <Icon name="sparkles" size={14} />
-      {count > 1 ? (
-        <span className="ds-ai-bubble__count" aria-hidden="true">
-          {count}
-        </span>
-      ) : null}
-    </button>
+    <Tooltip content={label}>
+      <button
+        type="button"
+        aria-label={label}
+        className="ds-ai-bubble ds-ai-bubble--ready"
+        onClick={onOpen}
+      >
+        <span className="ds-ai-bubble__pulse" aria-hidden="true" />
+        <Icon name="sparkles" size={14} />
+        {count > 1 ? (
+          <span className="ds-ai-bubble__count" aria-hidden="true">
+            {count}
+          </span>
+        ) : null}
+      </button>
+    </Tooltip>
   );
 }

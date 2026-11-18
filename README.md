@@ -110,4 +110,5 @@ pnpm format       # apply Prettier
 - Add a settings screen to tweak AI options, such as the model per task and the idle pause.
 - Add links and horizontal rules to the formatting toolbar, which needs a small URL input.
 - Use the software development lifecycle more fully: issues for each task, a branch per change, pull requests with review and CI checks before merging to `main`, versioned releases with tags and a changelog.
+- Add CI/CD automation: a pipeline on every pull request that runs `pnpm check`, builds both apps and scans dependencies and code for vulnerabilities (`pnpm audit`, secret and static analysis), either as repository workflows or as AI hooks that run the same gate before each commit.
 - Let the user pick the restructure operation (move, split, merge) in the slash menu.

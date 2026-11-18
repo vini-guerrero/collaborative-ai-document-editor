@@ -24,4 +24,11 @@ describe('AiBubble (S5)', () => {
     rerender(<AiBubble state="ready" count={3} onOpen={() => undefined} />);
     expect(screen.getByText('3')).toBeTruthy();
   });
+
+  it('gives both states a tooltip', () => {
+    const { rerender } = render(<AiBubble state="loading" />);
+    expect(screen.getByRole('tooltip').textContent).toBe('AI Is Analyzing This Paragraph');
+    rerender(<AiBubble state="ready" count={2} onOpen={() => undefined} />);
+    expect(screen.getByRole('tooltip').textContent).toBe('Show AI Suggestions (2)');
+  });
 });

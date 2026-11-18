@@ -75,6 +75,15 @@ describe('NavItem (S7, H2, H3)', () => {
     expect(screen.getByRole('link', { name: 'Documents' })).not.toBeNull();
   });
 
+  it('shows the label as a tooltip when collapsed, and none when expanded', () => {
+    const { rerender } = render(
+      <NavItem icon="file-text" label="Documents" href="/documents" collapsed />,
+    );
+    expect(screen.getByRole('tooltip').textContent).toBe('Documents');
+    rerender(<NavItem icon="file-text" label="Documents" href="/documents" collapsed={false} />);
+    expect(screen.queryByRole('tooltip')).toBeNull();
+  });
+
   it('keeps Soon out of the visible label but in the name of a collapsed disabled item', () => {
     render(<NavItem icon="users" label="Team" disabled soon collapsed />);
 

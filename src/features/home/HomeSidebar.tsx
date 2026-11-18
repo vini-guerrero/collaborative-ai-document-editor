@@ -1,6 +1,6 @@
 import type { JSX, MouseEvent } from 'react';
 import { useNavigate } from 'react-router';
-import { Button, Icon, NavItem, useShell } from '@/design-system';
+import { Button, Icon, NavItem, Tooltip, useShell } from '@/design-system';
 
 export interface HomeSidebarProps {
   onNewDocument: () => void;
@@ -40,13 +40,23 @@ export function HomeSidebar({ onNewDocument }: HomeSidebarProps): JSX.Element {
     void navigate('/');
   }
 
+  const newButton = (
+    <Button variant="primary" aria-label="New Document" onClick={startNewDocument}>
+      <Icon name="plus" />
+      <span className="home-sidebar__label">New Document</span>
+    </Button>
+  );
+
   return (
     <div className="home-sidebar">
       <div className="home-sidebar__new">
-        <Button variant="primary" aria-label="New Document" onClick={startNewDocument}>
-          <Icon name="plus" />
-          <span className="home-sidebar__label">New Document</span>
-        </Button>
+        {shell.collapsed ? (
+          <Tooltip content="New Document" align="start" fill>
+            {newButton}
+          </Tooltip>
+        ) : (
+          newButton
+        )}
       </div>
       <NavItem icon="file-text" label="Documents" href="/" current onClick={goHome} />
       <NavItem icon="pin" label="Pinned" disabled soon />

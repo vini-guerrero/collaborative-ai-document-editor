@@ -86,8 +86,19 @@ export function NavItem({
     shell.closeDrawer();
   }
 
+  // The icon rail hides the label, so the hint shows it on hover and focus (S7).
+  function withRailHint(item: JSX.Element): JSX.Element {
+    return isCollapsed ? (
+      <Tooltip content={label} align="start" fill>
+        {item}
+      </Tooltip>
+    ) : (
+      item
+    );
+  }
+
   if (href !== undefined) {
-    return (
+    return withRailHint(
       <a
         href={href}
         className={className}
@@ -95,13 +106,13 @@ export function NavItem({
         onClick={activate}
       >
         {body}
-      </a>
+      </a>,
     );
   }
 
-  return (
+  return withRailHint(
     <button type="button" className={className} onClick={activate}>
       {body}
-    </button>
+    </button>,
   );
 }
