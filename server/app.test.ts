@@ -138,6 +138,21 @@ describe('createApp', () => {
     expect(body).toEqual({ status: 'ok' });
   });
 
+  it('lists the configured model names and nothing else (T4, T7)', async () => {
+    const { app } = buildApp();
+    const response = await app.request('/api/info');
+    const body: unknown = await readBody(response);
+
+    expect(response.status).toBe(200);
+    expect(body).toEqual({
+      models: {
+        analyze: config.MODEL_ANALYZE,
+        rewrite: config.MODEL_REWRITE,
+        restructure: config.MODEL_RESTRUCTURE,
+      },
+    });
+  });
+
   it('returns a JSON 404 for a route that does not exist (T4)', async () => {
     const { app } = buildApp();
     const response = await app.request('/api/unknown');

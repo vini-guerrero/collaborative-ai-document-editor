@@ -30,7 +30,7 @@ describe('StatusIndicator (D14, S7)', () => {
   it('shows "AI ready" with an icon when idle', () => {
     const { container } = renderIndicator();
 
-    expect(screen.getAllByText('AI ready').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('AI Ready').length).toBeGreaterThan(0);
     expect(container.querySelector('svg')).not.toBeNull();
   });
 
@@ -41,7 +41,7 @@ describe('StatusIndicator (D14, S7)', () => {
       store.begin();
     });
 
-    expect(screen.getAllByText('AI is working').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('AI Is Working').length).toBeGreaterThan(0);
     expect(container.querySelector('.ds-spinner')).not.toBeNull();
   });
 
@@ -50,7 +50,7 @@ describe('StatusIndicator (D14, S7)', () => {
 
     settle(UNAVAILABLE);
 
-    expect(screen.getAllByText('AI unavailable. Retry later').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('AI Unavailable. Retry Later').length).toBeGreaterThan(0);
     expect(container.querySelector('svg')).not.toBeNull();
   });
 
@@ -60,7 +60,7 @@ describe('StatusIndicator (D14, S7)', () => {
     settle(OUT_OF_CREDIT);
     settle({ ok: true });
 
-    expect(screen.getAllByText('AI is out of credit').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('AI Is Out of Credit').length).toBeGreaterThan(0);
     expect(container.querySelector('svg')).not.toBeNull();
   });
 
@@ -68,6 +68,6 @@ describe('StatusIndicator (D14, S7)', () => {
     renderIndicator();
 
     const status = screen.getByRole('status');
-    expect(status.textContent).toBe('AI ready');
+    expect(status.textContent).toBe('AI Ready');
   });
 });

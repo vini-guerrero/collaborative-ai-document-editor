@@ -1,6 +1,7 @@
 import type { JSX } from 'react';
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useDocumentTitle } from '@/lib/useDocumentTitle';
 import { AppShell, Button, EmptyState, Spinner } from '@/design-system';
 import type { DocumentSummary } from '@/features/documents';
 import { DeleteDocumentDialog } from './DeleteDocumentDialog';
@@ -72,6 +73,7 @@ function renderDocuments(state: DocumentListState, options: DocumentsPanelOption
 // H1-H4, H6: the app's first screen. Every read state is rendered; none blanks the page (D14).
 export function HomePage({ newId = createDocumentId, now }: HomePageProps): JSX.Element {
   const navigate = useNavigate();
+  useDocumentTitle('Documents');
   const { state, retry, reload } = useDocuments();
   const [view, setView] = useState<DocumentView>('grid');
   // Read once when the page mounts: relative times stay stable across re-renders (purity). They do

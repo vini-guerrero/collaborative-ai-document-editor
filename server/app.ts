@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import type { ErrorBody } from '@shared/schemas';
+import type { ErrorBody, ServerInfo } from '@shared/schemas';
 import type { AiService } from './ai/service';
 import type { Config } from './config';
 import { createAiRoute } from './routes/ai';
@@ -20,6 +20,18 @@ export const createApp = (deps: AppDeps): Hono => {
   const app = new Hono();
 
   app.get('/api/health', (c) => c.json({ status: 'ok' }));
+
+  // Which models answer each task. Names only, never the key (T4).
+  app.get('/api/info', (c) => {
+    const info: ServerInfo = {
+      models: {
+        analyze: deps.config.MODEL_ANALYZE,
+        rewrite: deps.config.MODEL_REWRITE,
+        restructure: deps.config.MODEL_RESTRUCTURE,
+      },
+    };
+    return c.json(info);
+  });
 
   app.route(
     '/',

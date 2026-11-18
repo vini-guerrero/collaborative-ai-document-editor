@@ -3,6 +3,7 @@ import type { Editor } from '@tiptap/react';
 import { TextField, VisuallyHidden } from '@/design-system';
 import { StatusIndicator } from '@/features/ai';
 import type { HistoryEntry, StoredDocument } from '@/features/documents';
+import { useDocumentTitle } from '@/lib/useDocumentTitle';
 import { EditorOverlays } from './EditorOverlays';
 import { EditorSurface } from './EditorSurface';
 import { EditorTopBar } from './EditorTopBar';
@@ -65,6 +66,7 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
     historyRef,
   } = persistence;
   const [title, setTitle] = useState(initial?.title ?? '');
+  useDocumentTitle(title.trim() === '' ? DEFAULT_TITLE : title);
   const [viewMode, setViewMode] = useState<ViewMode>('visual');
   // The raw Markdown being edited while the Markdown view is shown (D15).
   const [source, setSource] = useState('');

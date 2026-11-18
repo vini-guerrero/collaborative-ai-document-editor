@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { TOOLBAR_HEIGHT_PX, TOOLBAR_WIDTH_PX, toolbarPosition, type Box } from './toolbarPosition';
 
 // D9, S9: placement above the selection, kept inside the visible area above the keyboard.
-// Wide enough for a 440px toolbar with the 16px gutter on both sides.
-const SCREEN: Box = { top: 0, left: 0, width: 520, height: 800 };
+// Wide enough for a 560px toolbar with the 16px gutter on both sides.
+const SCREEN: Box = { top: 0, left: 0, width: 640, height: 800 };
 const SELECTION: Box = { top: 300, left: 150, width: 120, height: 20 };
 const GAP = 8;
 const PAD = 16;

@@ -8,7 +8,7 @@
   align-items: center;
   gap: var(--ds-space-025);
   box-sizing: border-box;
-  inline-size: 440px;
+  inline-size: 560px;
   max-inline-size: calc(100vw - 2 * var(--ds-space-200));
   padding: var(--ds-space-050);
   border: var(--ds-border-width) solid var(--ds-border);
@@ -36,7 +36,7 @@
 }
 
 .selection-toolbar__field {
-  flex: 1 1 96px;
+  flex: 1 1 220px;
   min-inline-size: 0;
 }
 

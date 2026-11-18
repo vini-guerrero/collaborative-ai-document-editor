@@ -214,13 +214,13 @@ describe('flags in the editor', () => {
     insertParagraph(editor, PARAGRAPH);
     await advancePastPause();
 
-    expect(await screen.findAllByText('AI is working')).not.toHaveLength(0);
+    expect(await screen.findAllByText('AI Is Working')).not.toHaveLength(0);
 
     act(() => {
       pending.release([FLAG]);
     });
     await waitFor(() => {
-      expect(screen.getAllByText('AI ready').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('AI Ready').length).toBeGreaterThan(0);
     });
     expect(document.querySelector('.flag')).not.toBeNull();
   });

@@ -18,7 +18,8 @@
   background: var(--ds-background-neutral-bold);
   color: var(--ds-text-inverse);
   font: var(--ds-font-body-small);
-  white-space: nowrap;
+  white-space: pre-line;
+  min-inline-size: max-content;
   pointer-events: none;
   visibility: hidden;
   opacity: 0;
