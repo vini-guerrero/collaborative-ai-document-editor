@@ -131,6 +131,13 @@ Checkpoints (a milestone, or the end of a parallel set): one full `pnpm check`, 
 
 Escalate instead of guessing: a builder that hits an ambiguity, a contract change or a rule conflict stops and reports to the orchestrator.
 
+## Agent reuse (cache-friendly)
+
+- **One long-lived builder per area** (editor, server, design system), continued with `SendMessage` instead of a new spawn. A resumed agent keeps its read files and the prompt cache; a cold start pays them again.
+- **Batch related phases into one brief** for the same builder when they touch the same area, instead of one agent per phase. Spawn a new agent only for a new area or when the old context is stale or too large.
+- **One Opus reviewer per checkpoint**, resumed for later checkpoints. Brief it with the commit range, not file lists.
+- Keep briefs short and point to files; check the usage report after each checkpoint and cut what re-reads the same files.
+
 ## Handoffs: cold starts and token efficiency
 
 Side agents start with **no memory of the conversation**. Every handoff carries exactly what they need and nothing more.
