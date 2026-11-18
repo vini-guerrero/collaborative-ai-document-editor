@@ -21,6 +21,8 @@ export interface EditorTopBarProps {
   title?: ReactNode;
   // Absent while the document is loading or cannot be opened.
   view?: EditorViewControls | undefined;
+  // The Export control, shown right after the title; absent while the document is loading.
+  exportControl?: ReactNode;
   // The AI status indicator (D14); absent while the document is loading.
   aiStatus?: ReactNode;
   // The Next Flag control (D17); the caller shows it only while a flag exists.
@@ -32,6 +34,7 @@ export interface EditorTopBarProps {
 // flag control have reserved widths, so their appearing or changing does not move the toggles.
 export function EditorTopBar({
   title,
+  exportControl,
   view,
   aiStatus,
   flagControl,
@@ -56,6 +59,7 @@ export function EditorTopBar({
         </div>
       ) : null}
       {title === undefined ? null : <div className="editor-top-bar__title">{title}</div>}
+      {exportControl ?? null}
       <div className="editor-top-bar__flags">{flagControl ?? null}</div>
       <div className="editor-top-bar__ai">{aiStatus ?? null}</div>
       <div className="editor-top-bar__toggles">

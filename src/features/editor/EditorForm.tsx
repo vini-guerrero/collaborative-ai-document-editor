@@ -1,11 +1,12 @@
 import { useRef, useState, type JSX } from 'react';
 import type { Editor } from '@tiptap/react';
-import { TextField, VisuallyHidden } from '@/design-system';
+import { IconButton, TextField, VisuallyHidden } from '@/design-system';
 import { StatusIndicator } from '@/features/ai';
 import type { HistoryEntry, StoredDocument } from '@/features/documents';
 import { useDocumentTitle } from '@/lib/useDocumentTitle';
 import { EditorFooter } from './EditorFooter';
 import { EditorOverlays } from './EditorOverlays';
+import { markdownFilename, downloadMarkdown } from './exportMarkdown';
 import { EditorSurface } from './EditorSurface';
 import { EditorTopBar } from './EditorTopBar';
 import { NextFlagButton } from './NextFlagButton';
@@ -136,6 +137,16 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
     }
   };
 
+  // Exports what is on screen: the raw text in the Markdown view, otherwise the editor's Markdown.
+  const exportMarkdown = (): void => {
+    const editor = editorRef.current;
+    if (editor === null) {
+      return;
+    }
+    const body = viewMode === 'markdown' ? source : serializeMarkdown(editor);
+    downloadMarkdown(markdownFilename(title), body);
+  };
+
   const titleField = (
     <TextField
       label="Document title"
@@ -155,6 +166,18 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
     <div className="editor-page">
       <EditorTopBar
         title={titleField}
+        exportControl={
+          mountedEditor === null ? null : (
+            <IconButton
+              icon="download"
+              label="Export Markdown"
+              tooltip="Export Markdown"
+              tooltipAlign="start"
+              variant="secondary"
+              onClick={exportMarkdown}
+            />
+          )
+        }
         aiStatus={<StatusIndicator />}
         flagControl={
           mountedEditor === null ? null : (
