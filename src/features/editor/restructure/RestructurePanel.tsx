@@ -1,5 +1,5 @@
 import type { JSX } from 'react';
-import { Button, Spinner } from '@/design-system';
+import { Button, Icon, Spinner } from '@/design-system';
 import { RestructureSuggestion } from './RestructureSuggestion';
 import type { RestructureFailure, RestructureFlow } from './useRestructureFlow';
 
@@ -47,7 +47,10 @@ export function RestructurePanel({ flow }: RestructurePanelProps): JSX.Element |
     <section className="restructure-panel" aria-label="Restructure">
       <p className="restructure-panel__note">Your text is unchanged.</p>
       <p className="restructure-panel__note">{FAILURE_TEXT[state.reason]}</p>
-      <Button onClick={flow.dismiss}>Dismiss</Button>
+      <Button onClick={flow.dismiss}>
+        <Icon name="x" size={16} />
+        Dismiss
+      </Button>
     </section>
   );
 }

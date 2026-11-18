@@ -1,4 +1,4 @@
-import { useRef, type RefObject } from 'react';
+import { useRef, useState, type RefObject } from 'react';
 import type { Editor } from '@tiptap/react';
 import {
   restoreEntry,
@@ -42,6 +42,14 @@ export interface DocumentPersistence {
   readonly restoreFromHistory: (entryId: string) => boolean;
   // The history the next save writes, read when the timeline opens.
   readonly historyRef: RefObject<HistoryEntry[]>;
+  // What the footer shows: the last save and how many revisions the history holds.
+  readonly info: DocumentInfo;
+}
+
+export interface DocumentInfo {
+  // Null for a new document that has not been saved yet.
+  readonly savedAt: number | null;
+  readonly revisions: number;
 }
 
 // Saving, the "You" checkpoints (D7) and the version history for one document. The editor is
@@ -58,6 +66,10 @@ export function useDocumentPersistence({
   const persistedRef = useRef<StoredDocument | null>(initial);
   const latestRef = useRef<EditorDraft>({ title: initialTitle, body: initialBody });
   const historyRef = useRef<HistoryEntry[]>([...(initial?.history ?? [])]);
+  const [info, setInfo] = useState<DocumentInfo>({
+    savedAt: initial?.updatedAt ?? null,
+    revisions: initial?.history.length ?? 0,
+  });
 
   const persist = async (draft: EditorDraft): Promise<Result<void, StoreError>> => {
     const stamp = now();
@@ -91,6 +103,7 @@ export function useDocumentPersistence({
     }
     if (result.ok) {
       persistedRef.current = { ...doc, history: [...historyRef.current] };
+      setInfo({ savedAt: stamp, revisions: historyRef.current.length });
     }
     return result;
   };
@@ -145,5 +158,6 @@ export function useDocumentPersistence({
     recordAiAccept,
     restoreFromHistory,
     historyRef,
+    info,
   };
 }

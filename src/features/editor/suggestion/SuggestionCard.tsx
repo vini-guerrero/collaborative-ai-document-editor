@@ -1,5 +1,5 @@
 import { useEffect, useRef, type JSX } from 'react';
-import { Button } from '@/design-system';
+import { Button, Icon } from '@/design-system';
 import { RefineControls, type RefineControlsProps } from '../refine/RefineControls';
 import { keepEditorSelection } from '../toolbar/keepSelection';
 import { SuggestionOutcome, type SuggestionOutcomeRequest } from './SuggestionOutcome';
@@ -64,10 +64,14 @@ export function SuggestionCard({
       <div className="suggestion-card__actions">
         {isReady ? (
           <Button variant="primary" onClick={onAccept}>
+            <Icon name="check" size={16} />
             Accept
           </Button>
         ) : null}
-        <Button onClick={onDismiss}>Dismiss</Button>
+        <Button onClick={onDismiss}>
+          <Icon name="x" size={16} />
+          Dismiss
+        </Button>
         {isReady ? (
           <span className="suggestion-card__hint">
             <kbd>Tab</kbd> accept · <kbd>Esc</kbd> dismiss

@@ -4,6 +4,7 @@ import { TextField, VisuallyHidden } from '@/design-system';
 import { StatusIndicator } from '@/features/ai';
 import type { HistoryEntry, StoredDocument } from '@/features/documents';
 import { useDocumentTitle } from '@/lib/useDocumentTitle';
+import { EditorFooter } from './EditorFooter';
 import { EditorOverlays } from './EditorOverlays';
 import { EditorSurface } from './EditorSurface';
 import { EditorTopBar } from './EditorTopBar';
@@ -65,6 +66,7 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
     recordAiAccept,
     restoreFromHistory,
     historyRef,
+    info,
   } = persistence;
   const [title, setTitle] = useState(initial?.title ?? '');
   useDocumentTitle(title.trim() === '' ? DEFAULT_TITLE : title);
@@ -220,6 +222,7 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
           onRestoreVersion={restoreVersion}
         />
       </main>
+      <EditorFooter info={info} now={now()} />
     </div>
   );
 }

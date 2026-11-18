@@ -1,0 +1,15 @@
+/* A thin bar pinned to the bottom edge. Secondary text (7:1) on the page surface, with a rule above. */
+.editor-footer {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: var(--app-z-sidebar);
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  min-block-size: var(--ds-space-400);
+  padding-inline: var(--ds-space-200);
+  border-block-start: var(--ds-border-width) solid var(--ds-border);
+  background: var(--ds-surface);
+  color: var(--ds-text-subtle);
+  font: var(--app-type-secondary);
+}

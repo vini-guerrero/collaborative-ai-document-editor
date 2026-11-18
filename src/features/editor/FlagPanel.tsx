@@ -1,5 +1,5 @@
 import type { JSX } from 'react';
-import { Button } from '@/design-system';
+import { Button, Icon } from '@/design-system';
 import type { FlagKind } from '@shared/schemas';
 import { FlagAnswerForm } from './FlagAnswerForm';
 import type { FlagEntry } from './flags/flagsState';
@@ -37,9 +37,15 @@ export function FlagPanel({
       {onAnswer === undefined ? null : <FlagAnswerForm onAnswer={onAnswer} />}
       <div className="flag-panel__actions">
         {onViewSuggestion === undefined ? null : (
-          <Button onClick={onViewSuggestion}>View Suggestion</Button>
+          <Button variant="primary" onClick={onViewSuggestion}>
+            <Icon name="sparkles" size={16} />
+            View Suggestion
+          </Button>
         )}
-        <Button onClick={onDismiss}>Dismiss</Button>
+        <Button onClick={onDismiss}>
+          <Icon name="x" size={16} />
+          Dismiss
+        </Button>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useId, type JSX } from 'react';
-import { Button, VisuallyHidden } from '@/design-system';
+import { Button, Icon, VisuallyHidden } from '@/design-system';
 import type { RestructureOperation } from '@shared/schemas/restructure';
 import { describeOperation } from './describeOperation';
 import type { Section } from './sections';
@@ -42,9 +42,13 @@ export function RestructureSuggestion({
       </span>
       <div className="restructure-suggestion__actions">
         <Button variant="primary" onClick={onAccept} aria-describedby={descriptionId}>
+          <Icon name="check" size={16} />
           Accept
         </Button>
-        <Button onClick={onDismiss}>Dismiss</Button>
+        <Button onClick={onDismiss}>
+          <Icon name="x" size={16} />
+          Dismiss
+        </Button>
       </div>
     </section>
   );
