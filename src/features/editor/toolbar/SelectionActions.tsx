@@ -7,6 +7,9 @@ import { useVisualViewport } from './useVisualViewport';
 
 // D6 default for "Fix Tone": the AI is asked to fix the tone, and the tone picker stays on auto.
 const FIX_TONE_INSTRUCTION = 'Fix the tone';
+// The sticky formatting bar covers the top of the screen (about 40px plus a gap), so the selection
+// bubble must not be placed under it.
+const STICKY_BAR_INSET_PX = 56;
 
 export interface SelectionActionsProps {
   editor: Editor | null;
@@ -23,7 +26,12 @@ export function SelectionActions({
   actions,
 }: SelectionActionsProps): JSX.Element | null {
   const box = useSelectionBox(editor, enabled);
-  const viewport = useVisualViewport();
+  const fullViewport = useVisualViewport();
+  const viewport = {
+    ...fullViewport,
+    top: fullViewport.top + STICKY_BAR_INSET_PX,
+    height: fullViewport.height - STICKY_BAR_INSET_PX,
+  };
   return (
     <SelectionToolbar
       anchorRect={box}

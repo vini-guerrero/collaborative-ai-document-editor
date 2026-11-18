@@ -1,6 +1,11 @@
 /* S2, S9: a quiet bar above the text. Groups are separated by a divider; a pressed button takes
    the brand tint, a brand ring and a filled look, so state is not carried by colour alone (S7). */
 .formatting-toolbar {
+  /* Stays at the top of the screen while the page scrolls, so the controls are in reach wherever
+     the author is writing. It sits above the text and below popovers and the drawer. */
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--app-z-sidebar);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
