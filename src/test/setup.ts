@@ -44,3 +44,18 @@ if (typeof HTMLDialogElement.prototype.showModal !== 'function') {
     this.dispatchEvent(new Event('close'));
   };
 }
+
+// DEBT: jsdom has no layout. ProseMirror's scroll and hit-test paths call these, so they get
+// inert stand-ins that report an empty box. Tests therefore cannot assert positions or scrolling;
+// revisit if a test ever needs real geometry (use a browser-mode test instead).
+const EMPTY_RECT = new DOMRect(0, 0, 0, 0);
+if (typeof document.elementFromPoint !== 'function') {
+  document.elementFromPoint = (): Element | null => null;
+}
+if (typeof Range.prototype.getClientRects !== 'function') {
+  Range.prototype.getClientRects = (): DOMRectList =>
+    Object.assign([], { item: (): DOMRect | null => null });
+}
+if (typeof Range.prototype.getBoundingClientRect !== 'function') {
+  Range.prototype.getBoundingClientRect = (): DOMRect => EMPTY_RECT;
+}

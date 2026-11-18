@@ -15,6 +15,7 @@ import {
 } from '@/features/documents';
 import { EditorPageView } from './EditorPage';
 import { setViewportWidth } from '@/test/matchMedia';
+import { AiTestProvider } from '@/test/fakeAi';
 import { AUTOSAVE_DELAY_MS } from './useAutosave';
 
 const NOW = 1_700_000_000_000;
@@ -110,7 +111,9 @@ function renderEditor(store: DocumentStore, path = '/documents/doc-1'): Rendered
   );
   render(
     <DocumentStoreProvider store={store}>
-      <RouterProvider router={router} />
+      <AiTestProvider>
+        <RouterProvider router={router} />
+      </AiTestProvider>
     </DocumentStoreProvider>,
   );
   return { router, holder };

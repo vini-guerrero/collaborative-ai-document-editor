@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from '@/App';
+import { AiServicesProvider } from '@/app/AiServicesProvider';
 import { watchColorScheme } from '@/design-system';
 import { createLocalStorageStore, DocumentStoreProvider } from '@/features/documents';
 import './design-system/tokens.css';
@@ -23,7 +24,9 @@ const store = createLocalStorageStore({ storage: window.localStorage });
 createRoot(getRootElement()).render(
   <StrictMode>
     <DocumentStoreProvider store={store}>
-      <App />
+      <AiServicesProvider>
+        <App />
+      </AiServicesProvider>
     </DocumentStoreProvider>
   </StrictMode>,
 );

@@ -46,7 +46,8 @@ Updated in the same commit as each phase.
 | 34 | Analyze scheduler: 3 s pause or leave, LRU cache, abort, stale drop, pauses (D14, On demand, raw) | Done |
 | 41a | Section outline and move/split/merge as pure functions (UI and preview still to do) | Done |
 | 42a | History entry labels, 200-entry and size caps, restore and checkpoint helpers (UI still to do) | Done |
-| 35-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phase 35 (flag UI), then 36+ |
+| 35 | Flag UI: plugin and scheduler wired into the editor, status in the top bar, flag popover, next-flag key and button | Done |
+| 36-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 36-40 (suggestion, refine, toolbar, slash), then 41-43 |
 
 ## What it is
 

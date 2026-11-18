@@ -1,0 +1,33 @@
+/* S2: spacing and type from tokens only. The panel sits inside the popover or the bottom sheet. */
+.flag-panel {
+  display: grid;
+  gap: var(--ds-space-100);
+  max-inline-size: 22rem;
+}
+
+.flag-panel__kind {
+  margin: 0;
+  font: var(--ds-font-body-small);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--ds-text-subtle);
+}
+
+.flag-panel__reason {
+  margin: 0;
+  font: var(--ds-font-body);
+  color: var(--ds-text);
+}
+
+.flag-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-100);
+}
+
+/* S9: touch targets are at least 44px on coarse pointers. */
+@media (pointer: coarse) {
+  .flag-panel .ds-button {
+    min-block-size: 44px;
+    min-inline-size: 44px;
+  }
+}

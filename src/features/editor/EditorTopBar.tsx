@@ -21,13 +21,21 @@ export interface EditorTopBarProps {
   title?: ReactNode;
   // Absent while the document is loading or cannot be opened.
   view?: EditorViewControls | undefined;
-  // Reserved for the AI status indicator (phase 30); empty until then.
+  // The AI status indicator (D14); absent while the document is loading.
   aiStatus?: ReactNode;
+  // The Next flag control (D17); the caller shows it only while a flag exists.
+  flagControl?: ReactNode;
 }
 
 // H5, D1, D15, H7, S9: back and app name, the title, the view and AI mode toggles, and the save
 // status. Below md the view toggle and History move into the overflow menu.
-export function EditorTopBar({ message, title, view, aiStatus }: EditorTopBarProps): JSX.Element {
+export function EditorTopBar({
+  message,
+  title,
+  view,
+  aiStatus,
+  flagControl,
+}: EditorTopBarProps): JSX.Element {
   const breakpoint = useBreakpoint();
   const compact = breakpoint === 'base' || breakpoint === 'sm';
 
@@ -52,6 +60,7 @@ export function EditorTopBar({ message, title, view, aiStatus }: EditorTopBarPro
         <AiModeToggle value={view.aiMode} onChange={view.onAiModeChange} />
       ) : null}
       {view !== undefined && !compact ? <Button disabled>History (Soon)</Button> : null}
+      {flagControl ?? null}
       {aiStatus ?? null}
       <p role="status" className="editor-top-bar__status">
         {message}

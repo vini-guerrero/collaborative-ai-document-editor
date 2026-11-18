@@ -56,6 +56,7 @@
 
 @media (pointer: coarse) {
   .editor-top-bar .ds-icon-link,
+  .editor-top-bar .ds-button,
   .editor-top-bar__name {
     min-block-size: 44px;
     min-inline-size: 44px;

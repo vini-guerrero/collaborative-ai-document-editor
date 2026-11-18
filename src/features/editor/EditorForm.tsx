@@ -1,6 +1,7 @@
 import { useRef, useState, type JSX } from 'react';
 import type { Editor } from '@tiptap/react';
 import { TextField, VisuallyHidden } from '@/design-system';
+import { StatusIndicator } from '@/features/ai';
 import {
   toStoredDocument,
   useDocumentStore,
@@ -10,6 +11,8 @@ import {
 } from '@/features/documents';
 import { EditorSurface } from './EditorSurface';
 import { EditorTopBar } from './EditorTopBar';
+import { FlagPopover } from './FlagPopover';
+import { NextFlagButton } from './NextFlagButton';
 import type { ViewMode } from './editorModes';
 import { MarkdownSource } from './MarkdownSource';
 import { serializeMarkdown } from './markdown/markdown';
@@ -61,7 +64,13 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
   const [viewMode, setViewMode] = useState<ViewMode>('visual');
   // The raw Markdown being edited while the Markdown view is shown (D15).
   const [source, setSource] = useState('');
+  // The editor handle, once mounted, for the controls outside the surface (D17).
+  const [mountedEditor, setMountedEditor] = useState<Editor | null>(null);
+  // The flag whose popover is open, by id (D17).
+  const [openFlagId, setOpenFlagId] = useState<string | null>(null);
   const { aiMode, setAiMode } = useAiMode();
+  // D1, D15: nothing is analyzed in On demand mode or while the raw Markdown is shown.
+  const aiPaused = aiMode === 'on-demand' || viewMode === 'markdown';
 
   const persist = async (draft: EditorDraft): Promise<Result<void, StoreError>> => {
     const doc = toStoredDocument(
@@ -90,9 +99,10 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
     schedule(latestRef.current);
   };
 
-  const handleReady = (editor: Editor): void => {
-    editorRef.current = editor;
-    onReady?.(editor);
+  const handleReady = (ready: Editor): void => {
+    editorRef.current = ready;
+    setMountedEditor(ready);
+    onReady?.(ready);
   };
 
   // D15: entering the raw view copies the document's Markdown; leaving it parses the text back.
@@ -132,6 +142,12 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
       <EditorTopBar
         message={saveMessage(status, failure)}
         title={titleField}
+        aiStatus={<StatusIndicator />}
+        flagControl={
+          mountedEditor === null ? null : (
+            <NextFlagButton editor={mountedEditor} onOpenFlag={setOpenFlagId} />
+          )
+        }
         view={{
           viewMode,
           onViewModeChange: changeViewMode,
@@ -157,8 +173,19 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
             initialMarkdown={initialBody}
             onChange={scheduleBody}
             onReady={handleReady}
+            aiPaused={aiPaused}
+            onFlagOpen={setOpenFlagId}
           />
         </div>
+        {mountedEditor === null ? null : (
+          <FlagPopover
+            editor={mountedEditor}
+            flagId={openFlagId}
+            onClose={() => {
+              setOpenFlagId(null);
+            }}
+          />
+        )}
       </main>
     </>
   );
