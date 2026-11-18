@@ -16,7 +16,7 @@
   align-items: center;
   gap: var(--ds-space-100);
   padding: var(--ds-space-050);
-  border: var(--ds-border-width) solid var(--ds-border);
+  border: var(--ds-border-width) solid var(--ds-border-brand);
   border-radius: var(--ds-radius-xlarge);
   background: var(--ds-surface-raised);
   /* The gap above the footer is filled with the page colour, so scrolled text does not show in it. */
@@ -81,4 +81,18 @@
 .formatting-toolbar .ds-tooltip__bubble {
   inset-block-start: auto;
   inset-block-end: calc(100% + var(--ds-space-050));
+}
+
+/* On a phone the controls stay in one row that scrolls sideways, instead of wrapping to three
+   tall rows that cover the text. */
+@media (max-width: 767px) {
+  .formatting-toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .formatting-toolbar__group {
+    flex: 0 0 auto;
+  }
 }
