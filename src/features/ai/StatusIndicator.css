@@ -1,0 +1,5 @@
+.ai-status__icon {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-end: var(--ds-space-050);
+}
