@@ -102,14 +102,18 @@
   overflow-x: auto;
 }
 
-/* Placeholder from the Placeholder extension: shown only while the document is empty. */
+/* Placeholder from the Placeholder extension: shown only while the document is empty. It is
+   positioned over the paragraph's first line, so it starts exactly where the typed text starts. The
+   surface sets overflow-wrap: anywhere, so the hint is kept on one line rather than wrapping per letter. */
+.editor-surface .ProseMirror p.is-editor-empty:first-child {
+  position: relative;
+}
+
 .editor-surface .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
-  float: inline-start;
-  block-size: 0;
-  /* The surface sets overflow-wrap: anywhere, which shrinks a float to one character wide, so the
-     hint would wrap letter by letter and grow the empty page. It stays on one line. */
-  overflow-wrap: normal;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
   white-space: nowrap;
   color: var(--ds-text-subtle);
   pointer-events: none;
