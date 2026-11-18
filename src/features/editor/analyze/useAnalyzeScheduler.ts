@@ -15,6 +15,8 @@ export interface UseAnalyzeSchedulerOptions {
   onFlags: (hash: string, flags: Flag[]) => void;
   // Whether a paragraph with this text hash is still in the document (T10).
   isLive: (hash: string) => boolean;
+  // The paragraph under analysis by text hash, or null (the AI bubble's loading state).
+  onWorking?: (hash: string | null) => void;
 }
 
 // Stable across renders; calls made before mount or after unmount are ignored.
@@ -29,14 +31,15 @@ export function useAnalyzeScheduler({
   paused,
   onFlags,
   isLive,
+  onWorking,
 }: UseAnalyzeSchedulerOptions): AnalyzeSchedulerHandle {
   const client = useAiClient();
   const status = useAiStatus();
   // Read through a ref so the scheduler, created once per mount, always sees current values.
-  const latest = useRef({ client, status, paused, onFlags, isLive });
+  const latest = useRef({ client, status, paused, onFlags, isLive, onWorking });
 
   useEffect(() => {
-    latest.current = { client, status, paused, onFlags, isLive };
+    latest.current = { client, status, paused, onFlags, isLive, onWorking };
   });
 
   const schedulerRef = useRef<AnalyzeScheduler | null>(null);
@@ -60,6 +63,9 @@ export function useAnalyzeScheduler({
       isLive: (hash) => latest.current.isLive(hash),
       onFlags: (hash, flags) => {
         latest.current.onFlags(hash, flags);
+      },
+      onWorking: (hash) => {
+        latest.current.onWorking?.(hash);
       },
       pause_ms,
     } satisfies AnalyzeSchedulerDeps);

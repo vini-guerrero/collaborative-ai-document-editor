@@ -10,9 +10,12 @@ import { createSlashExtension } from './slash/slashExtension';
 import { SlashMenu } from './slash/SlashMenu';
 import { slashOptionDomId, type SlashItem } from './slash/slashItems';
 import { useSlashMenu } from './slash/useSlashMenu';
+import { AiBubbles } from './bubble/AiBubbles';
+import { useParagraphBubbles } from './bubble/useParagraphBubbles';
 import { HeadingActions } from './toolbar/HeadingActions';
 import { useHeadingBoxes } from './toolbar/useHeadingBoxes';
 import { useFlagAnalysis } from './useFlagAnalysis';
+import { useFlags } from './useFlags';
 import './flags/flags.css';
 import './suggestion/suggestion.css';
 import './EditorSurface.css';
@@ -90,7 +93,8 @@ export function EditorSurface({
     },
   }));
   const editor = useEditor(options);
-  useFlagAnalysis(editor, aiPaused);
+  const analyzingHash = useFlagAnalysis(editor, aiPaused);
+  const bubbles = useParagraphBubbles(editor, analyzingHash, useFlags(editor));
   const headings = useHeadingBoxes(editor);
 
   // The keyboard's active menu item is announced through the editor, which keeps focus (D12).
@@ -122,6 +126,7 @@ export function EditorSurface({
           actionsRef.current.onImprove(headingPos);
         }}
       />
+      <AiBubbles bubbles={bubbles} onOpenFlag={onFlagOpen} />
       {slash.view === null ? null : (
         <SlashMenu
           items={slash.view.items}

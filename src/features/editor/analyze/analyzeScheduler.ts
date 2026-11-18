@@ -47,6 +47,9 @@ export interface AnalyzeSchedulerDeps {
   // True while a paragraph with this text hash is still in the document (T10).
   isLive: (hash: string) => boolean;
   onFlags: (hash: string, flags: Flag[]) => void;
+  // The text hash of the paragraph being analyzed, or null when no call is in flight. Drives the
+  // AI bubble's loading state; it never carries the text itself.
+  onWorking?: (hash: string | null) => void;
   pause_ms?: number;
 }
 
@@ -198,8 +201,10 @@ export const createAnalyzeScheduler = (deps: AnalyzeSchedulerDeps): AnalyzeSched
       const controller = new AbortController();
       inFlight = controller;
       edited.delete(hash);
+      deps.onWorking?.(hash);
       const result = await client.run(toAnalyzeRequest(ctx), controller.signal);
       inFlight = undefined;
+      deps.onWorking?.(null);
       if (disposed) {
         return;
       }

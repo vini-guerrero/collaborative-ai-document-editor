@@ -1,4 +1,5 @@
 export { AppShell, useShell, type AppShellProps, type ShellState } from './AppShell/AppShell';
+export { AiBubble, type AiBubbleProps } from './AiBubble/AiBubble';
 export { Avatar, type AvatarProps, type AvatarSize } from './Avatar/Avatar';
 export { BottomSheet, type BottomSheetProps } from './BottomSheet/BottomSheet';
 export { Button, type ButtonProps, type ButtonVariant } from './Button/Button';

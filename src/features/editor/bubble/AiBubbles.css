@@ -1,0 +1,14 @@
+/* The layer covers the frame without catching clicks; only the bubbles take them. The first text
+   line is 28px tall and the bubble 24px, so a 2px offset centres it on that line. */
+.ai-bubbles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ai-bubbles__item {
+  position: absolute;
+  inset-inline-end: 0;
+  margin-block-start: var(--ds-space-025);
+  pointer-events: auto;
+}

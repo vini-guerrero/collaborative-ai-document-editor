@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { Editor } from '@tiptap/react';
 import type { Transaction } from '@tiptap/pm/state';
 import type { Flag } from '@shared/schemas';
@@ -31,9 +31,12 @@ function caretParagraphPos(editor: Editor): number | undefined {
 // D4: connects the editor to the analyze scheduler. Edits mark the caret paragraph and start its
 // pause; a collapsed caret leaving a focused paragraph analyzes it. Range selections and blur send
 // nothing. Nothing is sent while `paused` (D1 On Demand, D15 raw view).
-export function useFlagAnalysis(editor: Editor, paused: boolean): void {
+export function useFlagAnalysis(editor: Editor, paused: boolean): string | null {
+  // The hash of the paragraph being analyzed right now, for the AI bubble's loading state.
+  const [analyzingHash, setAnalyzingHash] = useState<string | null>(null);
   const scheduler = useAnalyzeScheduler({
     paused,
+    onWorking: setAnalyzingHash,
     onFlags: (hash, flags) => {
       showParagraphFlags(editor, hash, flags);
     },
@@ -83,4 +86,6 @@ export function useFlagAnalysis(editor: Editor, paused: boolean): void {
       editor.off('transaction', handleTransaction);
     };
   }, [editor, scheduler]);
+
+  return analyzingHash;
 }

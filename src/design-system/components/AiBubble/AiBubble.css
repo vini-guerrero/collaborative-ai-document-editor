@@ -1,0 +1,99 @@
+/* S2: tokens only. A 24px round bubble in the brand colour; effects use transform and opacity. */
+.ds-ai-bubble {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  inline-size: var(--ds-space-300);
+  block-size: var(--ds-space-300);
+  padding: 0;
+  border: var(--ds-border-width) solid var(--ds-border-brand);
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-background-brand-subtlest);
+  color: var(--ds-icon-brand);
+  animation: ds-ai-bubble-in var(--ds-duration-medium) var(--ds-easing-out-practical) both;
+}
+
+button.ds-ai-bubble {
+  cursor: pointer;
+}
+
+button.ds-ai-bubble:hover {
+  background: var(--ds-background-brand-subtlest-hovered);
+}
+
+button.ds-ai-bubble:active {
+  background: var(--ds-background-brand-subtlest-pressed);
+}
+
+/* Loading: a ring turns around the bubble while the AI reads. */
+.ds-ai-bubble__ring {
+  position: absolute;
+  inset: calc(-1 * var(--ds-space-050));
+  border: var(--ds-border-width-selected) solid transparent;
+  border-block-start-color: var(--ds-border-brand);
+  border-radius: var(--ds-radius-full);
+  animation: ds-ai-bubble-spin 900ms linear infinite;
+}
+
+/* Ready: a soft ring grows out of the bubble and fades, inviting a click. */
+.ds-ai-bubble__pulse {
+  position: absolute;
+  inset: 0;
+  border: var(--ds-border-width-selected) solid var(--ds-border-brand);
+  border-radius: var(--ds-radius-full);
+  animation: ds-ai-bubble-pulse 2s ease-out infinite;
+  pointer-events: none;
+}
+
+.ds-ai-bubble__count {
+  position: absolute;
+  inset-block-start: calc(-1 * var(--ds-space-050));
+  inset-inline-end: calc(-1 * var(--ds-space-050));
+  display: grid;
+  place-items: center;
+  min-inline-size: var(--ds-space-200);
+  block-size: var(--ds-space-200);
+  padding-inline: var(--ds-space-025);
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-background-brand-bold);
+  color: var(--ds-text-inverse);
+  font: var(--ds-font-heading-xxsmall);
+}
+
+@keyframes ds-ai-bubble-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ds-ai-bubble-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ds-ai-bubble-pulse {
+  from {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@media (pointer: coarse) {
+  button.ds-ai-bubble {
+    inline-size: var(--ds-space-400);
+    block-size: var(--ds-space-400);
+  }
+}

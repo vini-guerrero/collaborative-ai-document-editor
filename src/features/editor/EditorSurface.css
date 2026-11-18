@@ -28,6 +28,11 @@
   overflow-wrap: anywhere;
 }
 
+/* Paragraphs keep the inline end free for the AI bubble (AiBubbles), so it never covers text. */
+.editor-surface .ProseMirror p {
+  padding-inline-end: var(--ds-space-500);
+}
+
 .editor-surface .ProseMirror > * + * {
   margin-block-start: var(--ds-space-100);
 }

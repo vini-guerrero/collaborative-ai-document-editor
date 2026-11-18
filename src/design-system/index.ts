@@ -8,6 +8,7 @@ export {
 } from './theme';
 export {
   AppShell,
+  AiBubble,
   Avatar,
   BottomSheet,
   Button,
@@ -29,6 +30,7 @@ export {
   VisuallyHidden,
   useShell,
   type AppShellProps,
+  type AiBubbleProps,
   type AvatarProps,
   type AvatarSize,
   type BottomSheetProps,

@@ -9,6 +9,10 @@
   z-index: var(--app-z-sidebar);
   display: flex;
   flex-wrap: wrap;
+  /* Only as wide as its controls, centred in the column. */
+  align-self: center;
+  inline-size: fit-content;
+  max-inline-size: 100%;
   align-items: center;
   gap: var(--ds-space-100);
   padding: var(--ds-space-050);

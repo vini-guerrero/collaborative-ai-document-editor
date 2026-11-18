@@ -31,12 +31,18 @@ type OnFlags = (hash: string, flags: Flag[]) => void;
 interface HarnessProps {
   paused: boolean;
   onFlags: OnFlags;
+  onWorking?: (hash: string | null) => void;
   onHandle: (handle: AnalyzeSchedulerHandle) => void;
 }
 
 // Buttons stand in for the editor: an edit followed by leaving the paragraph is what analyzes it.
-function Harness({ paused, onFlags, onHandle }: HarnessProps): JSX.Element {
-  const handle = useAnalyzeScheduler({ paused, onFlags, isLive: () => true });
+function Harness({ paused, onFlags, onWorking, onHandle }: HarnessProps): JSX.Element {
+  const handle = useAnalyzeScheduler({
+    paused,
+    onFlags,
+    isLive: () => true,
+    ...(onWorking === undefined ? {} : { onWorking }),
+  });
   useEffect(() => {
     onHandle(handle);
   }, [handle, onHandle]);
@@ -64,12 +70,14 @@ function Harness({ paused, onFlags, onHandle }: HarnessProps): JSX.Element {
 
 interface RenderOptions {
   paused?: boolean;
+  onWorking?: (hash: string | null) => void;
   store?: AiStatusStore;
   fetchImpl: FetchLike;
 }
 
 const renderHarness = ({
   paused = false,
+  onWorking,
   store = createAiStatusStore(),
   fetchImpl,
 }: RenderOptions) => {
@@ -81,6 +89,7 @@ const renderHarness = ({
       <Harness
         paused={paused}
         onFlags={onFlags}
+        {...(onWorking === undefined ? {} : { onWorking })}
         onHandle={(handle) => {
           handles.push(handle);
         }}
@@ -105,6 +114,17 @@ describe('useAnalyzeScheduler (D4, D1, D14, D15, T10)', () => {
       expect(onFlags).toHaveBeenCalledWith(fnv1a32(PARAGRAPH), [FLAG]);
     });
     expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports the paragraph under analysis, then none, for the AI bubble', async () => {
+    const fetchImpl = vi.fn<FetchLike>(() => Promise.resolve(jsonResponse(200, { flags: [FLAG] })));
+    const onWorking = vi.fn<(hash: string | null) => void>();
+    renderHarness({ fetchImpl, onWorking });
+    await editAndLeave();
+    await waitFor(() => {
+      expect(onWorking).toHaveBeenLastCalledWith(null);
+    });
+    expect(onWorking).toHaveBeenNthCalledWith(1, fnv1a32(PARAGRAPH));
   });
 
   it('makes no call while paused in On Demand mode or the raw view (D1, D15)', async () => {
