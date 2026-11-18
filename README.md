@@ -42,7 +42,9 @@ Updated in the same commit as each phase.
 | 28-29 | `POST /api/ai` with guards (body and input caps, credit latch, timeout, redacted logs) and the OpenRouter adapter wired in `server/main.ts` (one commit: 28 needs 29's wiring to typecheck) | Done |
 | 25 | Editor top bar: title, Visual/Markdown toggle with raw source, Ambient/On demand state, overflow menu below md (scoped checks only; not yet seen in the browser) | Done |
 | 30 | AI client (`src/features/ai`): typed fetch client, status store (D14), `StatusIndicator`; not mounted yet | Done |
-| 33-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: wire status into the top bar, then flags (33+) |
+| 33 | Flags plugin: per-paragraph flags as decorations, mapped through edits, max 2, not undo steps | Done |
+| 34 | Analyze scheduler: 3 s pause or leave, LRU cache, abort, stale drop, pauses (D14, On demand, raw) | Done |
+| 35-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phase 35 (flag UI), then 36+ |
 
 ## What it is
 
