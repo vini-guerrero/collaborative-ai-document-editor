@@ -6,7 +6,7 @@ Priority: user instruction > this file and `docs/` > `guidelines/`. `Never` = ha
 
 ## Project in one paragraph
 
-A browser-based Markdown editor where an AI co-author flags and suggests; the user always sees a diff and must Accept. React + Vite + TipTap front end, a small Hono proxy to OpenRouter, localStorage persistence, no auth, no database. Built so far: the `pnpm check` gate, design system, documents store and the home screen (phases 1-20); the editor page now runs on TipTap (Markdown canonical; phases 22-24, 26, 31 done) while the top bar, AI surfaces are still to come; the AI server (`POST /api/ai`, service, OpenRouter adapter; phases 26-29) exists but is not yet used by the client. Progress table: `README.md`; next milestone: `docs/PLAN-EDITOR-MILESTONE.md`.
+A browser-based Markdown editor where an AI co-author flags and suggests; the user always sees a diff and must Accept. React + Vite + TipTap front end, a small Hono proxy to OpenRouter, localStorage persistence, no auth, no database. Setup and commands: `README.md`.
 
 ## Source of truth
 
@@ -17,7 +17,6 @@ Read only what the task needs, not everything.
 | What the product does (D1-D17 editor, H1-H7 home) | `docs/PRODUCT-DIRECTION.md` |
 | Stack, AI contract, storage, security, structure, packages, gates (T1-T13) | `docs/TECHNICAL-DIRECTION.md` |
 | Tokens, components, licenses, responsive (S1-S9) | `docs/DESIGN-DIRECTION.md` |
-| Current milestone: ordered phases, scope per phase | `docs/PLAN-HOME-MILESTONE.md` |
 
 Product decisions are settled. Do not re-open them; if code contradicts one, flag it. Cite decision IDs (`D4`, `H5`, `T7`, `S8`) in code comments and test names.
 
@@ -125,7 +124,7 @@ Revisit when the product grows (Phase 2: sign-in, sync, real users).
 | **Planner / Reviewer** | Opus | Plans non-trivial or cross-cutting work; reviews diffs against these rules and the decision IDs | Write the implementation; run long builds |
 | **Builder** | Haiku | Implements one well-bounded task from a brief; writes its tests | Make design decisions, change contracts, touch files outside its brief |
 
-Flow per phase: Orchestrator -> (Opus plan, if needed) -> Haiku build -> orchestrator runs the scoped checks (format, lint, types, tests of the touched folders) -> commit and push. No per-phase Opus review and no per-phase browser pass.
+Flow per change: Orchestrator -> (Opus plan, if needed) -> Haiku build -> orchestrator runs the scoped checks (format, lint, types, tests of the touched folders) -> commit and push. No per-phase Opus review and no per-phase browser pass.
 
 Checkpoints (a milestone, or the end of a parallel set): one full `pnpm check`, one Opus review of everything since the last checkpoint (mandatory for `shared/`, `server/` and editor plugins, and always before the first live key use), and one browser pass at 360, 768 and 1280px, light and dark. Findings become one fix round. Run builds, reviews and browser checks in the background while the next phase is built.
 
@@ -183,4 +182,4 @@ Open: <questions, risks, follow-ups>
 
 ## Git
 
-Work on `development`; `main` is for releases. Short, imperative commit messages. One commit per build phase; in the same commit, update the README build-progress table and any doc the phase changed. Add one dependency or one upgrade per commit. The raw AI session files in `ai-sessions/` are added last, unedited except for masked secrets, as the brief requires.
+Work on `development`; `main` is for releases. Short, imperative commit messages. One commit per change; update any doc the change touches. Add one dependency or one upgrade per commit. The raw AI session files in `ai-sessions/` are added last, unedited except for masked secrets, as the brief requires.
