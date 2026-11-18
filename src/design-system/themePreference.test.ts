@@ -70,3 +70,13 @@ describe('theme preference (S3)', () => {
     expect(f.removeListener).toHaveBeenCalled();
   });
 });
+
+describe('theme mode (S3)', () => {
+  it('reports the system mode until a mode is set, then that mode', () => {
+    const f = fixtures(null, true);
+    const controller = createThemeController(f.root, f.media, f.storage);
+    expect(controller.mode()).toBe('dark');
+    controller.set('light');
+    expect(controller.mode()).toBe('light');
+  });
+});

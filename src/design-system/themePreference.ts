@@ -14,6 +14,8 @@ export interface ThemeStorage {
 
 export interface ThemeController {
   readonly get: () => ThemePreference;
+  // The mode on screen: the preference, or the system's when it follows the system.
+  readonly mode: () => ColorMode;
   readonly set: (preference: ThemePreference) => void;
   readonly subscribe: (listener: () => void) => () => void;
   // Removes the system-scheme listener.
@@ -51,11 +53,15 @@ export function createThemeController(
   const listeners = new Set<() => void>();
   const sync = (): void => {
     applyTheme(root, resolveColorMode(preference, media.matches));
+    for (const listener of listeners) {
+      listener();
+    }
   };
   sync();
   media.addEventListener('change', sync);
   return {
     get: () => preference,
+    mode: () => resolveColorMode(preference, media.matches),
     set: (next) => {
       preference = next;
       sync();
@@ -63,9 +69,6 @@ export function createThemeController(
         storage.setItem(THEME_STORAGE_KEY, next);
       } catch {
         // The choice still applies for this visit; it is just not remembered.
-      }
-      for (const listener of listeners) {
-        listener();
       }
     },
     subscribe: (listener) => {

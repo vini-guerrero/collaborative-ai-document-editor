@@ -13,7 +13,7 @@ export interface ToolbarPoint {
 
 // S9: the toolbar's footprint. The width is its maximum; the CSS shrinks it on narrow screens.
 export const TOOLBAR_WIDTH_PX = 360;
-export const TOOLBAR_HEIGHT_PX = 56;
+export const TOOLBAR_HEIGHT_PX = 44;
 const TOOLBAR_GAP_PX = 8;
 // S9: 16px is the viewport gutter.
 const VIEWPORT_PADDING_PX = 16;
@@ -33,10 +33,11 @@ export function toolbarPosition(anchor: Box, viewport: Box): ToolbarPoint {
   const belowTop = anchor.top + anchor.height + TOOLBAR_GAP_PX;
   const top = clamp(aboveTop >= minTop ? aboveTop : belowTop, minTop, maxTop);
 
-  const centredLeft = anchor.left + anchor.width / 2 - TOOLBAR_WIDTH_PX / 2;
+  // Starts where the selection starts, as the prototype's bubble does, so it reads as attached.
+  const startLeft = anchor.left;
   const minLeft = viewport.left + VIEWPORT_PADDING_PX;
   const maxLeft = viewport.left + viewport.width - TOOLBAR_WIDTH_PX - VIEWPORT_PADDING_PX;
-  const left = clamp(centredLeft, minLeft, maxLeft);
+  const left = clamp(startLeft, minLeft, maxLeft);
 
   return { top, left };
 }

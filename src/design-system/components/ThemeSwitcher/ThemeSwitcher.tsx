@@ -1,24 +1,17 @@
 import type { JSX } from 'react';
-import { useThemePreference } from '../../useThemePreference';
-import { THEME_PREFERENCES, parseThemePreference } from '../../themePreference';
-import { Select, type SelectOption } from '../Select/Select';
+import { useThemeMode } from '../../useThemeMode';
+import { IconButton } from '../IconButton/IconButton';
 
-const LABELS = { system: 'System', light: 'Light', dark: 'Dark' } as const;
-const OPTIONS: readonly SelectOption[] = THEME_PREFERENCES.map((value) => ({
-  value,
-  label: LABELS[value],
-}));
-
-// S3: the colour mode choice, System, Light or Dark.
+// S3: one icon button that flips between light and dark. The icon shows the mode it switches to.
 export function ThemeSwitcher(): JSX.Element {
-  const [preference, setPreference] = useThemePreference();
+  const [mode, setMode] = useThemeMode();
+  const next = mode === 'dark' ? 'light' : 'dark';
   return (
-    <Select
-      label="Theme"
-      value={preference}
-      options={OPTIONS}
-      onChange={(value) => {
-        setPreference(parseThemePreference(value));
+    <IconButton
+      icon={next === 'light' ? 'sun' : 'moon'}
+      label={next === 'light' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+      onClick={() => {
+        setMode(next);
       }}
     />
   );

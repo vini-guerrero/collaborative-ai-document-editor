@@ -41,3 +41,14 @@
     min-block-size: 44px;
   }
 }
+
+/* The spinner sits on the brand-coloured Refine button, so its ring takes the inverse text colour. */
+.refine .ds-button--primary .ds-spinner {
+  inline-size: var(--ds-space-150);
+  block-size: var(--ds-space-150);
+}
+
+.refine .ds-button--primary .ds-spinner__ring {
+  border-color: var(--ds-text-inverse);
+  border-block-start-color: transparent;
+}

@@ -1,5 +1,6 @@
-/* S5, S9: a compact pill over the selection, as the prototype's bubble. The prototype's dark
-   bubble becomes the overlay surface so it follows the light and dark themes. Tokens only. */
+/* S5, S9: a compact bubble over the selection (prototype .bub: 4px padding, 2px gap, 9px label
+   padding, 10px radius). The dark bubble becomes the overlay surface so it follows the light and
+   dark themes. Tokens only. */
 .selection-toolbar {
   position: fixed;
   z-index: var(--app-z-drawer);
@@ -9,9 +10,9 @@
   box-sizing: border-box;
   inline-size: 360px;
   max-inline-size: calc(100vw - 2 * var(--ds-space-200));
-  padding: var(--ds-space-025) var(--ds-space-050);
+  padding: var(--ds-space-050);
   border: var(--ds-border-width) solid var(--ds-border);
-  border-radius: var(--ds-radius-full);
+  border-radius: var(--ds-radius-xlarge);
   background: var(--ds-surface-overlay);
   color: var(--ds-text);
   box-shadow: var(--ds-shadow-overlay);
@@ -22,7 +23,7 @@
   flex: 0 0 auto;
   inline-size: var(--ds-border-width);
   block-size: var(--ds-space-200);
-  margin-inline: var(--ds-space-025);
+  margin-inline: var(--ds-space-050);
   background: var(--ds-border);
 }
 
@@ -30,7 +31,7 @@
   display: flex;
   flex: 1 1 auto;
   align-items: center;
-  gap: var(--ds-space-025);
+  gap: var(--ds-space-050);
   min-inline-size: 0;
 }
 
@@ -39,27 +40,35 @@
   min-inline-size: 0;
 }
 
+/* The bubble's buttons are all one height, so labels, field and Apply line up on one baseline. */
 .selection-toolbar .ds-button {
-  padding-inline: var(--ds-space-075);
+  min-block-size: 28px;
+  padding-inline: var(--ds-space-100);
+  border-radius: var(--ds-radius-large);
+  font: var(--ds-font-body-small);
+  font-weight: var(--ds-font-weight-medium);
   white-space: nowrap;
 }
 
-/* S9: 44px touch targets on coarse pointers. */
-@media (pointer: coarse) {
-  .selection-toolbar .ds-button {
-    min-block-size: 44px;
-  }
-}
-
-/* Prototype .bub input: a soft fill inside the pill, no box around it. */
+/* Prototype .bub input: a soft fill inside the bubble, no box around it. */
 .selection-toolbar .ds-text-field__input {
   min-block-size: 28px;
+  padding-inline: var(--ds-space-100);
   border-color: transparent;
-  border-radius: var(--ds-radius-full);
+  border-radius: var(--ds-radius-large);
   background: var(--ds-background-neutral);
+  font: var(--ds-font-body-small);
 }
 
 .selection-toolbar .ds-text-field__input:focus-visible {
   outline: none;
   border-color: var(--ds-border-focused);
+}
+
+/* S9: 44px touch targets on coarse pointers. */
+@media (pointer: coarse) {
+  .selection-toolbar .ds-button,
+  .selection-toolbar .ds-text-field__input {
+    min-block-size: 44px;
+  }
 }

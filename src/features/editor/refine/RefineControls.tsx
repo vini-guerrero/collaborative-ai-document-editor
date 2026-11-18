@@ -1,5 +1,5 @@
 import { useState, type JSX, type SyntheticEvent } from 'react';
-import { Button, Select, TextField } from '@/design-system';
+import { Button, Select, Spinner, TextField } from '@/design-system';
 import type { Length, Tone } from '@shared/schemas/rewrite';
 import {
   LENGTH_OPTIONS,
@@ -99,20 +99,28 @@ export function RefineControls({
           />
         </div>
         <Button type="submit" variant="primary" disabled={!canSubmit}>
+          {busy ? (
+            // The card already announces the request; this one is only the visible cue.
+            <span aria-hidden="true" className="refine__spinner">
+              <Spinner label="Refining" />
+            </span>
+          ) : null}
           Refine
         </Button>
       </div>
-      <div className="refine__nav">
-        <Button disabled={!canStepBack} onClick={onStepBack}>
-          Previous
-        </Button>
-        <Button disabled={!canStepForward} onClick={onStepForward}>
-          Next
-        </Button>
-        <span className="refine__count" aria-live="polite">
-          {roundLabel}
-        </span>
-      </div>
+      {canStepBack || canStepForward ? (
+        <div className="refine__nav">
+          <Button disabled={!canStepBack} onClick={onStepBack}>
+            Previous
+          </Button>
+          <Button disabled={!canStepForward} onClick={onStepForward}>
+            Next
+          </Button>
+          <span className="refine__count" aria-live="polite">
+            {roundLabel}
+          </span>
+        </div>
+      ) : null}
     </form>
   );
 }

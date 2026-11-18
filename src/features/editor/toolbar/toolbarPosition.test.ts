@@ -9,10 +9,10 @@ const GAP = 8;
 const PAD = 16;
 
 describe('toolbarPosition', () => {
-  it('sits above the selection and centred on it', () => {
+  it('sits above the selection and starts where it starts, inside the gutter', () => {
     const point = toolbarPosition(SELECTION, SCREEN);
     expect(point.top).toBe(SELECTION.top - GAP - TOOLBAR_HEIGHT_PX);
-    expect(point.left).toBe(SELECTION.left + SELECTION.width / 2 - TOOLBAR_WIDTH_PX / 2);
+    expect(point.left).toBe(Math.min(SELECTION.left, SCREEN.width - TOOLBAR_WIDTH_PX - PAD));
   });
 
   it('moves below the selection when there is no room above', () => {

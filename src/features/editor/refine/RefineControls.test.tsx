@@ -85,4 +85,15 @@ describe('RefineControls', () => {
     expect(screen.getByRole('button', { name: 'Next' }).hasAttribute('disabled')).toBe(true);
     expect(onStepForward).not.toHaveBeenCalled();
   });
+
+  // D6: with one round there is nothing to step to, so the controls are not shown as dead buttons.
+  it('hides Previous, Next and the counter while there is one round', () => {
+    render(
+      <RefineControls
+        {...props({ canStepBack: false, canStepForward: false, roundLabel: '1 / 1' })}
+      />,
+    );
+    expect(screen.queryByRole('button', { name: 'Previous' })).toBeNull();
+    expect(screen.queryByText('1 / 1')).toBeNull();
+  });
 });

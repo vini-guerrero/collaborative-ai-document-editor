@@ -65,5 +65,5 @@ export {
   type ThemeStorage,
 } from './themePreference';
 export { ThemeProvider, type ThemeProviderProps } from './ThemeProvider';
-export { useThemePreference } from './useThemePreference';
+export { useThemeMode } from './useThemeMode';
 export { BREAKPOINTS, useBreakpoint, type Breakpoint, type ViewportBreakpoint } from './responsive';
