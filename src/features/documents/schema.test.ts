@@ -53,3 +53,32 @@ describe('IndexSchema', () => {
     expect(IndexSchema.safeParse({ schemaVersion: 1, ids: ['a'] }).success).toBe(false);
   });
 });
+
+describe('HistoryEntrySchema label (D7)', () => {
+  // A document saved before labels existed: schemaVersion 1, entries with no label.
+  const oldEntry = { id: 'h-1', author: 'ai', markdown: 'Earlier', createdAt: 1 };
+  const oldShapedDoc = {
+    id: 'doc-old',
+    title: 'Saved earlier',
+    markdown: 'Body',
+    createdAt: 1,
+    updatedAt: 2,
+    history: [oldEntry],
+    schemaVersion: 1,
+  };
+
+  it('parses an old document whose entries have no label', () => {
+    expect(DocumentSchema.parse(oldShapedDoc).history[0]?.label).toBeUndefined();
+  });
+
+  it('accepts a label of exactly 80 characters and rejects 81', () => {
+    const entryWith = (label: string) => ({ ...oldEntry, label });
+
+    expect(
+      DocumentSchema.safeParse({ ...oldShapedDoc, history: [entryWith('x'.repeat(80))] }).success,
+    ).toBe(true);
+    expect(
+      DocumentSchema.safeParse({ ...oldShapedDoc, history: [entryWith('x'.repeat(81))] }).success,
+    ).toBe(false);
+  });
+});

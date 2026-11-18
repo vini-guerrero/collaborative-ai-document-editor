@@ -44,6 +44,8 @@ Updated in the same commit as each phase.
 | 30 | AI client (`src/features/ai`): typed fetch client, status store (D14), `StatusIndicator`; not mounted yet | Done |
 | 33 | Flags plugin: per-paragraph flags as decorations, mapped through edits, max 2, not undo steps | Done |
 | 34 | Analyze scheduler: 3 s pause or leave, LRU cache, abort, stale drop, pauses (D14, On demand, raw) | Done |
+| 41a | Section outline and move/split/merge as pure functions (UI and preview still to do) | Done |
+| 42a | History entry labels, 200-entry and size caps, restore and checkpoint helpers (UI still to do) | Done |
 | 35-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phase 35 (flag UI), then 36+ |
 
 ## What it is

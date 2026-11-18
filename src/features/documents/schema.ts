@@ -3,8 +3,10 @@ import { z } from 'zod';
 // Feature-local contracts (T6, T11). The server never sees documents, so no shared/ schema.
 export const CURRENT_SCHEMA_VERSION = 1 as const;
 
-// D7: history keeps the most recent 200 entries per document.
-const MAX_HISTORY_ENTRIES = 200;
+// D7: history keeps the most recent 200 entries per document (the byte budget is in history.ts).
+export const HISTORY_MAX_ENTRIES = 200;
+// D7: optional label on a history entry, such as "Restored". Entries saved before labels have none.
+export const HISTORY_LABEL_MAX_CHARS = 80;
 
 const epochMs = z.number().int().nonnegative();
 
@@ -13,6 +15,7 @@ export const HistoryEntrySchema = z.object({
   author: z.enum(['user', 'ai']),
   markdown: z.string(),
   createdAt: epochMs,
+  label: z.string().max(HISTORY_LABEL_MAX_CHARS).optional(),
 });
 
 export const DocumentSchema = z.object({
@@ -21,7 +24,7 @@ export const DocumentSchema = z.object({
   markdown: z.string(),
   createdAt: epochMs,
   updatedAt: epochMs,
-  history: z.array(HistoryEntrySchema).max(MAX_HISTORY_ENTRIES),
+  history: z.array(HistoryEntrySchema).max(HISTORY_MAX_ENTRIES),
   schemaVersion: z.literal(CURRENT_SCHEMA_VERSION),
 });
 
