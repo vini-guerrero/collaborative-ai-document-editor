@@ -21,11 +21,22 @@ export interface FlagEntry {
   readonly blockHash: string;
 }
 
+// A flag the author dismissed. It stays dismissed while its block keeps this text (D4, D16): the
+// analyzer may propose it again, but only for the same block hash and quote.
+export interface DismissedFlag {
+  readonly blockHash: string;
+  readonly quote: string;
+}
+
 export interface FlagsState {
   readonly entries: readonly FlagEntry[];
   // Next id to hand out. Kept in state so ids stay unique without module-level mutation.
   readonly nextId: number;
+  // Bounded (AGENTS: bound everything); pruned when a block's text changes.
+  readonly dismissed: readonly DismissedFlag[];
 }
+
+const MAX_DISMISSED_FLAGS = 50;
 
 export interface SetFlagsInput {
   readonly paragraphPos: number;
@@ -40,7 +51,31 @@ export interface ClearFlagsMeta {
   readonly id: string | undefined;
 }
 
-export const EMPTY_FLAGS: FlagsState = { entries: [], nextId: 1 };
+export const EMPTY_FLAGS: FlagsState = { entries: [], nextId: 1, dismissed: [] };
+
+function isDismissed(
+  dismissed: readonly DismissedFlag[],
+  blockHash: string,
+  quote: string,
+): boolean {
+  return dismissed.some((entry) => entry.blockHash === blockHash && entry.quote === quote);
+}
+
+// Forgets dismissals whose block text no longer exists in the document (the block changed).
+function pruneDismissed(dismissed: readonly DismissedFlag[], doc: Node): readonly DismissedFlag[] {
+  if (dismissed.length === 0) {
+    return dismissed;
+  }
+  const liveHashes = new Set<string>();
+  doc.descendants((node) => {
+    if (node.isTextblock) {
+      liveHashes.add(fnv1a32(node.textContent));
+      return false;
+    }
+    return true;
+  });
+  return dismissed.filter((entry) => liveHashes.has(entry.blockHash));
+}
 
 // A flag stays valid while its range is non-empty, lies in one textblock whose text is unchanged
 // since the AI computed it (T3, D4), and still reads as its quote.
@@ -69,7 +104,7 @@ export function mapFlags(state: FlagsState, tr: Transaction): FlagsState {
       to: tr.mapping.map(entry.to, -1),
     }))
     .filter((entry) => isFlagEntryValid(entry, tr.doc));
-  return { ...state, entries };
+  return { ...state, entries, dismissed: pruneDismissed(state.dismissed, tr.doc) };
 }
 
 function locateQuote(
@@ -112,6 +147,9 @@ export function applySetFlags(state: FlagsState, doc: Node, input: SetFlagsInput
     if (created.length >= MAX_FLAGS_PER_PARAGRAPH) {
       break;
     }
+    if (isDismissed(state.dismissed, blockHash, flag.quote)) {
+      continue;
+    }
     const range = locateQuote(text, positions, flag.quote);
     if (range === null) {
       continue;
@@ -130,14 +168,22 @@ export function applySetFlags(state: FlagsState, doc: Node, input: SetFlagsInput
   const others = state.entries.filter(
     (entry) => entry.from < paragraphPos || entry.from >= blockEnd,
   );
-  return { entries: [...others, ...created], nextId };
+  return { entries: [...others, ...created], nextId, dismissed: state.dismissed };
 }
 
+// Clearing one flag by id is a dismissal, so the same flag is not shown again for this text.
+// Clearing every flag is not (it is used when the document is reset).
 export function applyClearFlags(state: FlagsState, id: string | undefined): FlagsState {
   if (id === undefined) {
     return { ...state, entries: [] };
   }
-  return { ...state, entries: state.entries.filter((entry) => entry.id !== id) };
+  const dismissedNow = state.entries.filter((entry) => entry.id === id);
+  const added = dismissedNow.map((entry) => ({ blockHash: entry.blockHash, quote: entry.quote }));
+  return {
+    ...state,
+    entries: state.entries.filter((entry) => entry.id !== id),
+    dismissed: [...state.dismissed, ...added].slice(-MAX_DISMISSED_FLAGS),
+  };
 }
 
 // Plugin meta arrives as unknown; only shapes this module writes are accepted.

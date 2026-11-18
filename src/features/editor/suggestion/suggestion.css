@@ -1,0 +1,38 @@
+/* D5, S7: the diff is shown with a strike (removed) and an underline (added), so it never relies
+   on colour alone. Colours are the diff tokens from tokens.css (S2). */
+.ProseMirror .suggestion-delete {
+  text-decoration-line: line-through;
+  background-color: var(--ai-diff-delete-bg);
+}
+
+.ProseMirror .suggestion-insert {
+  text-decoration-line: underline;
+  background-color: var(--ai-diff-insert-bg);
+}
+
+.suggestion-card {
+  display: grid;
+  gap: var(--ds-space-100);
+  inline-size: min(23.75rem, 100%);
+  box-sizing: border-box;
+  outline: none;
+}
+
+/* Reserves the outcome's height so the spinner, note and error text do not move the buttons. */
+.suggestion-card__outcome {
+  display: grid;
+  align-content: center;
+  min-block-size: var(--ds-space-600);
+}
+
+.suggestion-card__note {
+  margin: 0;
+  font: var(--ds-font-body-small);
+  color: var(--ds-text-subtle);
+}
+
+.suggestion-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-100);
+}

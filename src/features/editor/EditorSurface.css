@@ -1,5 +1,10 @@
-/* Tokens only (S2). Body text is at least 1rem and the measure stays within 75ch (AGENTS). */
+/* Tokens only (S2). Body text is at least 1rem and the measure stays within 75ch (AGENTS). The
+   surface is a clean page: no box or border around the text (prototype .page). */
 .editor-surface {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  min-block-size: 0;
   min-inline-size: 0;
   max-inline-size: 75ch;
   inline-size: 100%;
@@ -7,13 +12,13 @@
 
 .editor-surface .ProseMirror {
   display: block;
-  /* Fills most of a phone screen on first open while the top bar stays visible (S9); the
-     document grows past this height. */
+  /* Fills the rest of the viewport below the bar; the document grows past this height. */
+  flex: 1 0 auto;
   min-block-size: 60dvh;
   box-sizing: border-box;
-  padding: var(--ds-space-150);
-  border: var(--ds-border-width) solid var(--ds-border);
-  border-radius: var(--ds-radius-small);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
   background: transparent;
   color: var(--ds-text);
   /* Document text is 16px (AGENTS UI/UX); the body token is 14px, so the large body token is used. */
@@ -27,6 +32,13 @@
 
 .editor-surface .ProseMirror h1 {
   font: var(--ds-font-heading-large);
+}
+
+/* The document's first block reads as its title (prototype h1.dt): large, bold, tight tracking. */
+.editor-surface .ProseMirror > h1:first-child {
+  font: var(--ds-font-heading-xxlarge);
+  letter-spacing: -0.02em;
+  margin-block-end: var(--ds-space-200);
 }
 
 .editor-surface .ProseMirror h2 {

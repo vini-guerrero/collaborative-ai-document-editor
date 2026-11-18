@@ -3,16 +3,16 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createAppRoutes } from '@/app/router';
 import { createLocalStorageStore, DocumentStoreProvider } from '@/features/documents';
-import { AiTestProvider } from '@/test/fakeAi';
+import { AiServicesProvider } from './AiServicesProvider';
 
 function renderAt(path: string): void {
   const store = createLocalStorageStore({ storage: window.localStorage });
   const router = createMemoryRouter(createAppRoutes(), { initialEntries: [path] });
   render(
     <DocumentStoreProvider store={store}>
-      <AiTestProvider>
+      <AiServicesProvider>
         <RouterProvider router={router} />
-      </AiTestProvider>
+      </AiServicesProvider>
     </DocumentStoreProvider>,
   );
 }

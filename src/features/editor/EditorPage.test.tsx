@@ -15,7 +15,7 @@ import {
 } from '@/features/documents';
 import { EditorPageView } from './EditorPage';
 import { setViewportWidth } from '@/test/matchMedia';
-import { AiTestProvider } from '@/test/fakeAi';
+import { AiTestProvider } from './testing/fakeAi';
 import { AUTOSAVE_DELAY_MS } from './useAutosave';
 
 const NOW = 1_700_000_000_000;

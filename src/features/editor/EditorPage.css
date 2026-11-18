@@ -1,4 +1,12 @@
-/* Tokens only (S2). Document text is at least 1rem; the body stays within about 75 characters. */
+/* Tokens only (S2). Document text is at least 1rem; the page column keeps a 45-75ch measure. */
+.editor-page {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+  box-sizing: border-box;
+}
+
+/* A slim bar: 8px above and below, 16px at the sides, controls in one row that wraps at 360px. */
 .editor-top-bar {
   display: flex;
   flex-wrap: wrap;
@@ -9,10 +17,30 @@
   min-inline-size: 0;
 }
 
+.editor-top-bar .ds-icon-link {
+  border-radius: var(--ds-radius-full);
+}
+
 .editor-top-bar__name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-050);
   font: var(--ds-font-body);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-text);
+  text-decoration: none;
+}
+
+/* The brand mark: a small accent tile with the initial, decorative for assistive technology. */
+.editor-top-bar__mark {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 22px;
+  block-size: 22px;
+  border-radius: var(--ds-radius-small);
+  background: var(--ds-background-brand-bold);
+  color: var(--ds-surface);
+  font: var(--ds-font-heading-xxsmall);
 }
 
 /* Below md the title takes its own full row under the back arrow, name and overflow menu (S9). */
@@ -25,33 +53,93 @@
   min-inline-size: 0;
 }
 
-/* From md the title shares the bar with the toggles; 768px mirrors BREAKPOINTS.md (S9). */
+/* The title is borderless until the user points at it or focuses it (prototype .title). */
+.editor-top-bar__title .ds-text-field__input {
+  box-sizing: border-box;
+  inline-size: 100%;
+  padding: var(--ds-space-025) var(--ds-space-100);
+  border: var(--ds-border-width) solid transparent;
+  border-radius: var(--ds-radius-small);
+  background: transparent;
+  color: var(--ds-text);
+  font: var(--ds-font-body-large);
+  font-weight: var(--ds-font-weight-medium);
+}
+
+.editor-top-bar__title .ds-text-field__input:hover {
+  border-color: var(--ds-border);
+}
+
+.editor-top-bar__title .ds-text-field__input:focus {
+  outline: var(--ds-border-width-focused) solid var(--ds-border-focused);
+  outline-offset: 0;
+  border-color: transparent;
+}
+
+/* From md the title keeps a fixed width and the toggles, AI status and flag control sit to its
+   right. 768px mirrors BREAKPOINTS.md (S9). */
 @media (min-width: 768px) {
   .editor-top-bar__title {
-    flex: 1 1 12rem;
+    flex: 0 1 15rem;
   }
 }
 
-.editor-top-bar__title .ds-text-field__input {
-  box-sizing: border-box;
+/* The view and AI toggles are pushed to the right edge, in one row with the other controls. */
+.editor-top-bar__toggles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-space-100);
+  margin-inline-start: auto;
+}
+
+/* Reserved widths: the controls can come and go without moving what sits beside them. */
+.editor-top-bar__flags {
+  display: flex;
+  justify-content: flex-end;
+  min-inline-size: 7.5rem;
+}
+
+.editor-top-bar__ai {
+  display: flex;
+  justify-content: flex-start;
+  min-inline-size: 10rem;
 }
 
 .editor-top-bar__status {
   min-inline-size: 0;
-  margin: 0 0 0 auto;
+  margin: 0;
   font: var(--ds-font-body-small);
   color: var(--ds-text-subtle);
   text-align: end;
 }
 
+/* The page column: centred, about 46rem (the prototype's 740px), with generous top space. */
 .editor-page-main {
   display: flex;
+  flex: 1 0 auto;
   flex-direction: column;
   gap: var(--ds-space-100);
+  inline-size: 100%;
+  max-inline-size: 46rem;
+  margin-inline: auto;
   padding-inline: var(--ds-space-200);
+  padding-block: var(--ds-space-600) var(--ds-space-800);
   min-inline-size: 0;
-  max-inline-size: 100%;
   box-sizing: border-box;
+}
+
+/* The editing body fills the viewport below the bar (the hidden raw view keeps the same box). */
+.editor-page-body {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+/* The author's display rule must not override the hidden attribute on the raw-view switch. */
+.editor-page-body[hidden] {
+  display: none;
 }
 
 @media (pointer: coarse) {

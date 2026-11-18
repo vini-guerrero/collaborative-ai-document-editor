@@ -47,7 +47,12 @@ Updated in the same commit as each phase.
 | 41a | Section outline and move/split/merge as pure functions (UI and preview still to do) | Done |
 | 42a | History entry labels, 200-entry and size caps, restore and checkpoint helpers (UI still to do) | Done |
 | 35 | Flag UI: plugin and scheduler wired into the editor, status in the top bar, flag popover, next-flag key and button | Done |
-| 36-43 | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 36-40 (suggestion, refine, toolbar, slash), then 41-43 |
+| 36-37 | Suggestion preview (word diff as decorations), Accept as one undo step, suggestion card with loading, error, empty and success states | Done |
+| 38-40 (modules) | Refine reducer and controls, selection toolbar and Improve button, slash menu extension; built and tested, not yet wired into the editor | Done |
+| 41b | Restructure preview plugin, Accept as one undo step, suggestion wording and outline; not yet wired | Done |
+| 42b | History timeline, entry helpers and one-undo restore; not yet wired | Done |
+| Review fixes | Dismissed flags stay dismissed; analysis keeps running after an outage; Tab-close and role fixes; `.env.example` and `.gitignore` | Done |
+| 38-43 (wiring and close) | Main editor milestone: Markdown adapter, TipTap editor, AI server, flags, suggestions, restructure, history (see [docs/PLAN-EDITOR-MILESTONE.md](docs/PLAN-EDITOR-MILESTONE.md)) | Next: phases 36-40 (suggestion, refine, toolbar, slash), then 41-43 |
 
 ## What it is
 

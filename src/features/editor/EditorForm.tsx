@@ -138,7 +138,7 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
   );
 
   return (
-    <>
+    <div className="editor-page">
       <EditorTopBar
         message={saveMessage(status, failure)}
         title={titleField}
@@ -168,7 +168,7 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
             }}
           />
         ) : null}
-        <div hidden={viewMode === 'markdown'}>
+        <div hidden={viewMode === 'markdown'} className="editor-page-body">
           <EditorSurface
             initialMarkdown={initialBody}
             onChange={scheduleBody}
@@ -187,6 +187,6 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
           />
         )}
       </main>
-    </>
+    </div>
   );
 }

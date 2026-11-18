@@ -206,4 +206,26 @@ describe('flags state (D2, T3)', () => {
     expect(getFlags(one).map((entry) => entry.quote)).toEqual(['mat']);
     expect(getFlags(all)).toHaveLength(0);
   });
+  // D4, D16: a dismissed flag is not shown again while its text is unchanged.
+  it('ignores a dismissed flag when the analysis proposes it again (D4, D16)', () => {
+    const shown = withFlags(stateOf([SENTENCE]), 0, [flag('cat')]);
+    const id = getFlags(shown)[0]?.id ?? '';
+    const dismissed = shown.apply(clearFlagsMeta(shown.tr, id));
+
+    const again = withFlags(dismissed, 0, [flag('cat')]);
+
+    expect(getFlags(again)).toHaveLength(0);
+  });
+
+  // D4: once the paragraph text changes, the same flag may be shown again.
+  it('shows a dismissed flag again after its paragraph text changes (D4)', () => {
+    const shown = withFlags(stateOf([SENTENCE]), 0, [flag('cat')]);
+    const id = getFlags(shown)[0]?.id ?? '';
+    const dismissed = shown.apply(clearFlagsMeta(shown.tr, id));
+    const edited = dismissed.apply(dismissed.tr.insertText('Oh ', 1));
+
+    const reflagged = withFlags(edited, 0, [flag('cat')]);
+
+    expect(getFlags(reflagged).map((entry) => entry.quote)).toEqual(['cat']);
+  });
 });

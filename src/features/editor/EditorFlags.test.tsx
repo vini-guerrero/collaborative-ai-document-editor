@@ -1,91 +1,27 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { Editor } from '@tiptap/react';
-import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Flag } from '@shared/schemas';
 import type { FetchLike } from '@/features/ai';
-import { createLocalStorageStore, DocumentStoreProvider } from '@/features/documents';
-import { AiTestProvider, analyzeResponse, holdingFetch } from '@/test/fakeAi';
 import { setViewportWidth } from '@/test/matchMedia';
-import { DEFAULT_PAUSE_MS } from './analyze/analyzeScheduler';
-import { EditorPageView } from './EditorPage';
 import { getFlags } from './flags/flagsPlugin';
+import {
+  advancePastPause,
+  FLAG,
+  flagElementOrThrow,
+  insertParagraph,
+  PARAGRAPH,
+  readyEditor,
+  renderEditorPage,
+} from './testing/editorHarness';
+import { analyzeResponse, holdingFetch } from './testing/fakeAi';
 
-const NOW = 1_700_000_000_000;
-const PARAGRAPH = 'The launch moved to the second week of March.';
-const DOCUMENT_PATH = '/documents/doc-1';
-const FLAG: Flag = { kind: 'clarity', quote: 'moved', reason: 'Say why the date changed.' };
 const POPOVER_NAME = 'Writing flag';
-
-interface EditorHolder {
-  editor: Editor | null;
-}
-
-// The page is rendered with a real store, the real AI client and status store, and a fake fetch.
-function renderEditor(fetchImpl: FetchLike): EditorHolder {
-  const holder: EditorHolder = { editor: null };
-  const store = createLocalStorageStore({ storage: window.localStorage });
-  const router = createMemoryRouter(
-    [
-      {
-        path: DOCUMENT_PATH,
-        element: (
-          <EditorPageView
-            documentId="doc-1"
-            now={() => NOW}
-            onReady={(editor) => {
-              holder.editor = editor;
-            }}
-          />
-        ),
-      },
-    ],
-    { initialEntries: [DOCUMENT_PATH] },
-  );
-  render(
-    <DocumentStoreProvider store={store}>
-      <AiTestProvider fetchImpl={fetchImpl}>
-        <RouterProvider router={router} />
-      </AiTestProvider>
-    </DocumentStoreProvider>,
-  );
-  return holder;
-}
-
-async function readyEditor(holder: EditorHolder): Promise<Editor> {
-  await waitFor(() => {
-    expect(holder.editor).not.toBeNull();
-  });
-  if (holder.editor === null) {
-    throw new Error('the editor was not handed to onReady');
-  }
-  return holder.editor;
-}
-
-function insertParagraph(editor: Editor, text: string): void {
-  act(() => {
-    editor.commands.insertContent(text, { contentType: 'markdown' });
-  });
-}
-
-async function advancePastPause(): Promise<void> {
-  await act(async () => {
-    await vi.advanceTimersByTimeAsync(DEFAULT_PAUSE_MS);
-  });
-}
-
-function flagElement(): HTMLElement {
-  const element = document.querySelector<HTMLElement>('.flag');
-  if (element === null) {
-    throw new Error('no flag is rendered');
-  }
-  return element;
-}
 
 // Writes a paragraph, waits out the pause and waits for the flag the fake AI returns.
 async function editorWithFlag(flags: readonly Flag[] = [FLAG]): Promise<Editor> {
-  const holder = renderEditor(() => Promise.resolve(analyzeResponse(flags)));
+  const holder = renderEditorPage(() => Promise.resolve(analyzeResponse(flags)));
   const editor = await readyEditor(holder);
   insertParagraph(editor, PARAGRAPH);
   await advancePastPause();
@@ -108,14 +44,14 @@ describe('flags in the editor', () => {
   // D4: a paragraph is analyzed once it has been still for the pause, and its flags appear.
   it('shows the flag returned for a paragraph after the pause (D4, D2)', async () => {
     const fetchImpl = vi.fn<FetchLike>(() => Promise.resolve(analyzeResponse([FLAG])));
-    const holder = renderEditor(fetchImpl);
+    const holder = renderEditorPage(fetchImpl);
     const editor = await readyEditor(holder);
 
     insertParagraph(editor, PARAGRAPH);
     await advancePastPause();
 
     await waitFor(() => {
-      expect(flagElement().textContent).toBe('moved');
+      expect(flagElementOrThrow().textContent).toBe('moved');
     });
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
@@ -124,7 +60,7 @@ describe('flags in the editor', () => {
   it('makes no AI call in On demand mode (D1)', async () => {
     const fetchImpl = vi.fn<FetchLike>(() => Promise.resolve(analyzeResponse([FLAG])));
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    const holder = renderEditor(fetchImpl);
+    const holder = renderEditorPage(fetchImpl);
     const editor = await readyEditor(holder);
 
     await user.click(await screen.findByRole('button', { name: 'On demand' }));
@@ -139,7 +75,7 @@ describe('flags in the editor', () => {
   it('makes no AI call while the Markdown view is shown (D15)', async () => {
     const fetchImpl = vi.fn<FetchLike>(() => Promise.resolve(analyzeResponse([FLAG])));
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    const holder = renderEditor(fetchImpl);
+    const holder = renderEditorPage(fetchImpl);
     const editor = await readyEditor(holder);
 
     await user.click(await screen.findByRole('button', { name: 'Markdown' }));
@@ -154,7 +90,7 @@ describe('flags in the editor', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     await editorWithFlag();
 
-    await user.click(flagElement());
+    await user.click(flagElementOrThrow());
     const dialog = await screen.findByRole('dialog', { name: POPOVER_NAME });
     expect(within(dialog).getByText(FLAG.reason)).toBeTruthy();
     expect(within(dialog).getByText('Clarity')).toBeTruthy();
@@ -172,7 +108,7 @@ describe('flags in the editor', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     await editorWithFlag();
 
-    await user.click(flagElement());
+    await user.click(flagElementOrThrow());
     await screen.findByRole('dialog', { name: POPOVER_NAME });
     await user.keyboard('{Escape}');
 
@@ -221,7 +157,7 @@ describe('flags in the editor', () => {
   // D17: the Next flag button exists only while a flag does, and opens the flag.
   it('shows the Next flag button only while a flag exists and opens the flag (D17)', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    const holder = renderEditor(() => Promise.resolve(analyzeResponse([FLAG])));
+    const holder = renderEditorPage(() => Promise.resolve(analyzeResponse([FLAG])));
     const editor = await readyEditor(holder);
     expect(screen.queryByRole('button', { name: 'Next flag' })).toBeNull();
 
@@ -239,7 +175,7 @@ describe('flags in the editor', () => {
     const hostile: Flag = { ...FLAG, reason: '<img src=x onerror=alert(1)> Check this' };
     await editorWithFlag([hostile]);
 
-    await user.click(flagElement());
+    await user.click(flagElementOrThrow());
     const dialog = await screen.findByRole('dialog', { name: POPOVER_NAME });
 
     expect(within(dialog).getByText(hostile.reason)).toBeTruthy();
@@ -252,7 +188,7 @@ describe('flags in the editor', () => {
     setViewportWidth(360);
     await editorWithFlag();
 
-    await user.click(flagElement());
+    await user.click(flagElementOrThrow());
 
     const sheet = await screen.findByRole('dialog', { name: POPOVER_NAME });
     expect(within(sheet).getByText(FLAG.reason)).toBeTruthy();
@@ -261,7 +197,7 @@ describe('flags in the editor', () => {
   // D14: the status indicator sits in the top bar and reports a call that is in flight.
   it('shows AI is working in the top bar while a call is in flight (D14)', async () => {
     const pending = holdingFetch();
-    const holder = renderEditor(pending.fetchImpl);
+    const holder = renderEditorPage(pending.fetchImpl);
     const editor = await readyEditor(holder);
 
     insertParagraph(editor, PARAGRAPH);

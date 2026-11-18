@@ -6,7 +6,7 @@ import type { FlagEntry } from './flags/flagsState';
 import './FlagPanel.css';
 
 // S7: the kind is named in text, so it never relies on the underline's colour alone.
-const KIND_LABELS: Record<FlagKind, string> = {
+export const KIND_LABELS: Record<FlagKind, string> = {
   clarity: 'Clarity',
   tone: 'Tone',
   grammar: 'Grammar',
@@ -30,8 +30,10 @@ export function FlagPanel({
 }: FlagPanelProps): JSX.Element {
   return (
     <div className="flag-panel">
-      <p className="flag-panel__kind">{KIND_LABELS[flag.kind]}</p>
-      <p className="flag-panel__reason">{flag.reason}</p>
+      <div className="flag-panel__header">
+        <p className="flag-panel__kind">{KIND_LABELS[flag.kind]}</p>
+        <p className="flag-panel__reason">{flag.reason}</p>
+      </div>
       {onAnswer === undefined ? null : <FlagAnswerForm onAnswer={onAnswer} />}
       <div className="flag-panel__actions">
         {onViewSuggestion === undefined ? null : (

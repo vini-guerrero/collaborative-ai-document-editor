@@ -3,8 +3,10 @@ import { EditorContent, useEditor, type Editor, type UseEditorOptions } from '@t
 import { createEditorExtensions } from './markdown/extensions';
 import { createFlagsPlugin } from './flags/flagsPlugin';
 import { bindFlagOpener, createFlagNavigation } from './flagNavigation';
+import { createSuggestionPlugin } from './suggestion/suggestionPlugin';
 import { useFlagAnalysis } from './useFlagAnalysis';
 import './flags/flags.css';
+import './suggestion/suggestion.css';
 import './EditorSurface.css';
 
 export interface EditorSurfaceProps {
@@ -44,7 +46,12 @@ export function EditorSurface({
   // Built once per mount. TipTap compares options on every render, so a new object or callback
   // each render would call setOptions on every title keystroke.
   const [options] = useState<UseEditorOptions>(() => ({
-    extensions: [...createEditorExtensions(), createFlagsPlugin(), createFlagNavigation()],
+    extensions: [
+      ...createEditorExtensions(),
+      createFlagsPlugin(),
+      createSuggestionPlugin(),
+      createFlagNavigation(),
+    ],
     contentType: 'markdown',
     content: initialMarkdown,
     editorProps: {

@@ -2,17 +2,33 @@
 .flag-panel {
   display: grid;
   gap: var(--ds-space-100);
-  max-inline-size: 22rem;
+  inline-size: min(23.75rem, 100%);
+  box-sizing: border-box;
 }
 
+/* Kind pill and reason on one row; the reason takes the free width (prototype .ph2). */
+.flag-panel__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-space-100);
+}
+
+/* The kind is named in text on an accent-tinted pill (S7). */
 .flag-panel__kind {
+  flex: none;
   margin: 0;
+  padding: var(--ds-space-025) var(--ds-space-100);
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-background-accent-blue-subtler);
+  color: var(--ds-text-accent-blue-bolder);
   font: var(--ds-font-body-small);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--ds-text-subtle);
+  font-weight: var(--ds-font-weight-medium);
+  white-space: nowrap;
 }
 
 .flag-panel__reason {
+  flex: 1 1 auto;
+  min-inline-size: 0;
   margin: 0;
   font: var(--ds-font-body);
   color: var(--ds-text);
@@ -22,6 +38,28 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--ds-space-100);
+}
+
+/* The popover around the panel: a bordered card with a caret toward the flagged text (prototype
+   .pop and .pop::before). The popover itself is the design-system element; only its look is set
+   here, and only when it wraps one of these panels. */
+.ds-popover:has(> .flag-panel),
+.ds-popover:has(> .suggestion-card) {
+  border: var(--ds-border-width) solid var(--ds-border);
+}
+
+.ds-popover:has(> .flag-panel)::before,
+.ds-popover:has(> .suggestion-card)::before {
+  content: '';
+  position: absolute;
+  inset-block-start: calc(var(--ds-space-100) * -1 + 2px);
+  inset-inline-start: var(--ds-space-600);
+  inline-size: var(--ds-space-100);
+  block-size: var(--ds-space-100);
+  background: var(--ds-surface-overlay);
+  border-inline-start: var(--ds-border-width) solid var(--ds-border);
+  border-block-start: var(--ds-border-width) solid var(--ds-border);
+  transform: rotate(45deg);
 }
 
 /* S9: touch targets are at least 44px on coarse pointers. */

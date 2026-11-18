@@ -28,7 +28,8 @@ export interface EditorTopBarProps {
 }
 
 // H5, D1, D15, H7, S9: back and app name, the title, the view and AI mode toggles, and the save
-// status. Below md the view toggle and History move into the overflow menu.
+// status. Below md the view toggle and History move into the overflow menu. The AI status and the
+// flag control have reserved widths, so their appearing or changing does not move the toggles.
 export function EditorTopBar({
   message,
   title,
@@ -45,6 +46,9 @@ export function EditorTopBar({
         <Icon name="arrow-left" />
       </Link>
       <Link to="/" className="editor-top-bar__name">
+        <span className="editor-top-bar__mark" aria-hidden="true">
+          W
+        </span>
         WebApp
       </Link>
       {view !== undefined && compact ? (
@@ -53,15 +57,17 @@ export function EditorTopBar({
         </div>
       ) : null}
       {title === undefined ? null : <div className="editor-top-bar__title">{title}</div>}
-      {view !== undefined && !compact ? (
-        <ViewModeToggle value={view.viewMode} onChange={view.onViewModeChange} />
-      ) : null}
-      {view !== undefined ? (
-        <AiModeToggle value={view.aiMode} onChange={view.onAiModeChange} />
-      ) : null}
-      {view !== undefined && !compact ? <Button disabled>History (Soon)</Button> : null}
-      {flagControl ?? null}
-      {aiStatus ?? null}
+      <div className="editor-top-bar__toggles">
+        {view !== undefined && !compact ? (
+          <ViewModeToggle value={view.viewMode} onChange={view.onViewModeChange} />
+        ) : null}
+        {view !== undefined ? (
+          <AiModeToggle value={view.aiMode} onChange={view.onAiModeChange} />
+        ) : null}
+        {view !== undefined && !compact ? <Button disabled>History (Soon)</Button> : null}
+      </div>
+      <div className="editor-top-bar__flags">{flagControl ?? null}</div>
+      <div className="editor-top-bar__ai">{aiStatus ?? null}</div>
       <p role="status" className="editor-top-bar__status">
         {message}
       </p>
