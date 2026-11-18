@@ -1,0 +1,78 @@
+/* D10, D11: the restructure preview and outline. Tokens only (S2); colour is never the only cue,
+   since the target is a bar and the ghost is dashed (S7). */
+.ProseMirror .restructure-target {
+  position: relative;
+}
+
+.ProseMirror .restructure-target::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(var(--ds-space-100) * -1);
+  inline-size: var(--ds-space-050);
+  border-radius: var(--ds-space-025);
+  background-color: var(--ds-border-accent-blue);
+}
+
+.ProseMirror .restructure-ghost {
+  opacity: 0.6;
+  outline: var(--ds-space-025) dashed var(--ds-border);
+  outline-offset: var(--ds-space-050);
+}
+
+.restructure-suggestion {
+  display: grid;
+  gap: var(--ds-space-100);
+  max-inline-size: 22rem;
+}
+
+.restructure-suggestion__summary {
+  margin: 0;
+  font: var(--ds-font-body-small);
+  color: var(--ds-text);
+}
+
+.restructure-suggestion__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-100);
+}
+
+.restructure-outline {
+  display: grid;
+  gap: var(--ds-space-050);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.restructure-outline__empty {
+  margin: 0;
+  font: var(--ds-font-body-small);
+  color: var(--ds-text-subtle);
+}
+
+.restructure-outline__item {
+  font: var(--ds-font-body-small);
+  color: var(--ds-text);
+}
+
+.restructure-outline__item--level-2 {
+  padding-inline-start: var(--ds-space-200);
+}
+
+.restructure-outline__item--level-3 {
+  padding-inline-start: calc(var(--ds-space-200) * 2);
+}
+
+.restructure-outline__item--level-4 {
+  padding-inline-start: calc(var(--ds-space-200) * 3);
+}
+
+.restructure-outline__item--level-5 {
+  padding-inline-start: calc(var(--ds-space-200) * 4);
+}
+
+.restructure-outline__item--level-6 {
+  padding-inline-start: calc(var(--ds-space-200) * 5);
+}

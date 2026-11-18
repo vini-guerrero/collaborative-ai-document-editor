@@ -24,8 +24,16 @@ const NOOP: OperationResult = { ok: false, reason: 'noop' };
 const isIndex = (index: number, length: number): boolean =>
   Number.isInteger(index) && index >= 0 && index < length;
 
+// A section that ends the source has no trailing newline. When it moves into the middle, the next
+// heading would glue onto its last line and be lost, so every part except the last gets one.
 const joinSections = (sections: readonly Section[]): string =>
-  sections.map((section) => section.text).join('');
+  sections
+    .map((section, index) =>
+      index < sections.length - 1 && !section.text.endsWith('\n')
+        ? `${section.text}\n`
+        : section.text,
+    )
+    .join('');
 
 const applied = (sections: readonly Section[]): OperationResult => ({
   ok: true,

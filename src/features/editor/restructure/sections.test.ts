@@ -166,3 +166,14 @@ describe('applyOperation merge', () => {
     });
   });
 });
+
+describe('applyOperation with a last section that has no trailing newline (D10)', () => {
+  it('keeps every heading when the last section moves to the front', () => {
+    const source = '# A\n\nText A.\n\n# B\n\nText B.';
+    const result = applyOperation(source, { op: 'move', from: 1, to: 0 });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(outline(result.markdown).map((section) => section.heading)).toEqual(['B', 'A']);
+    }
+  });
+});
