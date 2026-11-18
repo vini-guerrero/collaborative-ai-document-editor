@@ -36,7 +36,7 @@ export interface EditorTopBarProps {
   flagControl?: ReactNode;
 }
 
-// H5, D1, D15, H7, S9: back and app name, the title, the view and AI mode toggles, and the save
+// H5, D1, D15, H7, S9: the back arrow, the title, the view and AI mode toggles, and the save
 // status. Below md the view toggle and History move into the overflow menu. The AI status and the
 // flag control have reserved widths, so their appearing or changing does not move the toggles.
 export function EditorTopBar({
@@ -53,12 +53,6 @@ export function EditorTopBar({
     <header className="editor-top-bar">
       <Link to="/" aria-label="Back to documents" className={iconLinkClassName()}>
         <Icon name="arrow-left" />
-      </Link>
-      <Link to="/" className="editor-top-bar__name">
-        <span className="editor-top-bar__mark" aria-hidden="true">
-          W
-        </span>
-        WebApp
       </Link>
       {view !== undefined && compact ? (
         <div className="editor-top-bar__overflow">

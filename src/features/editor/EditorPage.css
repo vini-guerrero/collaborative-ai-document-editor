@@ -17,33 +17,23 @@
   min-inline-size: 0;
 }
 
+/* Every control in the bar is 32px tall and centred on one line, so icons and the title align. */
+.editor-top-bar > *,
+.editor-top-bar__toggles > * {
+  min-block-size: 32px;
+}
+
+.editor-top-bar__ai,
+.editor-top-bar__flags,
+.editor-top-bar__status {
+  align-items: center;
+}
+
 .editor-top-bar .ds-icon-link {
   border-radius: var(--ds-radius-full);
 }
 
-.editor-top-bar__name {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--ds-space-050);
-  font: var(--ds-font-body);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--ds-text);
-  text-decoration: none;
-}
-
-/* The brand mark: a small accent tile with the initial, decorative for assistive technology. */
-.editor-top-bar__mark {
-  display: inline-grid;
-  place-items: center;
-  inline-size: 22px;
-  block-size: 22px;
-  border-radius: var(--ds-radius-small);
-  background: var(--ds-background-brand-bold);
-  color: var(--ds-surface);
-  font: var(--ds-font-heading-xxsmall);
-}
-
-/* Below md the title takes its own full row under the back arrow, name and overflow menu (S9). */
+/* Below md the title takes its own full row beside the back arrow and overflow menu (S9). */
 .editor-top-bar__overflow {
   margin-inline-start: auto;
 }
@@ -57,7 +47,8 @@
 .editor-top-bar__title .ds-text-field__input {
   box-sizing: border-box;
   inline-size: 100%;
-  padding: var(--ds-space-025) var(--ds-space-100);
+  min-block-size: 32px;
+  padding: 0 var(--ds-space-100);
   border: var(--ds-border-width) solid transparent;
   border-radius: var(--ds-radius-small);
   background: transparent;
@@ -80,13 +71,15 @@
    right. 768px mirrors BREAKPOINTS.md (S9). */
 @media (min-width: 768px) {
   .editor-top-bar__title {
-    flex: 0 1 10rem;
+    flex: 1 1 10rem;
+    max-inline-size: 24rem;
   }
 }
 
 @media (min-width: 1024px) {
   .editor-top-bar__title {
-    flex: 0 1 15rem;
+    flex: 1 1 15rem;
+    max-inline-size: 28rem;
   }
 }
 

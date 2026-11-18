@@ -193,15 +193,14 @@ describe('EditorPage', () => {
     expect(store.saves[0]?.markdown).toBe('Leaving');
   });
 
-  // H7: the back arrow and the app name both lead home.
-  it('links the back arrow and the app name to home (H7)', async () => {
+  // H7: the back arrow leads home; the editor bar carries no app name.
+  it('links the back arrow to home and shows no app name (H7)', async () => {
     renderEditor(createFakeStore());
 
     const back = await screen.findByRole('link', { name: 'Back to documents' });
-    const appName = screen.getByRole('link', { name: 'WebApp' });
 
     expect(back.getAttribute('href')).toBe('/');
-    expect(appName.getAttribute('href')).toBe('/');
+    expect(screen.queryByRole('link', { name: 'WebApp' })).toBeNull();
   });
 
   // H5: an unknown document opens as a blank draft with the title as a placeholder hint only.
