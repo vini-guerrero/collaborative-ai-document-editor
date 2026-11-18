@@ -12,6 +12,7 @@ export { NavItem, type NavItemProps } from './NavItem/NavItem';
 export { Popover, type PopoverPlacement, type PopoverProps } from './Popover/Popover';
 export { Select, type SelectOption, type SelectProps } from './Select/Select';
 export { Spinner, type SpinnerProps } from './Spinner/Spinner';
+export { Tooltip, type TooltipProps } from './Tooltip/Tooltip';
 export { ThemeSwitcher } from './ThemeSwitcher/ThemeSwitcher';
 export { TextField, type TextFieldProps } from './TextField/TextField';
 export {

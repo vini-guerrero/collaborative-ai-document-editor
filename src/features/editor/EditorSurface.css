@@ -116,3 +116,19 @@
   background: var(--ds-background-accent-blue-subtler);
   color: var(--ds-text);
 }
+
+/* D17: a quiet marker in the margin beside the line being written (like Notion's block marker).
+   It shows only while the editor has focus, and it is a bar, so it does not depend on colour. */
+.editor-surface .ProseMirror .current-block {
+  position: relative;
+}
+
+.editor-surface .ProseMirror.ProseMirror-focused .current-block::before {
+  content: '';
+  position: absolute;
+  inset-block: 0.35em;
+  inset-inline-start: calc(-1 * var(--ds-space-150));
+  inline-size: var(--ds-space-025);
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-border-bold);
+}

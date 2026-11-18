@@ -1,5 +1,24 @@
+/* D14: one round icon button-sized cue; the words live in the tooltip. */
+.ai-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 34px;
+  block-size: 34px;
+  border-radius: var(--ds-radius-full);
+  color: var(--ds-icon-subtle);
+}
+
+.ai-status--ready {
+  color: var(--ds-icon-success);
+}
+
+.ai-status--unavailable,
+.ai-status--out_of_credit {
+  color: var(--ds-icon-danger);
+}
+
 .ai-status__icon {
   display: inline-flex;
   align-items: center;
-  margin-inline-end: var(--ds-space-050);
 }

@@ -12,8 +12,8 @@ export interface ToolbarPoint {
 }
 
 // S9: the toolbar's footprint. The width is its maximum; the CSS shrinks it on narrow screens.
-export const TOOLBAR_WIDTH_PX = 360;
-export const TOOLBAR_HEIGHT_PX = 44;
+export const TOOLBAR_WIDTH_PX = 440;
+export const TOOLBAR_HEIGHT_PX = 48;
 const TOOLBAR_GAP_PX = 8;
 // S9: 16px is the viewport gutter.
 const VIEWPORT_PADDING_PX = 16;

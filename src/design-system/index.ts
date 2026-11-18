@@ -25,6 +25,7 @@ export {
   TextField,
   ThemeSwitcher,
   ToggleGroup,
+  Tooltip,
   VisuallyHidden,
   useShell,
   type AppShellProps,
@@ -52,6 +53,7 @@ export {
   type TextFieldProps,
   type ToggleGroupOption,
   type ToggleGroupProps,
+  type TooltipProps,
   type VisuallyHiddenProps,
 } from './components';
 export {

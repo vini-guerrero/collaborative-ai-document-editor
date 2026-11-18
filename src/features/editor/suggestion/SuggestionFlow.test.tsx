@@ -125,7 +125,7 @@ describe('suggestion flow in the editor', () => {
 
     expect(await screen.findByText('Your text is unchanged.')).toBeTruthy();
     expect(screen.getByText('The AI is out of credit.')).toBeTruthy();
-    expect(await screen.findByText('AI is out of credit')).toBeTruthy();
+    expect(await screen.findAllByText('AI is out of credit')).not.toHaveLength(0);
   });
 
   // D17: Tab accepts only once the suggestion is ready, never while it is still loading.

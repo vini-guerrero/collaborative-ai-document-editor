@@ -66,7 +66,7 @@ describe('useAiClient and useAiStatus (D14)', () => {
     await user.click(screen.getByRole('button', { name: 'Analyze' }));
 
     expect(await screen.findByText('Result: ok')).not.toBeNull();
-    expect(screen.getByText('AI ready')).not.toBeNull();
+    expect(screen.getAllByText('AI ready').length).toBeGreaterThan(0);
   });
 
   it('becomes unavailable on a failed request and recovers on the next success', async () => {
@@ -79,11 +79,11 @@ describe('useAiClient and useAiStatus (D14)', () => {
 
     await user.click(button);
     expect(await screen.findByText('Result: unavailable')).not.toBeNull();
-    expect(screen.getByText('AI unavailable. Retry later')).not.toBeNull();
+    expect(screen.getAllByText('AI unavailable. Retry later').length).toBeGreaterThan(0);
 
     await user.click(button);
     await waitFor(() => {
-      expect(screen.getByText('AI ready')).not.toBeNull();
+      expect(screen.getAllByText('AI ready').length).toBeGreaterThan(0);
     });
   });
 
@@ -102,7 +102,7 @@ describe('useAiClient and useAiStatus (D14)', () => {
     await waitFor(() => {
       expect(screen.getByText('Result: ok')).not.toBeNull();
     });
-    expect(screen.getByText('AI is out of credit')).not.toBeNull();
+    expect(screen.getAllByText('AI is out of credit').length).toBeGreaterThan(0);
   });
 
   it('throws a clear error when used outside an AiStatusProvider', () => {

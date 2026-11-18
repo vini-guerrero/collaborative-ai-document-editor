@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type JSX } from 'react';
 import { EditorContent, useEditor, type Editor, type UseEditorOptions } from '@tiptap/react';
+import { createCurrentBlockExtension } from './currentBlock/currentBlockExtension';
 import { createEditorExtensions } from './markdown/extensions';
 import { createFlagsPlugin } from './flags/flagsPlugin';
 import { bindFlagOpener, createFlagNavigation } from './flagNavigation';
@@ -73,6 +74,7 @@ export function EditorSurface({
       createFlagNavigation(),
       createSlashExtension(slash.handlers),
       createRestructurePreviewExtension(),
+      createCurrentBlockExtension(),
     ],
     contentType: 'markdown',
     content: initialMarkdown,

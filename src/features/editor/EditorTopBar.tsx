@@ -1,6 +1,13 @@
 import type { JSX, ReactNode } from 'react';
 import { Link } from 'react-router';
-import { Button, Icon, ThemeSwitcher, iconLinkClassName, useBreakpoint } from '@/design-system';
+import {
+  Icon,
+  IconButton,
+  ThemeSwitcher,
+  Tooltip,
+  iconLinkClassName,
+  useBreakpoint,
+} from '@/design-system';
 import { AiModeToggle } from './AiModeToggle';
 import { EditorOverflowMenu } from './EditorOverflowMenu';
 import type { AiMode, ViewMode } from './editorModes';
@@ -70,10 +77,14 @@ export function EditorTopBar({
         {view !== undefined ? (
           <AiModeToggle value={view.aiMode} onChange={view.onAiModeChange} />
         ) : null}
-        {view !== undefined && !compact ? <Button onClick={view.onHistory}>History</Button> : null}
       </div>
       <div className="editor-top-bar__flags">{flagControl ?? null}</div>
       <div className="editor-top-bar__ai">{aiStatus ?? null}</div>
+      {view !== undefined && !compact ? (
+        <Tooltip content="History">
+          <IconButton icon="history" label="History" onClick={view.onHistory} />
+        </Tooltip>
+      ) : null}
       <ThemeSwitcher />
       <p role="status" className="editor-top-bar__status">
         {message}

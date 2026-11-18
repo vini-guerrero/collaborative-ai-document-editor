@@ -1,11 +1,11 @@
 import type { JSX, ReactNode } from 'react';
-import { Icon, Lozenge, Spinner } from '@/design-system';
+import { Icon, Spinner, Tooltip, VisuallyHidden } from '@/design-system';
 import type { AiStatus } from './aiStatus';
 import { useAiStatus } from './AiStatusContext';
 import './StatusIndicator.css';
 
-// D14: neutral, factual one-liners (D8). Each state has an icon too, so color is not the only
-// cue (S7).
+// D14: neutral, factual one-liners (D8). Each state has its own icon, so colour is not the only
+// cue (S7). The text is the tooltip and the live-region message; the bar shows only the icon.
 const STATUS_LABELS: Record<AiStatus, string> = {
   ready: 'AI ready',
   working: 'AI is working',
@@ -28,12 +28,13 @@ const iconFor = (status: AiStatus): ReactNode => {
 
 export function StatusIndicator(): JSX.Element {
   const status = useAiStatus();
+  const label = STATUS_LABELS[status];
   return (
-    <Lozenge>
-      <span className="ai-status__icon">{iconFor(status)}</span>
-      <span role="status" aria-live="polite">
-        {STATUS_LABELS[status]}
+    <Tooltip content={label}>
+      <span className={`ai-status ai-status--${status}`} tabIndex={0} role="status">
+        <span className="ai-status__icon">{iconFor(status)}</span>
+        <VisuallyHidden>{label}</VisuallyHidden>
       </span>
-    </Lozenge>
+    </Tooltip>
   );
 }

@@ -166,7 +166,11 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
           },
         }}
       />
-      <main className="editor-page-main">
+      <main
+        className={
+          viewMode === 'markdown' ? 'editor-page-main editor-page-main--wide' : 'editor-page-main'
+        }
+      >
         <h1>
           <VisuallyHidden>Edit document</VisuallyHidden>
         </h1>

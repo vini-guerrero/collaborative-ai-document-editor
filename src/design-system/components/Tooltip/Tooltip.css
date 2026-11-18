@@ -1,0 +1,38 @@
+/* S2: tokens only. The bubble hangs below its anchor and appears on hover or focus-within. */
+.ds-tooltip {
+  position: relative;
+  display: inline-flex;
+}
+
+.ds-tooltip__anchor {
+  display: inline-flex;
+}
+
+.ds-tooltip__bubble {
+  position: absolute;
+  inset-block-start: calc(100% + var(--ds-space-050));
+  inset-inline-end: 0;
+  z-index: var(--app-z-drawer);
+  padding: var(--ds-space-050) var(--ds-space-100);
+  border-radius: var(--ds-radius-large);
+  background: var(--ds-background-neutral-bold);
+  color: var(--ds-text-inverse);
+  font: var(--ds-font-body-small);
+  white-space: nowrap;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity var(--ds-duration-short) var(--ds-easing-out-practical);
+}
+
+.ds-tooltip:hover .ds-tooltip__bubble,
+.ds-tooltip:focus-within .ds-tooltip__bubble {
+  visibility: visible;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-tooltip__bubble {
+    transition: none;
+  }
+}

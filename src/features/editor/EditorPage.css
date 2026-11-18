@@ -121,10 +121,6 @@
   .editor-top-bar__flags {
     min-inline-size: 7.5rem;
   }
-
-  .editor-top-bar__ai {
-    min-inline-size: 10rem;
-  }
 }
 
 .editor-top-bar__status {
@@ -179,4 +175,9 @@
     display: inline-flex;
     align-items: center;
   }
+}
+
+/* The raw Markdown view uses the room: a wider column than the reading page (D15). */
+.editor-page-main--wide {
+  max-inline-size: 64rem;
 }

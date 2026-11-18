@@ -4,8 +4,7 @@
 .markdown-source {
   box-sizing: border-box;
   inline-size: 100%;
-  max-inline-size: 75ch;
-  min-block-size: 60dvh;
+  min-block-size: 70dvh;
   margin: 0;
   padding: var(--ds-space-200);
   border: 0;
