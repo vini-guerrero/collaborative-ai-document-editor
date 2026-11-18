@@ -1,0 +1,52 @@
+/* S5, S9: a compact pill over the selection, as the prototype's bubble. The prototype's dark
+   bubble becomes the overlay surface so it follows the light and dark themes. Tokens only. */
+.selection-toolbar {
+  position: fixed;
+  z-index: var(--app-z-drawer);
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-025);
+  box-sizing: border-box;
+  inline-size: 360px;
+  max-inline-size: calc(100vw - 2 * var(--ds-space-200));
+  padding: var(--ds-space-025) var(--ds-space-050);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-surface-overlay);
+  color: var(--ds-text);
+  box-shadow: var(--ds-shadow-overlay);
+  font: var(--ds-font-body-small);
+}
+
+.selection-toolbar__divider {
+  flex: 0 0 auto;
+  inline-size: var(--ds-border-width);
+  block-size: var(--ds-space-200);
+  margin-inline: var(--ds-space-025);
+  background: var(--ds-border);
+}
+
+.selection-toolbar__form {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--ds-space-025);
+  min-inline-size: 0;
+}
+
+.selection-toolbar__field {
+  flex: 1 1 96px;
+  min-inline-size: 0;
+}
+
+.selection-toolbar .ds-button {
+  padding-inline: var(--ds-space-075);
+  white-space: nowrap;
+}
+
+/* S9: 44px touch targets on coarse pointers. */
+@media (pointer: coarse) {
+  .selection-toolbar .ds-button {
+    min-block-size: 44px;
+  }
+}

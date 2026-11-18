@@ -1,0 +1,61 @@
+/* D12, S2, S9: the prototype's menu panel and item rows, in tokens. Active item is tinted, not
+   coloured alone (S7). */
+.slash-menu {
+  box-sizing: border-box;
+  inline-size: 280px;
+  max-inline-size: calc(100vw - 2 * var(--ds-space-200));
+  padding: var(--ds-space-075);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-xlarge);
+  background: var(--ds-surface-overlay);
+  color: var(--ds-text);
+  box-shadow: var(--ds-shadow-overlay);
+  font: var(--ds-font-body);
+}
+
+.slash-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  padding: var(--ds-space-075) var(--ds-space-100);
+  border-radius: var(--ds-radius-large);
+  cursor: pointer;
+}
+
+.slash-menu__item[aria-selected='true'] {
+  background: var(--ds-background-selected);
+}
+
+.slash-menu__item:hover {
+  background: var(--ds-background-neutral-hovered);
+}
+
+.slash-menu__icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: 30px;
+  block-size: 30px;
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-small);
+  color: var(--ds-text-accent-blue);
+}
+
+.slash-menu__text {
+  display: flex;
+  min-inline-size: 0;
+  flex-direction: column;
+  overflow-wrap: anywhere;
+}
+
+.slash-menu__hint {
+  color: var(--ds-text-subtle);
+  font: var(--ds-font-body-small);
+}
+
+/* S9: 44px touch targets on coarse pointers. */
+@media (pointer: coarse) {
+  .slash-menu__item {
+    min-block-size: 44px;
+  }
+}

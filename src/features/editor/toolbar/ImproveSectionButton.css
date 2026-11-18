@@ -1,0 +1,35 @@
+/* S9, S7: visible on touch; on fine pointers it appears on hover or focus, and focus always reveals
+   it so the keyboard path does not depend on the pointer. Tokens only. */
+.improve-section {
+  display: inline-flex;
+  align-items: center;
+}
+
+.improve-section .ds-button {
+  font: var(--ds-font-body-small);
+  color: var(--ds-text-subtle);
+}
+
+@media (pointer: fine) {
+  .improve-section {
+    opacity: 0;
+    transition: opacity var(--ds-duration-short) var(--ds-easing-out-practical);
+  }
+
+  .improve-section:hover,
+  .improve-section:focus-within {
+    opacity: 1;
+  }
+}
+
+@media (pointer: coarse) {
+  .improve-section .ds-button {
+    min-block-size: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .improve-section {
+    transition: none;
+  }
+}

@@ -1,0 +1,43 @@
+/* S2, S9: tokens only. The prototype's 13px card text maps to the body-small token, and the
+   pills and rows sit in the suggestion card owned by FlagPanel. */
+.refine {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-075);
+  margin-block-start: var(--ds-space-100);
+  font: var(--ds-font-body-small);
+  color: var(--ds-text);
+}
+
+.refine__row,
+.refine__nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-space-075);
+}
+
+.refine__select {
+  flex: 0 0 auto;
+}
+
+/* The field takes the free width; the Refine button keeps its size beside it. */
+.refine__field {
+  flex: 1 1 160px;
+  min-inline-size: 0;
+}
+
+.refine__count {
+  margin-inline-start: auto;
+  color: var(--ds-text-subtle);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* S9: 44px touch targets on coarse pointers. */
+@media (pointer: coarse) {
+  .refine .ds-button,
+  .refine .ds-select__trigger {
+    min-block-size: 44px;
+  }
+}
