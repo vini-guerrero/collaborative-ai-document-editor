@@ -68,6 +68,11 @@ export function SuggestionCard({
           </Button>
         ) : null}
         <Button onClick={onDismiss}>Dismiss</Button>
+        {isReady ? (
+          <span className="suggestion-card__hint">
+            <kbd>Tab</kbd> accept · <kbd>Esc</kbd> dismiss
+          </span>
+        ) : null}
       </div>
       {refine === null ? null : (
         // A disabled fieldset removes the controls from the Tab order while a round is in flight.

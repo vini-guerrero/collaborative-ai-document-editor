@@ -110,3 +110,9 @@
 .editor-surface .ProseMirror:focus-visible {
   outline: none;
 }
+
+/* A selection stays readable in both themes: an accent tint with the normal text colour. */
+.editor-surface .ProseMirror ::selection {
+  background: var(--ds-background-accent-blue-subtler);
+  color: var(--ds-text);
+}

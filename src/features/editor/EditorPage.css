@@ -90,20 +90,32 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--ds-space-100);
-  margin-inline-start: auto;
 }
 
-/* Reserved widths: the controls can come and go without moving what sits beside them. */
 .editor-top-bar__flags {
   display: flex;
   justify-content: flex-end;
-  min-inline-size: 7.5rem;
 }
 
 .editor-top-bar__ai {
   display: flex;
   justify-content: flex-start;
-  min-inline-size: 10rem;
+}
+
+/* From md the controls sit at the right edge and keep reserved widths, so they can come and go
+   without moving what sits beside them. Below md they wrap flush left, as one tidy block. */
+@media (min-width: 768px) {
+  .editor-top-bar__toggles {
+    margin-inline-start: auto;
+  }
+
+  .editor-top-bar__flags {
+    min-inline-size: 7.5rem;
+  }
+
+  .editor-top-bar__ai {
+    min-inline-size: 10rem;
+  }
 }
 
 .editor-top-bar__status {

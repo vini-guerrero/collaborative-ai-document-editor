@@ -63,3 +63,19 @@
 .ProseMirror .suggestion-delete {
   opacity: 0.6;
 }
+
+/* Prototype .hint: the keyboard shortcuts, pushed to the end of the action row. */
+.suggestion-card__hint {
+  align-self: center;
+  margin-inline-start: auto;
+  color: var(--ds-text-subtle);
+  font: var(--ds-font-body-small);
+}
+
+.suggestion-card__hint kbd {
+  padding-inline: var(--ds-space-050);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-small);
+  font: var(--ds-font-body-small);
+  font-family: var(--ds-font-family-code);
+}

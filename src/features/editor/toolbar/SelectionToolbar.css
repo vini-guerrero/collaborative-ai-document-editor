@@ -53,7 +53,9 @@
 
 /* Prototype .bub input: a soft fill inside the pill, no box around it. */
 .selection-toolbar .ds-text-field__input {
+  min-block-size: 28px;
   border-color: transparent;
+  border-radius: var(--ds-radius-full);
   background: var(--ds-background-neutral);
 }
 
