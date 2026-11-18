@@ -1,6 +1,9 @@
 export interface LruCache<V> {
   get: (key: string) => V | undefined;
   set: (key: string, value: V) => void;
+  // Does not count as a use: only `get` and `set` refresh recency.
+  has: (key: string) => boolean;
+  delete: (key: string) => void;
   readonly size: number;
 }
 
@@ -42,6 +45,10 @@ export const createLruCache = <V>(capacity: number): LruCache<V> => {
   return {
     get,
     set,
+    has: (key) => entries.has(key),
+    delete: (key) => {
+      entries.delete(key);
+    },
     get size() {
       return entries.size;
     },

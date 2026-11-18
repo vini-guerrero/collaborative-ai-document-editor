@@ -6,6 +6,7 @@ import type { Flag } from '@shared/schemas';
 import type { FetchLike } from '@/features/ai';
 import { setViewportWidth } from '@/test/matchMedia';
 import { getFlags } from './flags/flagsPlugin';
+import { paragraphsOf } from './paragraphs';
 import {
   advancePastPause,
   FLAG,
@@ -18,6 +19,16 @@ import {
 import { analyzeResponse, holdingFetch } from './testing/fakeAi';
 
 const POPOVER_NAME = 'Writing flag';
+const SECOND_PARAGRAPH = 'The review moved to the third week of March.';
+
+// The document position where the paragraph with this text starts.
+function paragraphPosOf(editor: Editor, text: string): number {
+  const paragraph = paragraphsOf(editor.state.doc).find((entry) => entry.text === text);
+  if (paragraph === undefined) {
+    throw new Error(`no paragraph reads "${text}"`);
+  }
+  return paragraph.pos;
+}
 
 // Writes a paragraph, waits out the pause and waits for the flag the fake AI returns.
 async function editorWithFlag(flags: readonly Flag[] = [FLAG]): Promise<Editor> {
@@ -212,5 +223,44 @@ describe('flags in the editor', () => {
       expect(screen.getAllByText('AI ready').length).toBeGreaterThan(0);
     });
     expect(document.querySelector('.flag')).not.toBeNull();
+  });
+
+  // T10, D4: Enter above an analyzed paragraph shifts it; its flags still reach that paragraph.
+  it('applies flags to a paragraph that Enter moved down (T10, D4)', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const fetchImpl = vi.fn<FetchLike>(() => Promise.resolve(analyzeResponse([FLAG])));
+    const holder = renderEditorPage(fetchImpl);
+    const editor = await readyEditor(holder);
+
+    insertParagraph(editor, PARAGRAPH);
+    act(() => {
+      editor.commands.setTextSelection(paragraphPosOf(editor, PARAGRAPH) + 1);
+      editor.view.focus();
+    });
+    await user.keyboard('{Enter}');
+
+    await advancePastPause();
+    await waitFor(() => {
+      expect(flagElementOrThrow().textContent).toBe('moved');
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  // D4: a range selection is not leaving a paragraph, so it sends no call.
+  it('sends no call for a range selection across paragraphs (D4)', async () => {
+    const fetchImpl = vi.fn<FetchLike>(() => Promise.resolve(analyzeResponse([FLAG])));
+    const holder = renderEditorPage(fetchImpl);
+    const editor = await readyEditor(holder);
+
+    insertParagraph(editor, `${PARAGRAPH}\n\n${SECOND_PARAGRAPH}`);
+    act(() => {
+      editor.commands.setTextSelection({
+        from: paragraphPosOf(editor, PARAGRAPH) + 1,
+        to: paragraphPosOf(editor, SECOND_PARAGRAPH) + 1,
+      });
+      editor.view.focus();
+    });
+
+    expect(fetchImpl).not.toHaveBeenCalled();
   });
 });

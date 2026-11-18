@@ -4,8 +4,6 @@ import type { AiRequestOf } from '@/features/ai';
 
 // D4: a paragraph shorter than this is too little prose for a useful flag.
 export const MIN_PARAGRAPH_CHARS = 20;
-// Marks an absent neighbor in the cache key, so "no heading" differs from an empty heading.
-const ABSENT_FIELD_KEY = '-';
 
 // One paragraph plus the context the AI needs (D4). Neighbors are optional; the editor fills them.
 export interface ParagraphContext {
@@ -25,17 +23,11 @@ export const isAnalyzable = (ctx: ParagraphContext): boolean => {
   return trimmedLength >= MIN_PARAGRAPH_CHARS && ctx.text.length <= MAX_PARAGRAPH_CHARS;
 };
 
-// The paragraph hash is the staleness key (T10): a response is only shown for this exact text.
-export const textHashOf = (ctx: ParagraphContext): string => fnv1a32(ctx.text);
-
-// Heading and neighbors change what the AI would say, so they belong in the cache key too.
-const fieldKeyOf = (value: string | undefined): string =>
-  value === undefined ? ABSENT_FIELD_KEY : fnv1a32(value);
-
-export const cacheKeyOf = (ctx: ParagraphContext): string =>
-  [textHashOf(ctx), fieldKeyOf(ctx.heading), fieldKeyOf(ctx.previous), fieldKeyOf(ctx.next)].join(
-    '.',
-  );
+// The identity of a paragraph's text: the cache key, the edited mark and the staleness check (T10).
+// Only the paragraph's own text is hashed, so a changed neighbor never causes a new call.
+// The flags plugin hashes the same characters (readTextblock joins text nodes, as textContent does),
+// so hard breaks are left out on both sides and the two hashes always agree.
+export const hashOfText = (text: string): string => fnv1a32(text);
 
 // Empty neighbors are omitted: the request schema requires non-empty paragraphs (T5).
 export const toAnalyzeRequest = (ctx: ParagraphContext): AiRequestOf<'analyze'> => ({

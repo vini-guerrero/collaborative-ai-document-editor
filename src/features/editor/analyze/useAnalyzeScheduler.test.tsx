@@ -26,7 +26,7 @@ const jsonResponse = (status: number, body: unknown): Response =>
     headers: { 'Content-Type': 'application/json' },
   });
 
-type OnFlags = (paragraphId: string, hash: string, flags: Flag[]) => void;
+type OnFlags = (hash: string, flags: Flag[]) => void;
 
 interface HarnessProps {
   paused: boolean;
@@ -34,21 +34,31 @@ interface HarnessProps {
   onHandle: (handle: AnalyzeSchedulerHandle) => void;
 }
 
-// A button stands in for the editor: leaving the paragraph is what triggers the analysis.
+// Buttons stand in for the editor: an edit followed by leaving the paragraph is what analyzes it.
 function Harness({ paused, onFlags, onHandle }: HarnessProps): JSX.Element {
-  const handle = useAnalyzeScheduler({ paused, onFlags });
+  const handle = useAnalyzeScheduler({ paused, onFlags, isLive: () => true });
   useEffect(() => {
     onHandle(handle);
   }, [handle, onHandle]);
   return (
-    <button
-      type="button"
-      onClick={() => {
-        handle.paragraphLeft(CONTEXT);
-      }}
-    >
-      Leave paragraph
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={() => {
+          handle.paragraphEdited(CONTEXT);
+        }}
+      >
+        Edit paragraph
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          handle.paragraphLeft(CONTEXT);
+        }}
+      >
+        Leave paragraph
+      </button>
+    </>
   );
 }
 
@@ -80,13 +90,19 @@ const renderHarness = ({
   return { ...result, onFlags, handles, store };
 };
 
+// Edits the paragraph, then leaves it, the way the editor reports it.
+const editAndLeave = async (): Promise<void> => {
+  await userEvent.click(screen.getByRole('button', { name: 'Edit paragraph' }));
+  await userEvent.click(screen.getByRole('button', { name: 'Leave paragraph' }));
+};
+
 describe('useAnalyzeScheduler (D4, D1, D14, D15, T10)', () => {
-  it('emits the flags for the paragraph after it is left', async () => {
+  it('emits the flags for the edited paragraph once it is left', async () => {
     const fetchImpl = vi.fn<FetchLike>(() => Promise.resolve(jsonResponse(200, { flags: [FLAG] })));
     const { onFlags } = renderHarness({ fetchImpl });
-    await userEvent.click(screen.getByRole('button', { name: 'Leave paragraph' }));
+    await editAndLeave();
     await waitFor(() => {
-      expect(onFlags).toHaveBeenCalledWith('p1', fnv1a32(PARAGRAPH), [FLAG]);
+      expect(onFlags).toHaveBeenCalledWith(fnv1a32(PARAGRAPH), [FLAG]);
     });
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
@@ -94,7 +110,7 @@ describe('useAnalyzeScheduler (D4, D1, D14, D15, T10)', () => {
   it('makes no call while paused in On Demand mode or the raw view (D1, D15)', async () => {
     const fetchImpl = vi.fn<FetchLike>(() => Promise.resolve(jsonResponse(200, { flags: [FLAG] })));
     const { onFlags } = renderHarness({ paused: true, fetchImpl });
-    await userEvent.click(screen.getByRole('button', { name: 'Leave paragraph' }));
+    await editAndLeave();
     expect(fetchImpl).not.toHaveBeenCalled();
     expect(onFlags).not.toHaveBeenCalled();
   });
@@ -105,7 +121,7 @@ describe('useAnalyzeScheduler (D4, D1, D14, D15, T10)', () => {
     store.begin();
     store.end({ ok: false, error: { kind: 'unavailable' } });
     const { onFlags } = renderHarness({ store, fetchImpl });
-    await userEvent.click(screen.getByRole('button', { name: 'Leave paragraph' }));
+    await editAndLeave();
     await waitFor(() => {
       expect(onFlags).toHaveBeenCalledTimes(1);
     });
@@ -120,11 +136,11 @@ describe('useAnalyzeScheduler (D4, D1, D14, D15, T10)', () => {
     );
     const store = createAiStatusStore();
     const { onFlags } = renderHarness({ store, fetchImpl });
-    await userEvent.click(screen.getByRole('button', { name: 'Leave paragraph' }));
+    await editAndLeave();
     await waitFor(() => {
       expect(store.getSnapshot()).toBe('out_of_credit');
     });
-    await userEvent.click(screen.getByRole('button', { name: 'Leave paragraph' }));
+    await editAndLeave();
     expect(fetchImpl).toHaveBeenCalledTimes(1);
     expect(onFlags).not.toHaveBeenCalled();
   });
@@ -135,6 +151,7 @@ describe('useAnalyzeScheduler (D4, D1, D14, D15, T10)', () => {
     const handle = handles[0];
     expect(handle).toBeDefined();
     unmount();
+    handle?.paragraphEdited(CONTEXT);
     handle?.paragraphLeft(CONTEXT);
     expect(fetchImpl).not.toHaveBeenCalled();
   });

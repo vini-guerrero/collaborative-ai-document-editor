@@ -1,18 +1,23 @@
 import type { AiClientResult, AiRequestOf } from '@/features/ai';
 import type { Flag } from '@shared/schemas';
+import { DEFAULT_IDLE_PAUSE_SECONDS } from './idlePause';
 import { createLruCache, type LruCache } from './lruCache';
 import {
-  cacheKeyOf,
+  hashOfText,
   isAnalyzable,
-  textHashOf,
   toAnalyzeRequest,
   type ParagraphContext,
 } from './paragraphContext';
 
-// D4: analyze 3 s after the last edit, so nothing fires mid-typing.
-export const DEFAULT_PAUSE_MS = 3000;
-// Bounded so a long session cannot grow the cache without limit (AGENTS: bound everything).
+// D4: analyze after the typing pause, so nothing fires mid-typing. Read from settings by the hook.
+export const DEFAULT_PAUSE_MS = DEFAULT_IDLE_PAUSE_SECONDS * 1000;
+// Bounded so a long session cannot grow the caches without limit (AGENTS: bound everything).
 export const ANALYZE_CACHE_CAPACITY = 200;
+// D14: the first outage waits 30 s; each further consecutive failure doubles the wait, up to 5 min.
+export const BASE_COOLDOWN_MS = 30_000;
+export const MAX_COOLDOWN_MS = 300_000;
+// Paragraphs left while a call is in flight. Only the newest few are kept; older ones are dropped.
+export const QUEUE_CAPACITY = 3;
 
 export interface AnalyzeClient {
   run: (
@@ -30,141 +35,195 @@ export interface SchedulerTimers {
 export interface AnalyzeSchedulerDeps {
   client: AnalyzeClient;
   timers: SchedulerTimers;
-  pause_ms?: number;
-  onFlags: (paragraphId: string, hash: string, flags: Flag[]) => void;
+  // Injected clock: the cooldown is measured with it (AGENTS: inject the clock).
+  now: () => number;
+  // A hidden tab holds calls back; nobody is looking at the flags.
+  isHidden: () => boolean;
+  // On Demand mode, the raw view and out of credit hold calls back (D1, D14, D15).
   isPaused: () => boolean;
+  // True while a paragraph with this text hash is still in the document (T10).
+  isLive: (hash: string) => boolean;
+  onFlags: (hash: string, flags: Flag[]) => void;
+  pause_ms?: number;
 }
 
 export interface AnalyzeScheduler {
-  // Called on every edit: restarts the pause timer for this paragraph.
+  // Every edit to the caret paragraph: restarts the pause timer and marks the text as edited.
   paragraphEdited: (ctx: ParagraphContext) => void;
-  // Called when the caret leaves the paragraph: analyze now.
+  // The collapsed caret left the paragraph: analyzes it at once if it was edited since its last attempt.
   paragraphLeft: (ctx: ParagraphContext) => void;
-  cancelAll: () => void;
+  // Clears the pause timer and the queue. A call already in flight is left to finish.
+  pause: () => void;
+  // Unmount: aborts the call in flight and ignores everything after.
   dispose: () => void;
 }
 
-interface InFlight {
-  readonly controller: AbortController;
-  readonly key: string;
-}
+// Waits between outages: 30 s, 60 s, 120 s, ... capped at 5 min (D14).
+const cooldownAfter = (failures: number): number =>
+  Math.min(BASE_COOLDOWN_MS * 2 ** (failures - 1), MAX_COOLDOWN_MS);
 
+// Ambient analysis call policy (D1, D4, D14, T10). Calls go out only for text the user edited since
+// it was last attempted; text is cached by its own hash; one call is in flight at a time.
 export const createAnalyzeScheduler = (deps: AnalyzeSchedulerDeps): AnalyzeScheduler => {
-  const { client, timers, onFlags, isPaused } = deps;
+  const { client, timers, now, isHidden, isPaused, isLive, onFlags } = deps;
   const pause_ms = deps.pause_ms ?? DEFAULT_PAUSE_MS;
+  // Successful results by text hash. The same text is never sent twice.
   const cache: LruCache<Flag[]> = createLruCache<Flag[]>(ANALYZE_CACHE_CAPACITY);
-  const pendingTimers = new Map<string, unknown>();
-  const inFlight = new Map<string, InFlight>();
-  // The newest text hash per paragraph. A response for an older hash is dropped (T10).
-  const latestHash = new Map<string, string>();
+  // Text hashes edited since their last attempt. Leaving or pausing only sends edited text.
+  const edited: LruCache<true> = createLruCache<true>(ANALYZE_CACHE_CAPACITY);
+  // Paragraphs waiting for the call in flight, oldest first, one per text hash.
+  const queue: ParagraphContext[] = [];
+  let idle: { readonly handle: unknown } | undefined;
+  let inFlight: AbortController | undefined;
+  let failures = 0;
+  let cooldownEnds_ms = 0;
   let disposed = false;
 
-  const clearPendingTimer = (paragraphId: string): void => {
-    const handle = pendingTimers.get(paragraphId);
-    if (handle === undefined) {
+  const clearIdle = (): void => {
+    if (idle === undefined) {
       return;
     }
-    timers.clearTimeout(handle);
-    pendingTimers.delete(paragraphId);
+    timers.clearTimeout(idle.handle);
+    idle = undefined;
   };
 
-  const abortInFlight = (paragraphId: string): void => {
-    const request = inFlight.get(paragraphId);
-    if (request === undefined) {
-      return;
-    }
-    request.controller.abort();
-    inFlight.delete(paragraphId);
-  };
-
-  const cancelParagraph = (paragraphId: string): void => {
-    clearPendingTimer(paragraphId);
-    abortInFlight(paragraphId);
-  };
+  const inCooldown = (): boolean => now() < cooldownEnds_ms;
 
   // Copies the flags so a listener cannot mutate the cached array.
-  const emitIfFresh = (paragraphId: string, hash: string, flags: Flag[]): void => {
-    if (latestHash.get(paragraphId) === hash) {
-      onFlags(paragraphId, hash, [...flags]);
+  const emitIfLive = (hash: string, flags: readonly Flag[]): void => {
+    if (isLive(hash)) {
+      onFlags(hash, [...flags]);
     }
   };
 
-  // Fails silently: the client's error kinds drive the AI status, not the editor (D14).
-  const sendRequest = async (ctx: ParagraphContext, key: string): Promise<void> => {
-    const controller = new AbortController();
-    inFlight.set(ctx.id, { controller, key });
-    const result = await client.run(toAnalyzeRequest(ctx), controller.signal);
-    if (inFlight.get(ctx.id)?.controller === controller) {
-      inFlight.delete(ctx.id);
+  const enqueue = (ctx: ParagraphContext): void => {
+    const hash = hashOfText(ctx.text);
+    const index = queue.findIndex((queued) => hashOfText(queued.text) === hash);
+    if (index !== -1) {
+      queue.splice(index, 1);
     }
-    if (!result.ok) {
-      return;
-    }
-    cache.set(key, result.value.flags);
-    if (!controller.signal.aborted) {
-      emitIfFresh(ctx.id, textHashOf(ctx), result.value.flags);
+    queue.push(ctx);
+    if (queue.length > QUEUE_CAPACITY) {
+      queue.shift();
     }
   };
 
-  const analyze = (ctx: ParagraphContext): void => {
-    if (!isAnalyzable(ctx) || isPaused()) {
+  const record = (hash: string, result: AiClientResult<'analyze'>): void => {
+    if (result.ok) {
+      failures = 0;
+      cooldownEnds_ms = 0;
+      cache.set(hash, result.value.flags);
+      emitIfLive(hash, result.value.flags);
       return;
     }
-    const key = cacheKeyOf(ctx);
-    const cached = cache.get(key);
+    // Out of credit is handled by the status, which pauses analysis (D14).
+    if (result.error.kind === 'out_of_credit') {
+      return;
+    }
+    failures += 1;
+    cooldownEnds_ms = now() + cooldownAfter(failures);
+  };
+
+  // The next queued paragraph to send, or undefined. Held-back work is dropped, and its text stays
+  // edited, so only a later trigger sends it (no automatic retry, D14).
+  const nextToSend = (): ParagraphContext | undefined => {
+    for (let next = queue.shift(); next !== undefined; next = queue.shift()) {
+      if (disposed || isPaused() || isHidden() || inCooldown()) {
+        queue.length = 0;
+        return undefined;
+      }
+      const hash = hashOfText(next.text);
+      const cached = cache.get(hash);
+      if (cached === undefined) {
+        return next;
+      }
+      edited.delete(hash);
+      emitIfLive(hash, cached);
+    }
+    return undefined;
+  };
+
+  // Sends one paragraph and then the queue, one call at a time. Only the call in flight is aborted
+  // by dispose; edits and pauses never abort it.
+  const callAndQueue = async (first: ParagraphContext): Promise<void> => {
+    let ctx: ParagraphContext | undefined = first;
+    while (ctx !== undefined) {
+      const hash = hashOfText(ctx.text);
+      const controller = new AbortController();
+      inFlight = controller;
+      edited.delete(hash);
+      const result = await client.run(toAnalyzeRequest(ctx), controller.signal);
+      inFlight = undefined;
+      if (disposed) {
+        return;
+      }
+      record(hash, result);
+      ctx = nextToSend();
+    }
+  };
+
+  // A trigger for one paragraph: answer from cache, queue behind the call in flight, or send.
+  const request = (ctx: ParagraphContext): void => {
+    if (disposed || !isAnalyzable(ctx) || isPaused() || isHidden()) {
+      return;
+    }
+    const hash = hashOfText(ctx.text);
+    const cached = cache.get(hash);
     if (cached !== undefined) {
-      emitIfFresh(ctx.id, textHashOf(ctx), cached);
+      edited.delete(hash);
+      emitIfLive(hash, cached);
       return;
     }
-    if (inFlight.get(ctx.id)?.key === key) {
+    if (inFlight !== undefined) {
+      enqueue(ctx);
       return;
     }
-    abortInFlight(ctx.id);
-    void sendRequest(ctx, key);
-  };
-
-  const noteText = (ctx: ParagraphContext): void => {
-    latestHash.set(ctx.id, textHashOf(ctx));
+    if (inCooldown()) {
+      return;
+    }
+    void callAndQueue(ctx);
   };
 
   const paragraphEdited = (ctx: ParagraphContext): void => {
     if (disposed) {
       return;
     }
-    noteText(ctx);
-    cancelParagraph(ctx.id);
+    clearIdle();
+    const hash = hashOfText(ctx.text);
+    edited.set(hash, true);
     if (!isAnalyzable(ctx)) {
       return;
     }
     const handle = timers.setTimeout(() => {
-      pendingTimers.delete(ctx.id);
-      analyze(ctx);
+      idle = undefined;
+      if (edited.has(hash)) {
+        request(ctx);
+      }
     }, pause_ms);
-    pendingTimers.set(ctx.id, handle);
+    idle = { handle };
   };
 
   const paragraphLeft = (ctx: ParagraphContext): void => {
     if (disposed) {
       return;
     }
-    noteText(ctx);
-    clearPendingTimer(ctx.id);
-    analyze(ctx);
+    clearIdle();
+    if (edited.has(hashOfText(ctx.text))) {
+      request(ctx);
+    }
   };
 
-  const cancelAll = (): void => {
-    for (const paragraphId of [...pendingTimers.keys()]) {
-      clearPendingTimer(paragraphId);
-    }
-    for (const paragraphId of [...inFlight.keys()]) {
-      abortInFlight(paragraphId);
-    }
+  const pause = (): void => {
+    clearIdle();
+    queue.length = 0;
   };
 
   const dispose = (): void => {
-    cancelAll();
+    pause();
+    inFlight?.abort();
+    inFlight = undefined;
     disposed = true;
   };
 
-  return { paragraphEdited, paragraphLeft, cancelAll, dispose };
+  return { paragraphEdited, paragraphLeft, pause, dispose };
 };

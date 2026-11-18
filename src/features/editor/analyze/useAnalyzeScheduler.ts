@@ -6,38 +6,44 @@ import {
   type AnalyzeScheduler,
   type AnalyzeSchedulerDeps,
 } from './analyzeScheduler';
+import { parseIdlePauseMs } from './idlePause';
 import type { ParagraphContext } from './paragraphContext';
 
 export interface UseAnalyzeSchedulerOptions {
   // True in On Demand mode (D1) and the raw Markdown view (D15).
   paused: boolean;
-  onFlags: (paragraphId: string, hash: string, flags: Flag[]) => void;
+  onFlags: (hash: string, flags: Flag[]) => void;
+  // Whether a paragraph with this text hash is still in the document (T10).
+  isLive: (hash: string) => boolean;
 }
 
 // Stable across renders; calls made before mount or after unmount are ignored.
 export interface AnalyzeSchedulerHandle {
   paragraphEdited: (ctx: ParagraphContext) => void;
   paragraphLeft: (ctx: ParagraphContext) => void;
-  cancelAll: () => void;
+  pause: () => void;
 }
 
 // Thin React adapter: the scheduler holds the logic, this hook only wires the injected services.
 export function useAnalyzeScheduler({
   paused,
   onFlags,
+  isLive,
 }: UseAnalyzeSchedulerOptions): AnalyzeSchedulerHandle {
   const client = useAiClient();
   const status = useAiStatus();
   // Read through a ref so the scheduler, created once per mount, always sees current values.
-  const latest = useRef({ client, status, paused, onFlags });
+  const latest = useRef({ client, status, paused, onFlags, isLive });
 
   useEffect(() => {
-    latest.current = { client, status, paused, onFlags };
+    latest.current = { client, status, paused, onFlags, isLive };
   });
 
   const schedulerRef = useRef<AnalyzeScheduler | null>(null);
 
   useEffect(() => {
+    // The idle pause is read once per mount from the Vite setting (D4, default 5 s).
+    const pause_ms = parseIdlePauseMs(import.meta.env.VITE_AI_IDLE_PAUSE_SECONDS);
     const scheduler = createAnalyzeScheduler({
       client: {
         run: (request, signal) => latest.current.client.run<'analyze'>(request, signal),
@@ -46,13 +52,16 @@ export function useAnalyzeScheduler({
         setTimeout: window.setTimeout.bind(window),
         clearTimeout: window.clearTimeout.bind(window),
       },
-      onFlags: (paragraphId, hash, flags) => {
-        latest.current.onFlags(paragraphId, hash, flags);
-      },
-      // D14: only out of credit stops ambient analysis for good; an outage backs off by itself because
-      // the next edit or paragraph change tries again, and a request in flight is not a reason to skip
-      // another paragraph. D1, D15: nothing in On Demand or raw view.
+      now: () => Date.now(),
+      isHidden: () => document.visibilityState === 'hidden',
+      // D14: out of credit stops ambient analysis; an outage backs off for a cooldown and then waits
+      // for a new edit. D1, D15: nothing in On Demand or raw view.
       isPaused: () => latest.current.paused || latest.current.status === 'out_of_credit',
+      isLive: (hash) => latest.current.isLive(hash),
+      onFlags: (hash, flags) => {
+        latest.current.onFlags(hash, flags);
+      },
+      pause_ms,
     } satisfies AnalyzeSchedulerDeps);
     schedulerRef.current = scheduler;
     return () => {
@@ -68,8 +77,8 @@ export function useAnalyzeScheduler({
     paragraphLeft: (ctx) => {
       schedulerRef.current?.paragraphLeft(ctx);
     },
-    cancelAll: () => {
-      schedulerRef.current?.cancelAll();
+    pause: () => {
+      schedulerRef.current?.pause();
     },
   }));
 

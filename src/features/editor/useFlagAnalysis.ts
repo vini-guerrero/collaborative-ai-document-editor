@@ -2,65 +2,79 @@ import { useEffect } from 'react';
 import type { Editor } from '@tiptap/react';
 import type { Transaction } from '@tiptap/pm/state';
 import type { Flag } from '@shared/schemas';
+import { hashOfText } from './analyze/paragraphContext';
 import { useAnalyzeScheduler } from './analyze/useAnalyzeScheduler';
 import { paragraphContextOf, paragraphIdAt, paragraphsOf } from './paragraphs';
 import { setFlagsMeta } from './flags/flagsPlugin';
 
-// Applies one paragraph's flags. The paragraph is found again by id, because the document may
-// have changed since the request; the plugin drops the flags if the text no longer matches.
-function showParagraphFlags(
-  editor: Editor,
-  paragraphId: string,
-  blockHash: string,
-  flags: readonly Flag[],
-): void {
-  const paragraph = paragraphsOf(editor.state.doc).find((entry) => entry.id === paragraphId);
+// Applies one paragraph's flags to the paragraph whose text still has this hash (T10). The text is
+// looked up by hash, not by id, because inserting a paragraph above renumbers the ids.
+function showParagraphFlags(editor: Editor, hash: string, flags: readonly Flag[]): void {
+  const paragraph = paragraphsOf(editor.state.doc).find((entry) => hashOfText(entry.text) === hash);
   if (paragraph === undefined) {
     return;
   }
   editor.view.dispatch(
-    setFlagsMeta(editor.state.tr, { paragraphPos: paragraph.pos, blockHash, flags }),
+    setFlagsMeta(editor.state.tr, { paragraphPos: paragraph.pos, blockHash: hash, flags }),
   );
 }
 
-// D4: connects the editor to the analyze scheduler. Edits restart the paragraph's pause; leaving
-// a paragraph analyzes it at once. Nothing is sent while `paused` (D1 On Demand, D15 raw view).
+// Where the paragraph holding the caret starts, or undefined when the caret is in a heading.
+function caretParagraphPos(editor: Editor): number | undefined {
+  const paragraphs = paragraphsOf(editor.state.doc);
+  const id = paragraphIdAt(paragraphs, editor.state.selection.$from);
+  return paragraphs.find((paragraph) => paragraph.id === id)?.pos;
+}
+
+// D4: connects the editor to the analyze scheduler. Edits mark the caret paragraph and start its
+// pause; a collapsed caret leaving a focused paragraph analyzes it. Range selections and blur send
+// nothing. Nothing is sent while `paused` (D1 On Demand, D15 raw view).
 export function useFlagAnalysis(editor: Editor, paused: boolean): void {
   const scheduler = useAnalyzeScheduler({
     paused,
-    onFlags: (paragraphId, hash, flags) => {
-      showParagraphFlags(editor, paragraphId, hash, flags);
+    onFlags: (hash, flags) => {
+      showParagraphFlags(editor, hash, flags);
     },
+    isLive: (hash) =>
+      paragraphsOf(editor.state.doc).some((paragraph) => hashOfText(paragraph.text) === hash),
   });
 
   useEffect(() => {
     if (paused) {
-      scheduler.cancelAll();
+      scheduler.pause();
     }
   }, [paused, scheduler]);
 
   useEffect(() => {
-    let caretParagraphId: string | undefined;
+    // The start position of the paragraph the caret was last in. Every transaction maps it, so a
+    // paragraph inserted above (Enter) keeps pointing at the same paragraph.
+    let caretPos = caretParagraphPos(editor);
     const handleTransaction = ({ transaction }: { transaction: Transaction }): void => {
       if (!transaction.docChanged && !transaction.selectionSet) {
         return;
       }
-      const { doc, selection } = editor.state;
-      const paragraphs = paragraphsOf(doc);
+      caretPos = caretPos === undefined ? undefined : transaction.mapping.map(caretPos);
+      const { selection } = editor.state;
+      const paragraphs = paragraphsOf(editor.state.doc);
       const currentId = paragraphIdAt(paragraphs, selection.$from);
-      if (caretParagraphId !== undefined && caretParagraphId !== currentId) {
-        const left = paragraphContextOf(paragraphs, caretParagraphId);
-        if (left !== undefined) {
-          scheduler.paragraphLeft(left);
+      if (selection.empty) {
+        const previous = paragraphs.find((paragraph) => paragraph.pos === caretPos);
+        // Only a collapsed caret in a focused editor counts as leaving (D4).
+        if (editor.isFocused && previous !== undefined && previous.id !== currentId) {
+          const left = paragraphContextOf(paragraphs, previous.id);
+          if (left !== undefined) {
+            scheduler.paragraphLeft(left);
+          }
         }
+        const current = paragraphs.find((paragraph) => paragraph.id === currentId);
+        caretPos = current?.pos;
       }
-      if (currentId !== undefined && transaction.docChanged) {
+      if (transaction.docChanged && currentId !== undefined) {
         const edited = paragraphContextOf(paragraphs, currentId);
         if (edited !== undefined) {
           scheduler.paragraphEdited(edited);
         }
       }
-      caretParagraphId = currentId;
     };
     editor.on('transaction', handleTransaction);
     return () => {
