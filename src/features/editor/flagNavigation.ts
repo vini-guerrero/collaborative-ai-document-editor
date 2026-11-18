@@ -18,7 +18,7 @@ declare module '@tiptap/core' {
 // D17: the keyboard path to flags, without hover. Alt+F moves to the next flag and opens it.
 // Enter opens the flag the caret is in. A click or tap on a flag opens it. On macOS Option+F
 // types a symbol, but ProseMirror's keymap falls back to the key code when Alt is held, so the
-// same binding matches. The Next flag button in the top bar stays the touch and pointer path.
+// same binding matches. The Next Flag button in the top bar stays the touch and pointer path.
 export const NEXT_FLAG_SHORTCUT = 'Alt-f';
 // Above StarterKit's Enter handling, so the flag gets the key first when the caret is inside it.
 const FLAG_NAVIGATION_PRIORITY = 1000;

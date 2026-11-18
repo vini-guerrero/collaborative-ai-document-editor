@@ -9,7 +9,7 @@ import {
 import type { ParagraphContext } from './paragraphContext';
 
 export interface UseAnalyzeSchedulerOptions {
-  // True in On demand mode (D1) and the raw Markdown view (D15).
+  // True in On Demand mode (D1) and the raw Markdown view (D15).
   paused: boolean;
   onFlags: (paragraphId: string, hash: string, flags: Flag[]) => void;
 }
@@ -51,7 +51,7 @@ export function useAnalyzeScheduler({
       },
       // D14: only out of credit stops ambient analysis for good; an outage backs off by itself because
       // the next edit or paragraph change tries again, and a request in flight is not a reason to skip
-      // another paragraph. D1, D15: nothing in On demand or raw view.
+      // another paragraph. D1, D15: nothing in On Demand or raw view.
       isPaused: () => latest.current.paused || latest.current.status === 'out_of_credit',
     } satisfies AnalyzeSchedulerDeps);
     schedulerRef.current = scheduler;

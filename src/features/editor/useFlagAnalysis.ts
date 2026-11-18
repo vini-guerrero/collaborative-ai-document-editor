@@ -24,7 +24,7 @@ function showParagraphFlags(
 }
 
 // D4: connects the editor to the analyze scheduler. Edits restart the paragraph's pause; leaving
-// a paragraph analyzes it at once. Nothing is sent while `paused` (D1 On demand, D15 raw view).
+// a paragraph analyzes it at once. Nothing is sent while `paused` (D1 On Demand, D15 raw view).
 export function useFlagAnalysis(editor: Editor, paused: boolean): void {
   const scheduler = useAnalyzeScheduler({
     paused,

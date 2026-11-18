@@ -47,7 +47,7 @@ async function openFlag(
 // Asks for the suggestion from the open flag popover.
 async function viewSuggestion(user: ReturnType<typeof userEvent.setup>): Promise<void> {
   const dialog = screen.getByRole('dialog', { name: POPOVER_NAME });
-  await user.click(within(dialog).getByRole('button', { name: 'View suggestion' }));
+  await user.click(within(dialog).getByRole('button', { name: 'View Suggestion' }));
 }
 
 describe('suggestion flow in the editor', () => {

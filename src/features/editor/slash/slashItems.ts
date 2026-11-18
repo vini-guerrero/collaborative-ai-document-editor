@@ -22,15 +22,15 @@ export interface SlashItem {
 export const SLASH_ITEMS: readonly SlashItem[] = [
   {
     id: 'rewrite-paragraph',
-    label: 'Rewrite paragraph',
+    label: 'Rewrite Paragraph',
     description: 'Rewrite the paragraph above',
     icon: 'file-text',
   },
-  { id: 'change-tone', label: 'Change tone', icon: 'users' },
-  { id: 'ask-missing', label: "Ask what's missing", icon: 'search', soon: true },
+  { id: 'change-tone', label: 'Change Tone', icon: 'users' },
+  { id: 'ask-missing', label: "Ask What's Missing", icon: 'search', soon: true },
   {
     id: 'restructure-section',
-    label: 'Restructure section',
+    label: 'Restructure Section',
     description: 'Move, split or merge',
     icon: 'layout-grid',
   },

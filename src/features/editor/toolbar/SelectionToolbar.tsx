@@ -66,7 +66,7 @@ export function SelectionToolbar({
       onMouseDown={keepEditorSelection}
     >
       <Button onClick={onRewrite}>Rewrite</Button>
-      <Button onClick={onFixTone}>Fix tone</Button>
+      <Button onClick={onFixTone}>Fix Tone</Button>
       <Button onClick={onShorten}>Shorten</Button>
       <span className="selection-toolbar__divider" aria-hidden="true" />
       <form className="selection-toolbar__form" onSubmit={handleSubmit}>

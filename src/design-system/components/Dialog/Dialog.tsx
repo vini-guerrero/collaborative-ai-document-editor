@@ -15,7 +15,7 @@ export interface DialogProps {
   // Names the object being confirmed, e.g. "Delete “Q3 plan”?" (H5).
   title: string;
   description?: string;
-  // A verb naming the outcome, e.g. "Delete document".
+  // A verb naming the outcome, e.g. "Delete Document".
   confirmLabel: string;
   cancelLabel?: string;
   onConfirm: () => void;

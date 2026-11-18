@@ -54,7 +54,7 @@ describe('HomePage', () => {
   // H4: the Grid/List toggle sits in the same row as the title, and only when there are documents.
   it('puts the view toggle in the title row once documents exist (H4)', async () => {
     renderHome(fakeStore([{ ok: true, value: [] }]));
-    await screen.findByRole('heading', { level: 2, name: 'Start your first document' });
+    await screen.findByRole('heading', { level: 2, name: 'Start Your First Document' });
     expect(screen.queryByRole('group', { name: 'Document view' })).toBeNull();
   });
 
@@ -95,20 +95,20 @@ describe('HomePage', () => {
   });
 
   // H6: with no documents, an invitation replaces the list.
-  it('shows the empty invitation with a New document action (H6)', async () => {
+  it('shows the empty invitation with a New Document action (H6)', async () => {
     renderHome(fakeStore([{ ok: true, value: [] }]));
 
-    await screen.findByRole('heading', { level: 2, name: 'Start your first document' });
+    await screen.findByRole('heading', { level: 2, name: 'Start Your First Document' });
     expect(screen.queryByRole('list')).toBeNull();
   });
 
-  // H5: New document opens an editor route for a fresh id; nothing is saved here.
-  it('New document in the empty state opens the editor with a new id (H5)', async () => {
+  // H5: New Document opens an editor route for a fresh id; nothing is saved here.
+  it('New Document in the empty state opens the editor with a new id (H5)', async () => {
     const user = userEvent.setup();
     const router = renderHome(fakeStore([{ ok: true, value: [] }]));
 
     const main = await screen.findByRole('main');
-    await user.click(within(main).getByRole('button', { name: 'New document' }));
+    await user.click(within(main).getByRole('button', { name: 'New Document' }));
 
     await waitFor(() => {
       expect(router.state.location.pathname).toBe(`/documents/${NEW_ID}`);
@@ -125,7 +125,7 @@ describe('HomePage', () => {
       ]),
     );
 
-    await screen.findByRole('heading', { level: 2, name: 'Could not load your documents' });
+    await screen.findByRole('heading', { level: 2, name: 'Could Not Load Your Documents' });
     expect(screen.getByRole('heading', { level: 1, name: 'Documents' })).toBeTruthy();
     expect(screen.getByRole('alert').textContent).toBe('Storage could not be read. Try again.');
 
@@ -173,15 +173,15 @@ describe('HomePage', () => {
     expect(fireEvent.click(link, { button: 1 })).toBe(true);
   });
 
-  // S9: at phone width the sidebar is a drawer; New document is reachable inside it (H2).
-  it('puts New document inside the drawer at 360px (S9, H2)', async () => {
+  // S9: at phone width the sidebar is a drawer; New Document is reachable inside it (H2).
+  it('puts New Document inside the drawer at 360px (S9, H2)', async () => {
     setViewportWidth(360);
     const user = userEvent.setup();
     const router = renderHome(fakeStore([{ ok: true, value: [] }]));
 
     await user.click(screen.getByRole('button', { name: 'Open navigation' }));
     const nav = screen.getByRole('navigation', { name: 'Primary' });
-    await user.click(within(nav).getByRole('button', { name: 'New document' }));
+    await user.click(within(nav).getByRole('button', { name: 'New Document' }));
 
     await waitFor(() => {
       expect(router.state.location.pathname).toBe(`/documents/${NEW_ID}`);

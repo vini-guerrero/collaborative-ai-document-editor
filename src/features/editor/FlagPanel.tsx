@@ -37,7 +37,7 @@ export function FlagPanel({
       {onAnswer === undefined ? null : <FlagAnswerForm onAnswer={onAnswer} />}
       <div className="flag-panel__actions">
         {onViewSuggestion === undefined ? null : (
-          <Button onClick={onViewSuggestion}>View suggestion</Button>
+          <Button onClick={onViewSuggestion}>View Suggestion</Button>
         )}
         <Button onClick={onDismiss}>Dismiss</Button>
       </div>

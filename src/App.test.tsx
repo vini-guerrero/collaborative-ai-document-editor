@@ -31,6 +31,6 @@ describe('App', () => {
       </DocumentStoreProvider>,
     );
 
-    await screen.findByRole('heading', { level: 1, name: 'Page not found' });
+    await screen.findByRole('heading', { level: 1, name: 'Page Not Found' });
   });
 });

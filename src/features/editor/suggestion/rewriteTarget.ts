@@ -13,7 +13,7 @@ export interface RewriteTarget {
   readonly blockHash: string;
   // The flag this rewrite answers. Accept also drops that flag. Undefined for selections (D9).
   readonly flagId: string | undefined;
-  // The card heading, such as "Clarity" or "Selected text". Plain text, never markup (T10).
+  // The card heading, such as "Clarity" or "Selected Text". Plain text, never markup (T10).
   readonly title: string;
   // Text under the heading, such as a flag's reason. Undefined when there is none.
   readonly detail: string | undefined;

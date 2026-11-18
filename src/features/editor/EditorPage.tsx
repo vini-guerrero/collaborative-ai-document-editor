@@ -50,9 +50,9 @@ export function EditorPageView({
         <EditorTopBar message="" />
         <main className="editor-page-main">
           <EmptyState
-            title="This document could not be opened"
+            title="This Document Could Not Be Opened"
             description="It may be damaged or storage may be unavailable."
-            action={<Link to="/">Go to home</Link>}
+            action={<Link to="/">Go to Home</Link>}
           />
         </main>
       </>

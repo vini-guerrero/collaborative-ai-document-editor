@@ -92,7 +92,7 @@ describe('HomePage delete flow (H5, D14)', () => {
 
     await screen.findByRole('link', { name: 'Plan' });
     await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
-    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Document' }));
 
     await waitFor(() => {
       expect(dialogIsOpen()).toBe(false);
@@ -119,7 +119,7 @@ describe('HomePage delete flow (H5, D14)', () => {
 
     await screen.findByRole('link', { name: 'Plan' });
     await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
-    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Document' }));
 
     await waitFor(() => {
       expect(dialogIsOpen()).toBe(false);
@@ -137,7 +137,7 @@ describe('HomePage delete flow (H5, D14)', () => {
 
     await screen.findByRole('link', { name: 'Plan' });
     await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
-    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Document' }));
 
     await waitFor(() => {
       expect(screen.queryByRole('link', { name: 'Plan' })).toBeNull();
@@ -155,7 +155,7 @@ describe('HomePage delete flow (H5, D14)', () => {
 
     await screen.findByRole('link', { name: 'Plan' });
     await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
-    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Document' }));
 
     expect(await screen.findByText(DELETE_FAILED)).toBeTruthy();
     expect(dialogIsOpen()).toBe(true);
@@ -170,7 +170,7 @@ describe('HomePage delete flow (H5, D14)', () => {
 
     await screen.findByRole('link', { name: 'Plan' });
     await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
-    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Document' }));
 
     expect(await screen.findByText(DELETE_FAILED)).toBeTruthy();
     expect(dialogIsOpen()).toBe(true);
@@ -196,9 +196,9 @@ describe('HomePage delete flow (H5, D14)', () => {
 
     await screen.findByRole('link', { name: 'Plan' });
     await user.click(screen.getByRole('button', { name: 'Delete "Plan"' }));
-    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Document' }));
 
-    await screen.findByRole('heading', { level: 2, name: 'Could not load your documents' });
+    await screen.findByRole('heading', { level: 2, name: 'Could Not Load Your Documents' });
     expect(dialogIsOpen()).toBe(false);
     expect(screen.queryByRole('link', { name: 'Plan' })).toBeNull();
   });

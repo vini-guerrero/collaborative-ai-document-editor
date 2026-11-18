@@ -12,7 +12,7 @@ function baseProps(overrides: Partial<DialogProps> = {}): DialogProps {
     open: true,
     title: TITLE,
     description: DESCRIPTION,
-    confirmLabel: 'Delete document',
+    confirmLabel: 'Delete Document',
     destructive: true,
     onConfirm: vi.fn<() => void>(),
     onCancel: vi.fn<() => void>(),
@@ -50,7 +50,7 @@ function DeleteHarness(): JSX.Element {
       <Dialog
         open={open}
         title={TITLE}
-        confirmLabel="Delete document"
+        confirmLabel="Delete Document"
         destructive
         onConfirm={() => {
           setOpen(false);
@@ -86,7 +86,7 @@ function RemovingTriggerHarness(): JSX.Element {
       <Dialog
         open={open}
         title={TITLE}
-        confirmLabel="Delete document"
+        confirmLabel="Delete Document"
         destructive
         onConfirm={() => {
           setTriggerShown(false);
@@ -157,7 +157,7 @@ describe('Dialog (H5, S4, S7)', () => {
     const user = userEvent.setup();
     const { props } = renderDialog();
 
-    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Document' }));
 
     expect(props.onConfirm).toHaveBeenCalledTimes(1);
     expect(props.onCancel).not.toHaveBeenCalled();
@@ -188,7 +188,7 @@ describe('Dialog (H5, S4, S7)', () => {
     const { props } = renderDialog({ busy: true });
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
-    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Document' }));
 
     expect(props.onCancel).not.toHaveBeenCalled();
     expect(props.onConfirm).not.toHaveBeenCalled();
@@ -284,7 +284,7 @@ describe('Dialog (H5, S4, S7)', () => {
       'true',
     );
     expect(
-      screen.getByRole('button', { name: 'Delete document' }).getAttribute('aria-disabled'),
+      screen.getByRole('button', { name: 'Delete Document' }).getAttribute('aria-disabled'),
     ).toBe('true');
   });
 
@@ -307,7 +307,7 @@ describe('Dialog (H5, S4, S7)', () => {
     render(<RemovingTriggerHarness />);
 
     await user.click(screen.getByRole('button', { name: 'Remove document' }));
-    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Document' }));
 
     expect(getDialog().hasAttribute('open')).toBe(false);
     expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Back to list' }));

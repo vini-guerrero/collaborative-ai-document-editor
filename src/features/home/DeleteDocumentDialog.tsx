@@ -30,7 +30,7 @@ export function DeleteDocumentDialog({
       open={target !== null}
       title={target === null ? '' : `Delete "${displayTitle(target.title)}"?`}
       description={DESCRIPTION}
-      confirmLabel="Delete document"
+      confirmLabel="Delete Document"
       cancelLabel="Cancel"
       destructive
       busy={busy}

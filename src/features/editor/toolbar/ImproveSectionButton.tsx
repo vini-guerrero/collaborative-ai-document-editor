@@ -11,7 +11,7 @@ export interface ImproveSectionButtonProps {
 export function ImproveSectionButton({ onImprove }: ImproveSectionButtonProps): JSX.Element {
   return (
     <span className="improve-section">
-      <Button onClick={onImprove}>Improve section</Button>
+      <Button onClick={onImprove}>Improve Section</Button>
     </span>
   );
 }

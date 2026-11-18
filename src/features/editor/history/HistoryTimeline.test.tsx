@@ -59,16 +59,16 @@ describe('HistoryTimeline', () => {
     expect(screen.queryAllByRole('listitem')).toHaveLength(0);
   });
 
-  it('shows the newest entries only until "Show all" is pressed', async () => {
+  it('shows the newest entries only until "Show All" is pressed', async () => {
     const user = userEvent.setup();
     const many = Array.from({ length: HISTORY_PREVIEW_COUNT + 10 }, (_, index) =>
       entryAt(index + 1, `m${String(index)}`, `Clarity: ${String(index)}`),
     ).reverse();
     render(<HistoryTimeline entries={many} now={NOW} onRestore={vi.fn()} />);
     expect(screen.getAllByRole('listitem')).toHaveLength(HISTORY_PREVIEW_COUNT);
-    await user.click(screen.getByRole('button', { name: 'Show all' }));
+    await user.click(screen.getByRole('button', { name: 'Show All' }));
     expect(screen.getAllByRole('listitem')).toHaveLength(HISTORY_PREVIEW_COUNT + 10);
-    expect(screen.queryByRole('button', { name: 'Show all' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Show All' })).toBeNull();
   });
 
   it('collapses and expands with a disclosure button that reports aria-expanded', async () => {

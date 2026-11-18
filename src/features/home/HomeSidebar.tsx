@@ -20,7 +20,7 @@ function isPlainPrimaryClick(event: MouseEvent<HTMLElement>): boolean {
   );
 }
 
-// H2: only New document and the current Documents entry work. The rest are visible promises (Soon).
+// H2: only New Document and the current Documents entry work. The rest are visible promises (Soon).
 export function HomeSidebar({ onNewDocument }: HomeSidebarProps): JSX.Element {
   const navigate = useNavigate();
   const shell = useShell();
@@ -43,9 +43,9 @@ export function HomeSidebar({ onNewDocument }: HomeSidebarProps): JSX.Element {
   return (
     <div className="home-sidebar">
       <div className="home-sidebar__new">
-        <Button variant="primary" aria-label="New document" onClick={startNewDocument}>
+        <Button variant="primary" aria-label="New Document" onClick={startNewDocument}>
           <Icon name="plus" />
-          <span className="home-sidebar__label">New document</span>
+          <span className="home-sidebar__label">New Document</span>
         </Button>
       </div>
       <NavItem icon="file-text" label="Documents" href="/" current onClick={goHome} />

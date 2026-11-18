@@ -9,7 +9,7 @@ export interface HeadingActionsProps {
   onImprove: (headingPos: number) => void;
 }
 
-// D9: one "Improve section" control beside each heading that has body text. The controls are
+// D9: one "Improve Section" control beside each heading that has body text. The controls are
 // positioned over the frame's edge, so they never change the text layout.
 export function HeadingActions({ boxes, onImprove }: HeadingActionsProps): JSX.Element {
   return (

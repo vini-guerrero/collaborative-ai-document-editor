@@ -24,7 +24,7 @@ export function selectionRangeOf(editor: Editor): TextRange | null {
 }
 
 // D9: the first body paragraph under a heading, up to the next heading. Null when there is none.
-// DEBT: "Improve section" rewrites only this paragraph. Rewriting the whole section needs the
+// DEBT: "Improve Section" rewrites only this paragraph. Rewriting the whole section needs the
 // restructure-section mode of the AI contract; revisit with the section rewrite phase.
 export function sectionParagraphRange(doc: Node, headingPos: number): TextRange | null {
   const heading = doc.nodeAt(headingPos);

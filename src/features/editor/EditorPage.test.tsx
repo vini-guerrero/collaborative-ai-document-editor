@@ -383,9 +383,9 @@ describe('EditorPage', () => {
     renderEditor(createFakeStore({ getError: { kind: 'corrupt' } }));
 
     expect(
-      await screen.findByRole('heading', { level: 2, name: 'This document could not be opened' }),
+      await screen.findByRole('heading', { level: 2, name: 'This Document Could Not Be Opened' }),
     ).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'Go to home' }).getAttribute('href')).toBe('/');
+    expect(screen.getByRole('link', { name: 'Go to Home' }).getAttribute('href')).toBe('/');
   });
   // H5: the title is typed in the top bar and saves through the same debounced autosave.
   it('saves a title typed in the top bar (H5)', async () => {
@@ -430,12 +430,12 @@ describe('EditorPage', () => {
   });
 
   // D1: the AI mode defaults to Ambient and the toggle only changes its state.
-  it('switches the AI mode between Ambient and On demand (D1)', async () => {
+  it('switches the AI mode between Ambient and On Demand (D1)', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderEditor(createFakeStore());
 
     const ambient = await screen.findByRole('button', { name: 'Ambient' });
-    const onDemand = screen.getByRole('button', { name: 'On demand' });
+    const onDemand = screen.getByRole('button', { name: 'On Demand' });
     expect(ambient.getAttribute('aria-pressed')).toBe('true');
     expect(onDemand.getAttribute('aria-pressed')).toBe('false');
 

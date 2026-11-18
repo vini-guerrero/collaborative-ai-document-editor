@@ -47,7 +47,7 @@ function renderDocuments(state: DocumentListState, options: DocumentsPanelOption
     // The alert wraps only the sentence; the heading and Retry stay outside it (D14).
     return (
       <EmptyState
-        title="Could not load your documents"
+        title="Could Not Load Your Documents"
         action={
           <div className="home-page__error">
             <p role="alert" className="home-page__error-text">

@@ -7,7 +7,7 @@ export interface AiModeToggleProps {
   onChange: (mode: AiMode) => void;
 }
 
-// D1: Ambient or On demand. Only the state is set here; the AI behavior arrives in later phases.
+// D1: Ambient or On Demand. Only the state is set here; the AI behavior arrives in later phases.
 export function AiModeToggle({ value, onChange }: AiModeToggleProps): JSX.Element {
   return (
     <ToggleGroup

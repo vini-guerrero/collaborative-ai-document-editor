@@ -65,7 +65,7 @@ describe('restructure section from the slash menu (D10, D11)', () => {
       editor.view.focus();
       editor.view.dispatch(editor.state.tr.insertText(' /'));
     });
-    await user.click(await screen.findByRole('option', { name: /Restructure section/ }));
+    await user.click(await screen.findByRole('option', { name: /Restructure Section/ }));
 
     const panel = await screen.findByRole('region', { name: 'Restructure suggestion' });
     expect(bodies[0]).toContain('"action":"move"');

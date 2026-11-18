@@ -43,9 +43,9 @@ describe('NavItem (S7, H2, H3)', () => {
   });
 
   it('does not put aria-current on an action button', () => {
-    render(<NavItem icon="plus" label="New document" onClick={vi.fn()} current />);
+    render(<NavItem icon="plus" label="New Document" onClick={vi.fn()} current />);
 
-    expect(screen.getByRole('button', { name: 'New document' }).hasAttribute('aria-current')).toBe(
+    expect(screen.getByRole('button', { name: 'New Document' }).hasAttribute('aria-current')).toBe(
       false,
     );
   });
@@ -85,7 +85,7 @@ describe('NavItem (S7, H2, H3)', () => {
   it('runs the action with Enter from the keyboard', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
-    render(<NavItem icon="plus" label="New document" onClick={onClick} />);
+    render(<NavItem icon="plus" label="New Document" onClick={onClick} />);
 
     await user.tab();
     await user.keyboard('{Enter}');
@@ -96,9 +96,9 @@ describe('NavItem (S7, H2, H3)', () => {
   it('runs the action on click', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
-    render(<NavItem icon="plus" label="New document" onClick={onClick} />);
+    render(<NavItem icon="plus" label="New Document" onClick={onClick} />);
 
-    await user.click(screen.getByRole('button', { name: 'New document' }));
+    await user.click(screen.getByRole('button', { name: 'New Document' }));
 
     expect(onClick).toHaveBeenCalledTimes(1);
   });

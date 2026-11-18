@@ -53,11 +53,11 @@ describe('DeleteDocumentDialog', () => {
   });
 
   // H5: the confirm button is labelled with the outcome and calls onConfirm.
-  it('calls onConfirm from the Delete document button (H5)', async () => {
+  it('calls onConfirm from the Delete Document button (H5)', async () => {
     const user = userEvent.setup();
     const props = renderDialog({ kind: 'confirming', document: PLAN });
 
-    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Document' }));
 
     expect(props.onConfirm).toHaveBeenCalledTimes(1);
     expect(props.onCancel).not.toHaveBeenCalled();
@@ -99,7 +99,7 @@ describe('DeleteDocumentDialog', () => {
     }
     fireEvent(dialog, new Event('cancel', { cancelable: true }));
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
-    await user.click(screen.getByRole('button', { name: 'Delete document' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Document' }));
 
     expect(props.onCancel).not.toHaveBeenCalled();
     expect(props.onConfirm).not.toHaveBeenCalled();

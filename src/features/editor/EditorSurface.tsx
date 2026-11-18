@@ -26,13 +26,13 @@ export interface EditorSurfaceProps {
   // Called once per editor instance with the live editor (twice under StrictMode in dev, with the
   // same instance), so callers can drive it through its commands.
   onReady?: ((editor: Editor) => void) | undefined;
-  // True while the AI must not analyze: On demand (D1) or the raw Markdown view (D15).
+  // True while the AI must not analyze: On Demand (D1) or the raw Markdown view (D15).
   aiPaused: boolean;
   // Asked to open a flag's popover by keyboard or pointer (D17).
   onFlagOpen: (flagId: string) => void;
   // The slash menu item the author chose (D12).
   onSlashChoose: (item: SlashItem) => void;
-  // "Improve section" was pressed for the heading at this position (D9).
+  // "Improve Section" was pressed for the heading at this position (D9).
   onImprove: (headingPos: number) => void;
 }
 

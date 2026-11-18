@@ -5,7 +5,7 @@ import { SelectionToolbar } from './SelectionToolbar';
 import { useSelectionBox } from './useSelectionBox';
 import { useVisualViewport } from './useVisualViewport';
 
-// D6 default for "Fix tone": the AI is asked to fix the tone, and the tone picker stays on auto.
+// D6 default for "Fix Tone": the AI is asked to fix the tone, and the tone picker stays on auto.
 const FIX_TONE_INSTRUCTION = 'Fix the tone';
 
 export interface SelectionActionsProps {

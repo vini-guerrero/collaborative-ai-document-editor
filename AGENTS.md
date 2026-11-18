@@ -106,7 +106,7 @@ One command, `pnpm check`, runs: format check, type-aware strict ESLint, `tsc --
 - **Disabled controls: the product record wins.** H2 and H3 keep visible, disabled items (a promise of future features); give each a small "Soon" label or tooltip so it explains itself.
 - Accessibility: semantic HTML first, ARIA only to fill gaps. Everything reachable and operable by keyboard with a visible focus ring; icon-only controls have accessible names; headings and landmarks are hierarchical; async updates use live regions; hover content is also reachable by focus and touch. Respect `prefers-reduced-motion`.
 - Motion explains cause and effect: 150-300 ms, transform and opacity only, never blocking input.
-- Content: plain language, sentence case, one term per concept. The AI speaks in neutral, factual one-liners (D8). Never put a placeholder where a label belongs.
+- Content: plain language, one term per concept. Labels (buttons, menu items, toggles, headings, titles) use Title Case ("Fix Tone", "Go to Home"); messages, notes and placeholders stay in sentence case. The user chose this over the prototype's sentence case. The AI speaks in neutral, factual one-liners (D8). Never put a placeholder where a label belongs.
 
 ## Dropped on purpose (does not fit this project yet)
 

@@ -5,9 +5,9 @@ import { Link } from 'react-router';
 export function NotFound(): JSX.Element {
   return (
     <main>
-      <h1>Page not found</h1>
+      <h1>Page Not Found</h1>
       <p>The page you were looking for does not exist.</p>
-      <Link to="/">Go to home</Link>
+      <Link to="/">Go to Home</Link>
     </main>
   );
 }

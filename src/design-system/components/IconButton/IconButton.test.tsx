@@ -14,7 +14,7 @@ describe('IconButton (S7)', () => {
   it('activates with Enter from the keyboard', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
-    render(<IconButton icon="plus" label="New document" onClick={onClick} />);
+    render(<IconButton icon="plus" label="New Document" onClick={onClick} />);
 
     await user.tab();
     await user.keyboard('{Enter}');
@@ -25,7 +25,7 @@ describe('IconButton (S7)', () => {
   it('activates with Space from the keyboard', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
-    render(<IconButton icon="trash" label="Delete document" onClick={onClick} />);
+    render(<IconButton icon="trash" label="Delete Document" onClick={onClick} />);
 
     await user.tab();
     await user.keyboard(' ');

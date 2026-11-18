@@ -80,7 +80,7 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
   const actions = rewriteActionsFor(mountedEditor, rewrite);
   const restructure = useRestructureFlow(mountedEditor, recordAiAccept);
   const { aiMode, setAiMode } = useAiMode();
-  // D1, D15: nothing is analyzed in On demand mode or while the raw Markdown is shown.
+  // D1, D15: nothing is analyzed in On Demand mode or while the raw Markdown is shown.
   const aiPaused = aiMode === 'on-demand' || viewMode === 'markdown';
 
   // Opening another flag ends a rewrite that belongs to a different popover (D5).

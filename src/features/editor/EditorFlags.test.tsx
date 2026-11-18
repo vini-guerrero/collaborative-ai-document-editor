@@ -56,14 +56,14 @@ describe('flags in the editor', () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
-  // D1: On demand mode asks the AI for nothing.
-  it('makes no AI call in On demand mode (D1)', async () => {
+  // D1: On Demand mode asks the AI for nothing.
+  it('makes no AI call in On Demand mode (D1)', async () => {
     const fetchImpl = vi.fn<FetchLike>(() => Promise.resolve(analyzeResponse([FLAG])));
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const holder = renderEditorPage(fetchImpl);
     const editor = await readyEditor(holder);
 
-    await user.click(await screen.findByRole('button', { name: 'On demand' }));
+    await user.click(await screen.findByRole('button', { name: 'On Demand' }));
     insertParagraph(editor, PARAGRAPH);
     await advancePastPause();
 
@@ -154,16 +154,16 @@ describe('flags in the editor', () => {
     expect(editor.state.selection.from).toBe(entry?.from);
   });
 
-  // D17: the Next flag button exists only while a flag does, and opens the flag.
-  it('shows the Next flag button only while a flag exists and opens the flag (D17)', async () => {
+  // D17: the Next Flag button exists only while a flag does, and opens the flag.
+  it('shows the Next Flag button only while a flag exists and opens the flag (D17)', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const holder = renderEditorPage(() => Promise.resolve(analyzeResponse([FLAG])));
     const editor = await readyEditor(holder);
-    expect(screen.queryByRole('button', { name: 'Next flag' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Next Flag' })).toBeNull();
 
     insertParagraph(editor, PARAGRAPH);
     await advancePastPause();
-    await user.click(await screen.findByRole('button', { name: 'Next flag' }));
+    await user.click(await screen.findByRole('button', { name: 'Next Flag' }));
 
     const dialog = await screen.findByRole('dialog', { name: POPOVER_NAME });
     expect(within(dialog).getByText(FLAG.reason)).toBeTruthy();

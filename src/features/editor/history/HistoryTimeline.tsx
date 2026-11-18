@@ -4,7 +4,7 @@ import type { HistoryEntry } from '@/features/documents';
 import { HistoryEntryRow } from './HistoryEntryRow';
 import './HistoryTimeline.css';
 
-// Long histories open with the newest entries only; "Show all" reveals the rest.
+// Long histories open with the newest entries only; "Show All" reveals the rest.
 export const HISTORY_PREVIEW_COUNT = 50;
 
 export interface HistoryTimelineProps {
@@ -51,7 +51,7 @@ export function HistoryTimeline({ entries, now, onRestore }: HistoryTimelineProp
               setIsShowingAll(true);
             }}
           >
-            Show all
+            Show All
           </Button>
         ) : null}
       </div>

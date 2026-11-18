@@ -25,7 +25,7 @@ export interface EditorTopBarProps {
   view?: EditorViewControls | undefined;
   // The AI status indicator (D14); absent while the document is loading.
   aiStatus?: ReactNode;
-  // The Next flag control (D17); the caller shows it only while a flag exists.
+  // The Next Flag control (D17); the caller shows it only while a flag exists.
   flagControl?: ReactNode;
 }
 

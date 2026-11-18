@@ -42,7 +42,7 @@ describe('RefineControls', () => {
     const user = userEvent.setup();
     const onLengthChange = vi.fn();
     render(<RefineControls {...props({ onLengthChange })} />);
-    await user.click(screen.getByRole('button', { name: 'Length: Same length' }));
+    await user.click(screen.getByRole('button', { name: 'Length: Same Length' }));
     await user.click(screen.getByRole('option', { name: 'Longer' }));
     expect(onLengthChange).toHaveBeenCalledWith('longer');
   });

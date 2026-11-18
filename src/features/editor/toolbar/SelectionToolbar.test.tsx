@@ -33,7 +33,7 @@ describe('SelectionToolbar', () => {
     const onShorten = vi.fn();
     render(<SelectionToolbar {...props({ onRewrite, onFixTone, onShorten })} />);
     await user.click(screen.getByRole('button', { name: 'Rewrite' }));
-    await user.click(screen.getByRole('button', { name: 'Fix tone' }));
+    await user.click(screen.getByRole('button', { name: 'Fix Tone' }));
     await user.click(screen.getByRole('button', { name: 'Shorten' }));
     expect(onRewrite).toHaveBeenCalledTimes(1);
     expect(onFixTone).toHaveBeenCalledTimes(1);

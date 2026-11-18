@@ -9,10 +9,10 @@ export interface EmptyHomeProps {
 export function EmptyHome({ onNewDocument }: EmptyHomeProps): JSX.Element {
   return (
     <EmptyState
-      title="Start your first document"
+      title="Start Your First Document"
       action={
         <Button variant="primary" onClick={onNewDocument}>
-          New document
+          New Document
         </Button>
       }
     />

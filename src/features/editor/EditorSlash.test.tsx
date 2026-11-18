@@ -51,7 +51,7 @@ describe('slash menu (D12)', () => {
 
     editor.view.focus();
     await user.keyboard('{ArrowDown}');
-    expect(screen.getByRole('option', { name: /Change tone/ }).getAttribute('aria-selected')).toBe(
+    expect(screen.getByRole('option', { name: /Change Tone/ }).getAttribute('aria-selected')).toBe(
       'true',
     );
     expect(editor.view.dom.getAttribute('aria-activedescendant')).toBe('slash-option-change-tone');
@@ -78,7 +78,7 @@ describe('slash menu (D12)', () => {
   // DEBT: skipped, the jsdom run is timing-dependent (decoration widgets and deferred focus). The
   // flow (choose item, '/' removed, card opens, Accept) is checked in the browser pass; revisit with
   // a browser-mode test.
-  it.skip('removes the slash and opens a rewrite when Rewrite paragraph is chosen', async () => {
+  it.skip('removes the slash and opens a rewrite when Rewrite Paragraph is chosen', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const bodies: string[] = [];
     const holder = renderEditorPage(rewriteFetch('Rewritten line', bodies));
@@ -95,7 +95,7 @@ describe('slash menu (D12)', () => {
     });
     await screen.findByRole('listbox', { name: MENU_NAME });
 
-    await user.click(screen.getByRole('option', { name: /Rewrite paragraph/ }));
+    await user.click(screen.getByRole('option', { name: /Rewrite Paragraph/ }));
 
     expect(await screen.findByRole('dialog', { name: 'Suggestion' })).toBeTruthy();
     // The preview is a word diff (deleted and inserted words interleave), so check the accepted text.
@@ -116,7 +116,7 @@ describe('slash menu (D12)', () => {
     typeSlash(editor);
     await screen.findByRole('listbox', { name: MENU_NAME });
 
-    await user.click(screen.getByRole('option', { name: /Ask what's missing/ }));
+    await user.click(screen.getByRole('option', { name: /Ask What's Missing/ }));
 
     expect(screen.getByRole('listbox', { name: MENU_NAME })).toBeTruthy();
     expect(editor.getText()).toContain('/');
@@ -124,9 +124,9 @@ describe('slash menu (D12)', () => {
 });
 
 describe('improve section (D9)', () => {
-  // D9: each heading with body text offers Improve section, which rewrites its first paragraph with
+  // D9: each heading with body text offers Improve Section, which rewrites its first paragraph with
   // the instruction "Improve clarity" and opens the card.
-  it('offers Improve section beside a heading and rewrites its first paragraph', async () => {
+  it('offers Improve Section beside a heading and rewrites its first paragraph', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const bodies: string[] = [];
     const holder = renderEditorPage(rewriteFetch('Clearer line', bodies));
@@ -135,7 +135,7 @@ describe('improve section (D9)', () => {
       editor.commands.insertContent(`# Launch\n\n${PARAGRAPH}`, { contentType: 'markdown' });
     });
 
-    await user.click(await screen.findByRole('button', { name: 'Improve section' }));
+    await user.click(await screen.findByRole('button', { name: 'Improve Section' }));
 
     const card = await screen.findByRole('dialog', { name: 'Suggestion' });
     await within(card).findByRole('button', { name: 'Accept' });

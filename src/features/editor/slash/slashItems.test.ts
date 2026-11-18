@@ -5,10 +5,10 @@ import { SLASH_ITEMS, filterSlashItems, slashOptionDomId } from './slashItems';
 describe('slashItems', () => {
   it('offers the four D12 actions', () => {
     expect(SLASH_ITEMS.map((item) => item.label)).toEqual([
-      'Rewrite paragraph',
-      'Change tone',
-      "Ask what's missing",
-      'Restructure section',
+      'Rewrite Paragraph',
+      'Change Tone',
+      "Ask What's Missing",
+      'Restructure Section',
     ]);
   });
 

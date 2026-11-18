@@ -24,7 +24,7 @@ export function NextFlagButton({ editor, onOpenFlag }: NextFlagButtonProps): JSX
         }
       }}
     >
-      Next flag
+      Next Flag
     </Button>
   );
 }

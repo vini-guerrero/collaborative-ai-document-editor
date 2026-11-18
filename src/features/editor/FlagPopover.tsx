@@ -15,7 +15,7 @@ import { useFlags } from './useFlags';
 
 const FLAG_DIALOG_LABEL = 'Writing flag';
 const SUGGESTION_DIALOG_LABEL = 'Suggestion';
-// D6 default for "View suggestion": the AI picks the tone.
+// D6 default for "View Suggestion": the AI picks the tone.
 const FLAG_VIEW_PICK: RoundPick = { type: 'setTone', tone: 'auto' };
 
 export interface FlagPopoverProps {

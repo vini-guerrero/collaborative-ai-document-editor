@@ -138,7 +138,7 @@ describe('analyze scheduler (D4, D1, D14, D15, T10)', () => {
   });
 
   it.each([
-    ['On demand mode or raw view', false],
+    ['On Demand mode or raw view', false],
     ['the AI being paused', true],
   ])('makes no call while paused by %s (D1, D14, D15)', async (_label, paused) => {
     const { scheduler, client, state } = createHarness();

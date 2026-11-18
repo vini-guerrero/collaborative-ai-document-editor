@@ -91,7 +91,7 @@ describe('useAnalyzeScheduler (D4, D1, D14, D15, T10)', () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
-  it('makes no call while paused in On demand mode or the raw view (D1, D15)', async () => {
+  it('makes no call while paused in On Demand mode or the raw view (D1, D15)', async () => {
     const fetchImpl = vi.fn<FetchLike>(() => Promise.resolve(jsonResponse(200, { flags: [FLAG] })));
     const { onFlags } = renderHarness({ paused: true, fetchImpl });
     await userEvent.click(screen.getByRole('button', { name: 'Leave paragraph' }));

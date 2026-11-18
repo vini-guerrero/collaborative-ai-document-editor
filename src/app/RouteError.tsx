@@ -7,7 +7,7 @@ import { Button } from '@/design-system';
 export function RouteError(): JSX.Element {
   return (
     <main>
-      <h1>This page could not be shown</h1>
+      <h1>This Page Could Not Be Shown</h1>
       <p>Something went wrong while loading it. Try again, or go to home.</p>
       <Button
         variant="primary"
@@ -17,7 +17,7 @@ export function RouteError(): JSX.Element {
       >
         Try again
       </Button>
-      <Link to="/">Go to home</Link>
+      <Link to="/">Go to Home</Link>
     </main>
   );
 }

@@ -15,7 +15,7 @@ const TONE_LABELS: Record<Tone, string> = {
 const LENGTH_LABELS: Record<Length, string> = {
   shorter: 'Shorter',
   longer: 'Longer',
-  same: 'Same length',
+  same: 'Same Length',
 };
 
 // Shown in the free instruction input. The hint follows the length setting so it suggests what

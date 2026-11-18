@@ -57,7 +57,7 @@ describe('version history (D7)', () => {
     await user.click(screen.getByRole('button', { name: 'History' }));
     const timeline = await screen.findByRole('dialog', { name: 'Version history' });
     await user.click(
-      within(timeline).getByRole('button', { name: 'Restore this version: Selected text' }),
+      within(timeline).getByRole('button', { name: 'Restore this version: Selected Text' }),
     );
 
     await waitFor(() => {

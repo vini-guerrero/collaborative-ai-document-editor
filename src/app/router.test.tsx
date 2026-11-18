@@ -26,8 +26,8 @@ describe('app routes', () => {
   it('shows the not-found page with a link home for an unknown path', async () => {
     renderAt('/does-not-exist');
 
-    await screen.findByRole('heading', { level: 1, name: 'Page not found' });
-    expect(screen.getByRole('link', { name: 'Go to home' }).getAttribute('href')).toBe('/');
+    await screen.findByRole('heading', { level: 1, name: 'Page Not Found' });
+    expect(screen.getByRole('link', { name: 'Go to Home' }).getAttribute('href')).toBe('/');
   });
 
   // H1: the home screen is the root route.
@@ -48,6 +48,6 @@ describe('app routes', () => {
   it('shows the not-found page for an invalid document id', async () => {
     renderAt('/documents/bad.id');
 
-    await screen.findByRole('heading', { level: 1, name: 'Page not found' });
+    await screen.findByRole('heading', { level: 1, name: 'Page Not Found' });
   });
 });

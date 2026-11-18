@@ -17,7 +17,7 @@ export interface RewriteActions {
   readonly collapseSelection: () => void;
 }
 
-const SELECTION_TITLE = 'Selected text';
+const SELECTION_TITLE = 'Selected Text';
 const PARAGRAPH_TITLE = 'Paragraph';
 const SECTION_TITLE = 'Section';
 // D6 default: the AI picks the tone and keeps the length.
