@@ -16,7 +16,7 @@
   align-items: center;
   gap: var(--ds-space-100);
   padding: var(--ds-space-050);
-  border: var(--ds-border-width) solid var(--ds-border-brand);
+  border: var(--ds-border-width) solid var(--ds-border);
   border-radius: var(--ds-radius-xlarge);
   background: var(--ds-surface-raised);
   /* The gap above the footer is filled with the page colour, so scrolled text does not show in it. */
