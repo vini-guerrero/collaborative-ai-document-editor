@@ -189,9 +189,6 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
             }}
           />
         ) : null}
-        {mountedEditor !== null && viewMode === 'visual' ? (
-          <FormattingToolbar editor={mountedEditor} />
-        ) : null}
         <div hidden={viewMode === 'markdown'} className="editor-page-body">
           <EditorSurface
             initialMarkdown={initialBody}
@@ -203,6 +200,9 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
             onImprove={actions.improveSection}
           />
         </div>
+        {mountedEditor !== null && viewMode === 'visual' ? (
+          <FormattingToolbar editor={mountedEditor} />
+        ) : null}
         <EditorOverlays
           editor={mountedEditor}
           selectionEnabled={viewMode === 'visual' && rewrite.target === null}

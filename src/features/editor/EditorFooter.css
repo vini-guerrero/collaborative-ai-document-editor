@@ -6,7 +6,8 @@
   display: flex;
   align-items: center;
   gap: var(--ds-space-100);
-  min-block-size: var(--ds-space-500);
+  box-sizing: border-box;
+  block-size: var(--app-footer-height);
   padding-inline: var(--ds-space-200);
   border-block-start: var(--ds-border-width) solid var(--ds-border);
   background: var(--ds-surface);

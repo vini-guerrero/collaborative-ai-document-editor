@@ -1,10 +1,11 @@
 /* S2, S9: a quiet bar above the text. Groups are separated by a divider; a pressed button takes
    the brand tint, a brand ring and a filled look, so state is not carried by colour alone (S7). */
 .formatting-toolbar {
-  /* Stays at the top of the screen while the page scrolls, so the controls are in reach wherever
-     the author is writing. It sits above the text and below popovers and the drawer. */
+  /* Floats at the bottom of the screen, a gap above the footer, so it never rolls over the text
+     being read at the top and stays in reach wherever the author writes. It sits below popovers
+     and the drawer. */
   position: sticky;
-  inset-block-start: 0;
+  inset-block-end: calc(var(--app-footer-height) + var(--ds-space-200));
   z-index: var(--app-z-sidebar);
   display: flex;
   flex-wrap: wrap;
@@ -14,8 +15,8 @@
   border: var(--ds-border-width) solid var(--ds-border);
   border-radius: var(--ds-radius-xlarge);
   background: var(--ds-surface-raised);
-  /* Leaves room for the selection bubble above the first line, so it never covers this bar. */
-  margin-block-end: var(--ds-space-600);
+  /* The gap above the footer is filled with the page colour, so scrolled text does not show in it. */
+  box-shadow: 0 var(--ds-space-200) 0 var(--ds-surface);
 }
 
 .formatting-toolbar__group {
@@ -70,4 +71,10 @@
     inline-size: 44px;
     block-size: 44px;
   }
+}
+
+/* At the bottom edge the tooltips open upward, so they are not hidden by the footer. */
+.formatting-toolbar .ds-tooltip__bubble {
+  inset-block-start: auto;
+  inset-block-end: calc(100% + var(--ds-space-050));
 }

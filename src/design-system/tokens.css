@@ -14,6 +14,7 @@
   --app-surface: var(--ds-surface);
   --app-surface-raised: var(--ds-surface-raised);
   --app-dialog-width: 480px;
+  --app-footer-height: 3rem;
   --app-text: var(--ds-text);
   --app-text-subtle: var(--ds-text-subtle);
   --app-border: var(--ds-border);
