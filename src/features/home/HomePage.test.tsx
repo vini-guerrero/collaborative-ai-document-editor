@@ -142,7 +142,7 @@ describe('HomePage', () => {
     const search = within(banner).getByRole('searchbox', { name: 'Search documents' });
     expect(search.hasAttribute('disabled')).toBe(true);
     expect(search.getAttribute('aria-disabled')).toBe('true');
-    expect(search.closest('[title]')?.getAttribute('title')).toBe('Search is coming later');
+    expect(screen.getByRole('tooltip', { name: 'Search is coming later' })).toBeTruthy();
     expect(within(banner).queryByText('Soon')).toBeNull();
   });
 
@@ -155,6 +155,7 @@ describe('HomePage', () => {
       const item = within(nav).getByRole('button', { name: new RegExp(label) });
       expect(item.getAttribute('aria-disabled')).toBe('true');
       expect(within(item).getByText('Soon')).toBeTruthy();
+      expect(item.getAttribute('aria-describedby')).not.toBeNull();
     }
     expect(within(nav).getByRole('link', { name: 'Documents' }).getAttribute('aria-current')).toBe(
       'page',

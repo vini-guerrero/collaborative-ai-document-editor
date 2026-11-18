@@ -9,14 +9,21 @@ export interface TooltipProps {
   // Which edge of the control the bubble lines up with. Use 'start' near the left edge of the
   // screen and the default 'end' near the right edge, so the bubble is never cut off.
   align?: 'start' | 'end';
+  // Stretches the hint's wrapper to the width of its container, for full-width controls.
+  fill?: boolean;
 }
 
 // S5, S9: a hint shown on hover and on keyboard focus, never the only place the information lives
 // (the child keeps its own accessible name). Pure CSS: no portal, no timers.
-export function Tooltip({ content, children, align = 'end' }: TooltipProps): JSX.Element {
+export function Tooltip({
+  content,
+  children,
+  align = 'end',
+  fill = false,
+}: TooltipProps): JSX.Element {
   const id = useId();
   return (
-    <span className={`ds-tooltip ds-tooltip--${align}`}>
+    <span className={`ds-tooltip ds-tooltip--${align}${fill ? ' ds-tooltip--fill' : ''}`}>
       <span className="ds-tooltip__anchor">
         {cloneElement(children, { 'aria-describedby': id })}
       </span>

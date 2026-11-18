@@ -26,6 +26,13 @@
   transition: opacity var(--ds-duration-short) var(--ds-easing-out-practical);
 }
 
+.ds-tooltip--fill,
+.ds-tooltip--fill .ds-tooltip__anchor {
+  flex: 1 1 auto;
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
 .ds-tooltip--start .ds-tooltip__bubble {
   inset-inline-start: 0;
   inset-inline-end: auto;

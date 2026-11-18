@@ -2,6 +2,7 @@ import type { JSX, MouseEvent } from 'react';
 import { Icon, type IconName } from '../../icons';
 import { useShell } from '../AppShell/AppShell';
 import { Lozenge } from '../Lozenge/Lozenge';
+import { Tooltip } from '../Tooltip/Tooltip';
 import { VisuallyHidden } from '../VisuallyHidden/VisuallyHidden';
 import './NavItem.css';
 
@@ -65,10 +66,18 @@ export function NavItem({
 
   // Announced as unavailable; no onClick is attached, so activation does nothing.
   if (disabled) {
-    return (
+    const unavailable = (
       <button type="button" className={className} aria-disabled="true">
         {body}
       </button>
+    );
+    // H3: a disabled "Soon" item explains itself on hover and on keyboard focus.
+    return showSoon ? (
+      <Tooltip content={`${label} is coming soon`} align="start" fill>
+        {unavailable}
+      </Tooltip>
+    ) : (
+      unavailable
     );
   }
 
