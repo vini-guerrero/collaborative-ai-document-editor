@@ -237,7 +237,7 @@ export function Popover({
       ref={panelRef}
       role={role}
       aria-label={role === 'dialog' ? label : undefined}
-      tabIndex={-1}
+      tabIndex={role === 'dialog' ? -1 : undefined}
       className="ds-popover"
     >
       {children}

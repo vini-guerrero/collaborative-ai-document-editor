@@ -99,14 +99,17 @@ describe('useAnalyzeScheduler (D4, D1, D14, D15, T10)', () => {
     expect(onFlags).not.toHaveBeenCalled();
   });
 
-  it('makes no call while the AI status is not ready (D14)', async () => {
+  it('keeps analyzing after an outage, since the next request can recover (D14)', async () => {
     const fetchImpl = vi.fn<FetchLike>(() => Promise.resolve(jsonResponse(200, { flags: [FLAG] })));
     const store = createAiStatusStore();
     store.begin();
     store.end({ ok: false, error: { kind: 'unavailable' } });
-    renderHarness({ store, fetchImpl });
+    const { onFlags } = renderHarness({ store, fetchImpl });
     await userEvent.click(screen.getByRole('button', { name: 'Leave paragraph' }));
-    expect(fetchImpl).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(onFlags).toHaveBeenCalledTimes(1);
+    });
+    expect(store.getSnapshot()).toBe('ready');
   });
 
   it('stops calling and emits nothing once out of credit (D14)', async () => {

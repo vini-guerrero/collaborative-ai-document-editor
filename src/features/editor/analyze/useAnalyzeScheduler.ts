@@ -49,8 +49,10 @@ export function useAnalyzeScheduler({
       onFlags: (paragraphId, hash, flags) => {
         latest.current.onFlags(paragraphId, hash, flags);
       },
-      // D14: nothing is sent while the AI is not ready. D1, D15: nothing in On demand or raw view.
-      isPaused: () => latest.current.paused || latest.current.status !== 'ready',
+      // D14: only out of credit stops ambient analysis for good; an outage backs off by itself because
+      // the next edit or paragraph change tries again, and a request in flight is not a reason to skip
+      // another paragraph. D1, D15: nothing in On demand or raw view.
+      isPaused: () => latest.current.paused || latest.current.status === 'out_of_credit',
     } satisfies AnalyzeSchedulerDeps);
     schedulerRef.current = scheduler;
     return () => {

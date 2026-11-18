@@ -4,7 +4,9 @@ import type { AiRequest, AiResponse, AiTask, ErrorCode } from '@shared/schemas';
 // The browser talks only to our proxy (T4). The client never sends a model name (T7).
 export const AI_ENDPOINT_PATH = '/api/ai';
 // Matches the server's AI_TIMEOUT_MS so a slow call fails the same way on both sides (T5).
-export const DEFAULT_AI_TIMEOUT_MS = 30_000;
+// Slightly above the server's own 30 s limit, so the client can read the server's 503 or 402
+// instead of aborting first.
+export const DEFAULT_AI_TIMEOUT_MS = 35_000;
 const HTTP_PAYMENT_REQUIRED = 402;
 
 export type AiRequestOf<T extends AiTask> = Extract<AiRequest, { task: T }>;

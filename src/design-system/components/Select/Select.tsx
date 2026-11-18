@@ -121,7 +121,7 @@ export function Select({
       tabStopRef.current =
         anchor === null
           ? null
-          : findTabStop(anchor, event.currentTarget.closest('[role="dialog"]'), event.shiftKey);
+          : findTabStop(anchor, event.currentTarget.closest('.ds-popover'), event.shiftKey);
       close();
       return;
     }
