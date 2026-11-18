@@ -1,0 +1,29 @@
+/* S2: spacing, type and colour from tokens only. */
+.history-timeline {
+  display: grid;
+  gap: var(--ds-space-100);
+  max-inline-size: 22rem;
+}
+
+.history-timeline__panel {
+  display: grid;
+  gap: var(--ds-space-100);
+}
+
+.history-timeline__panel[hidden] {
+  display: none;
+}
+
+.history-timeline__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--ds-space-050);
+}
+
+.history-timeline__empty {
+  margin: 0;
+  font: var(--ds-font-body);
+  color: var(--ds-text-subtle);
+}

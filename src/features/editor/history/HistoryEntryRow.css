@@ -1,0 +1,43 @@
+/* S2: spacing, type and colour from tokens only. */
+.history-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-100);
+  padding-block: var(--ds-space-100);
+  padding-inline-start: var(--ds-space-150);
+  border-inline-start: 2px solid var(--ds-border);
+}
+
+.history-entry--ai {
+  border-inline-start-color: var(--ds-border-bold);
+}
+
+.history-entry__body {
+  min-inline-size: 0;
+}
+
+.history-entry__label,
+.history-entry__meta {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.history-entry__label {
+  font: var(--ds-font-body-small);
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--ds-text);
+}
+
+.history-entry__meta {
+  font: var(--ds-font-body-small);
+  color: var(--ds-text-subtle);
+}
+
+/* S9: touch targets are at least 44px on coarse pointers. */
+@media (pointer: coarse) {
+  .history-entry .ds-button {
+    min-block-size: 44px;
+    min-inline-size: 44px;
+  }
+}
