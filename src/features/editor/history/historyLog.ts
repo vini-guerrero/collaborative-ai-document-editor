@@ -33,3 +33,18 @@ export function withAiAccept(
 ): HistoryEntry[] {
   return recordEntry(history, aiAcceptEntry(input));
 }
+
+// D7: before an AI change is recorded, the author's own text is kept as a "You" entry when it is not
+// already the newest entry, so the text before the change can be restored.
+export function withSnapshot(
+  history: readonly HistoryEntry[],
+  markdown: string,
+  now: number,
+  id: string,
+): HistoryEntry[] {
+  const latest = history[history.length - 1];
+  if (latest?.markdown === markdown) {
+    return [...history];
+  }
+  return recordEntry(history, youCheckpointEntry({ id, markdown, now }));
+}

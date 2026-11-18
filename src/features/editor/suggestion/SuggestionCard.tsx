@@ -1,6 +1,7 @@
 import { useEffect, useRef, type JSX } from 'react';
 import { Button } from '@/design-system';
 import { RefineControls, type RefineControlsProps } from '../refine/RefineControls';
+import { keepEditorSelection } from '../toolbar/keepSelection';
 import { SuggestionOutcome, type SuggestionOutcomeRequest } from './SuggestionOutcome';
 
 export interface SuggestionCardProps {
@@ -11,12 +12,9 @@ export interface SuggestionCardProps {
   onDismiss: () => void;
 }
 
-// The refine form sits inside the card. Tab from inside it must move focus, not accept (D17).
-const REFINE_SELECTOR = '.refine';
-
-// D5, D17: the card for one suggestion. Tab accepts while the card itself has focus and the
-// suggestion is ready; Esc closes it from the popover (FlagPopover). The card takes focus when it
-// opens, and the popover then focuses its first control, which is Accept when there is one.
+// D5, D17: the card for one suggestion. Tab accepts only while the card itself has focus and the
+// suggestion is ready; once a button has focus, Tab moves normally. Esc closes it from the popover
+// (FlagPopover). The card is the first tab stop, so the popover focuses it on open.
 export function SuggestionCard({
   request,
   refine,
@@ -41,11 +39,7 @@ export function SuggestionCard({
       if (event.key !== 'Tab' || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) {
         return;
       }
-      const active = document.activeElement;
-      if (cardRef.current?.contains(active) !== true || active === null) {
-        return;
-      }
-      if (active.closest(REFINE_SELECTOR) !== null) {
+      if (document.activeElement !== cardRef.current) {
         return;
       }
       event.preventDefault();
@@ -59,7 +53,7 @@ export function SuggestionCard({
   }, [isReady, onAccept]);
 
   return (
-    <div className="suggestion-card" ref={cardRef} tabIndex={-1}>
+    <div className="suggestion-card" ref={cardRef} tabIndex={0} onMouseDown={keepEditorSelection}>
       <div className="flag-panel__header">
         <p className="flag-panel__kind">{target.title}</p>
         {target.detail === undefined ? null : <p className="flag-panel__reason">{target.detail}</p>}

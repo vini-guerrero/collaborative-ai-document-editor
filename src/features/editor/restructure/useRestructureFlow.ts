@@ -37,7 +37,7 @@ export interface RestructureFlow {
 // ends the suggestion, because its section indexes no longer match the text.
 export function useRestructureFlow(
   editor: Editor | null,
-  onApplied: (label: string) => void,
+  onApplied: (label: string, before: string) => void,
 ): RestructureFlow {
   const client = useAiClient();
   const [state, setState] = useState<RestructureState>({ kind: 'idle' });
@@ -105,6 +105,7 @@ export function useRestructureFlow(
     if (editor === null || state.kind !== 'ready') {
       return;
     }
+    const before = serializeMarkdown(editor);
     const result = applyRestructure(editor, state.operation);
     if (!result.ok) {
       setState({ kind: 'error', reason: result.reason });
@@ -112,7 +113,7 @@ export function useRestructureFlow(
     }
     const label = describeOperation(state.sections, state.operation);
     setState({ kind: 'idle' });
-    onAppliedRef.current(label);
+    onAppliedRef.current(label, before);
   };
 
   const dismiss = (): void => {

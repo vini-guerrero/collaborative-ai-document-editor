@@ -17,6 +17,8 @@ export function restoreVersion(editor: Editor, markdown: string): MarkdownResult
   const { tr } = editor.state;
   tr.replaceWith(0, tr.doc.content.size, restored.content);
   editor.view.dispatch(closeHistory(tr));
+  // Closed after as well, so typing that follows is not merged into the restore (as in Accept).
+  editor.view.dispatch(closeHistory(editor.state.tr));
   return { ok: true, value: undefined };
 }
 

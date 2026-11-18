@@ -48,9 +48,12 @@ export function useHeadingBoxes(editor: Editor | null): readonly HeadingBox[] {
     measure();
     editor.on('transaction', measure);
     window.addEventListener('resize', measure);
+    // The heading actions are positioned against the frame, so they follow any scrolling ancestor.
+    window.addEventListener('scroll', measure, { capture: true, passive: true });
     return () => {
       editor.off('transaction', measure);
       window.removeEventListener('resize', measure);
+      window.removeEventListener('scroll', measure, { capture: true });
     };
   }, [editor]);
 

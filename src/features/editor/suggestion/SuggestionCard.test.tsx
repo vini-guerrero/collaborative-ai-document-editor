@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { RewriteTarget } from './rewriteTarget';
@@ -83,5 +83,21 @@ describe('SuggestionCard states', () => {
     const { onAccept } = renderCard({ kind: 'ready', target: TARGET });
     await user.keyboard('{Tab}');
     expect(onAccept).toHaveBeenCalledTimes(1);
+  });
+
+  // D17: once a button has focus, Tab moves focus normally and never accepts.
+  it('does not accept with Tab from the Dismiss button', async () => {
+    const user = userEvent.setup();
+    const { onAccept } = renderCard({ kind: 'ready', target: TARGET });
+    screen.getByRole('button', { name: 'Dismiss' }).focus();
+    await user.keyboard('{Tab}');
+    expect(onAccept).not.toHaveBeenCalled();
+  });
+
+  // A press on an action keeps the editor's selection: the mousedown default is prevented, so the
+  // button does not take focus or collapse the text selection (D9, D17).
+  it('prevents the mousedown default on card actions so the editor keeps its selection', () => {
+    renderCard({ kind: 'ready', target: TARGET });
+    expect(fireEvent.mouseDown(screen.getByRole('button', { name: 'Accept' }))).toBe(false);
   });
 });

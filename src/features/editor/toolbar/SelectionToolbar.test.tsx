@@ -56,7 +56,9 @@ describe('SelectionToolbar', () => {
     const user = userEvent.setup();
     const onDismiss = vi.fn();
     render(<SelectionToolbar {...props({ onDismiss })} />);
-    await user.click(screen.getByRole('button', { name: 'Rewrite' }));
+    // Mouse presses keep the editor focused (the toolbar prevents focus moves), so focus the button
+    // the way Tab does before pressing Escape.
+    await user.tab();
     await user.keyboard('{Escape}');
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });

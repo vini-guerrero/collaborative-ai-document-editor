@@ -85,3 +85,14 @@
   max-inline-size: 75ch;
   inline-size: 100%;
 }
+
+/* The document is a clean page: no box while focused (prototype). Keyboard focus gets a thin,
+   light caret-area outline only (S7). */
+.editor-surface .ProseMirror:focus {
+  outline: none;
+}
+
+.editor-surface .ProseMirror:focus-visible {
+  outline: var(--ds-border-width) solid var(--ds-border);
+  outline-offset: var(--ds-space-025);
+}

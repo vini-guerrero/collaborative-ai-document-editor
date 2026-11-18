@@ -3,6 +3,7 @@ import type { Editor } from '@tiptap/react';
 import { BottomSheet, Popover, useBreakpoint } from '@/design-system';
 import { FlagPanel, KIND_LABELS } from './FlagPanel';
 import { clearFlagsMeta } from './flags/flagsPlugin';
+import { serializeMarkdown } from './markdown/markdown';
 import type { FlagEntry } from './flags/flagsState';
 import { applySuggestion } from './suggestion/applySuggestion';
 import { refineControlsFor } from './suggestion/refineControlsFor';
@@ -24,8 +25,8 @@ export interface FlagPopoverProps {
   // The rewrite in progress (D5, D9). It shows in this popover, anchored to its text.
   session: RewriteSession;
   onClose: () => void;
-  // Reports an accepted rewrite, by its card title, for the history (D7).
-  onAccepted: (label: string) => void;
+  // Reports an accepted rewrite: its card title, and the Markdown from before it (D7).
+  onAccepted: (label: string, before: string) => void;
   onAnswer?: ((answer: string) => void) | undefined;
 }
 
@@ -62,7 +63,7 @@ interface PanelInputs {
   session: RewriteSession;
   flag: FlagEntry | undefined;
   close: () => void;
-  onAccepted: (label: string) => void;
+  onAccepted: (label: string, before: string) => void;
   onAnswer: ((answer: string) => void) | undefined;
 }
 
@@ -83,9 +84,10 @@ function panelFor({
         session.fail('stale');
         return;
       }
+      const before = serializeMarkdown(editor);
       const result = applySuggestion(editor, current);
       if (result.ok) {
-        onAccepted(target.title);
+        onAccepted(target.title, before);
         close();
       } else {
         session.fail(result.reason);

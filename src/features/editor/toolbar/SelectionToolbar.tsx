@@ -5,6 +5,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
 import { Button, TextField } from '@/design-system';
+import { keepEditorSelection } from './keepSelection';
 import { toolbarPosition, type Box } from './toolbarPosition';
 import './SelectionToolbar.css';
 
@@ -62,6 +63,7 @@ export function SelectionToolbar({
       className="selection-toolbar"
       style={{ top, left }}
       onKeyDown={handleKeyDown}
+      onMouseDown={keepEditorSelection}
     >
       <Button onClick={onRewrite}>Rewrite</Button>
       <Button onClick={onFixTone}>Fix tone</Button>

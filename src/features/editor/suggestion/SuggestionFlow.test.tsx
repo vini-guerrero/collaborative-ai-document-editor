@@ -142,6 +142,10 @@ describe('suggestion flow in the editor', () => {
       pending.resolve(rewriteResponse(REPLACEMENT));
     });
     await screen.findByRole('button', { name: 'Accept' });
+    // Tab accepts from the card itself (D17); a focused button moves focus normally.
+    act(() => {
+      document.querySelector<HTMLElement>('.suggestion-card')?.focus();
+    });
     await user.keyboard('{Tab}');
 
     await waitFor(() => {

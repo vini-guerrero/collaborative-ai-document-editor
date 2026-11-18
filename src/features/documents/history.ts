@@ -2,7 +2,7 @@ import { HISTORY_MAX_ENTRIES, type HistoryEntry, type StoredDocument } from './s
 
 // D7: a budget on stored Markdown as well as the entry count. Counted in UTF-16 code units
 // (String.length), which is cheap to sum and close to bytes for mostly ASCII text.
-export const HISTORY_MAX_MARKDOWN_UNITS = 2_000_000;
+export const HISTORY_MAX_MARKDOWN_UNITS = 500_000;
 
 // D7: a "You" checkpoint is taken on a save that follows at least this much idle time.
 export const IDLE_CHECKPOINT_MS = 60_000;

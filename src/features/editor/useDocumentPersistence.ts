@@ -10,7 +10,7 @@ import {
   type StoredDocument,
 } from '@/features/documents';
 import { serializeMarkdown } from './markdown/markdown';
-import { createEntryId, withAiAccept, withCheckpoint } from './history/historyLog';
+import { createEntryId, withAiAccept, withCheckpoint, withSnapshot } from './history/historyLog';
 import { restoreVersion } from './history/useHistoryRestore';
 import { useAutosave, type AutosaveFailure, type AutosaveStatus } from './useAutosave';
 
@@ -37,7 +37,7 @@ export interface DocumentPersistence {
   readonly latestRef: RefObject<EditorDraft>;
   readonly scheduleBody: (body: string) => void;
   // D7: records an accepted AI change as an entry, then saves.
-  readonly recordAiAccept: (label: string) => void;
+  readonly recordAiAccept: (label: string, before: string) => void;
   // D7: restores an entry as one undo step and saves. False when it could not be restored.
   readonly restoreFromHistory: (entryId: string) => boolean;
   // The history the next save writes, read when the timeline opens.
@@ -82,9 +82,15 @@ export function useDocumentPersistence({
       ),
       history: [...historyRef.current],
     };
-    const result = await store.save(doc);
+    let result = await store.save(doc);
+    if (!result.ok && result.error.kind === 'quota') {
+      // D7: over the storage quota, the oldest half of the history is dropped and the save retried once.
+      const kept = historyRef.current.slice(Math.floor(historyRef.current.length / 2));
+      historyRef.current = kept;
+      result = await store.save({ ...doc, history: [...kept] });
+    }
     if (result.ok) {
-      persistedRef.current = doc;
+      persistedRef.current = { ...doc, history: [...historyRef.current] };
     }
     return result;
   };
@@ -99,16 +105,19 @@ export function useDocumentPersistence({
     schedule(latestRef.current);
   };
 
-  const recordAiAccept = (label: string): void => {
+  // D7: the author's text before the change is kept first, then the AI entry is recorded.
+  const recordAiAccept = (label: string, before: string): void => {
     const editor = editorRef.current;
     if (editor === null) {
       return;
     }
-    historyRef.current = withAiAccept(historyRef.current, {
+    const stamp = now();
+    const withBefore = withSnapshot(historyRef.current, before, stamp, createEntryId());
+    historyRef.current = withAiAccept(withBefore, {
       id: createEntryId(),
       markdown: serializeMarkdown(editor),
       label,
-      now: now(),
+      now: stamp,
     });
     schedule(latestRef.current);
   };

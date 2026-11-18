@@ -44,3 +44,22 @@
   padding: 0;
   border: 0;
 }
+
+/* The rewrite card and flag panel have a fixed reading width, not the popover's shrink-to-fit
+   width (which grew to the available space). Capped at 360px-friendly widths (S9). */
+.ds-popover:has(.suggestion-card),
+.ds-popover:has(.flag-panel) {
+  box-sizing: border-box;
+  inline-size: min(23.75rem, calc(100vw - 2 * var(--ds-space-200)));
+  max-inline-size: calc(100vw - 2 * var(--ds-space-200));
+}
+
+/* Added words keep a gap from the struck words next to them; removed words are dimmed as well as
+   struck, so the two read apart without colour alone (S7). */
+.ProseMirror .suggestion-insert {
+  margin-inline: var(--ds-space-025);
+}
+
+.ProseMirror .suggestion-delete {
+  opacity: 0.6;
+}

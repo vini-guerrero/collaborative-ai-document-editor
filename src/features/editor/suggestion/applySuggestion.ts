@@ -16,10 +16,12 @@ export function applySuggestion(editor: Editor, suggestion: Suggestion): ApplyRe
   }
   editor.view.dispatch(closeHistory(editor.state.tr));
   const { state } = editor;
+  // The new text takes the marks of the quoted text's start, so bold and links survive Accept.
+  const marks = state.doc.resolve(suggestion.from).marks();
   const tr = state.tr.replaceWith(
     suggestion.from,
     suggestion.to,
-    state.schema.text(suggestion.replacement),
+    state.schema.text(suggestion.replacement, marks),
   );
   clearSuggestionMeta(tr);
   if (suggestion.flagId !== undefined) {

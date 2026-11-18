@@ -19,7 +19,7 @@ export interface EditorOverlaysProps {
   // The flag whose popover is open, by id; null while none is.
   flagId: string | null;
   onFlagClose: () => void;
-  onAccepted: (label: string) => void;
+  onAccepted: (label: string, before: string) => void;
   historyOpen: boolean;
   historyEntries: readonly HistoryEntry[];
   now: number;

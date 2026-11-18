@@ -10,6 +10,7 @@ import {
   type RefineState,
 } from '../refine/refineReducer';
 import { suggestionFor, type RewriteTarget } from './rewriteTarget';
+import { flattenReplacement } from './replacementText';
 import { clearSuggestionMeta, getSuggestion, setSuggestionMeta } from './suggestionPlugin';
 import { failureOf, type SuggestionFailure, type SuggestionRequest } from './suggestionRequest';
 import type { Suggestion } from './suggestionState';
@@ -128,7 +129,7 @@ export function useRewriteSession(editor: Editor | null): RewriteSession {
                 ...latest,
                 refine: refineReducer(latest.refine, {
                   type: 'roundReceived',
-                  replacement: result.value.replacement,
+                  replacement: flattenReplacement(result.value.replacement),
                 }),
                 failure: null,
               })

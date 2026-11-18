@@ -18,11 +18,17 @@ function escapeLeadingBlockMarker(line: string): string {
     .replace(/^-(?=--)/, '\\-');
 }
 
-// T2, D13: the paragraph keeps TipTap's Markdown output and only escapes a leading block marker,
+// A line break inside a paragraph's text starts a new line in the Markdown, so every line is
+// escaped, not only the first (T2, T10: plain text must not become structure after a reload).
+function escapeBlockMarkers(markdown: string): string {
+  return markdown.split('\n').map(escapeLeadingBlockMarker).join('\n');
+}
+
+// T2, D13: the paragraph keeps TipTap's Markdown output and only escapes leading block markers,
 // so plain text such as "- one" stays a paragraph after a reload.
 const EscapingParagraph = Paragraph.extend({
   renderMarkdown(node, helpers, ctx) {
-    return escapeLeadingBlockMarker(this.parent?.call(this, node, helpers, ctx) ?? '');
+    return escapeBlockMarkers(this.parent?.call(this, node, helpers, ctx) ?? '');
   },
 });
 
