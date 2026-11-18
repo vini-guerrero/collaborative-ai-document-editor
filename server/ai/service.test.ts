@@ -129,6 +129,36 @@ describe('AiService: prompt-injection and delimiter (T10)', () => {
 });
 
 describe('AiService: analyze flags (D16, T10)', () => {
+  // D14: one flag with an over-long reason is shortened, not a reason to call the AI unavailable.
+  it('shortens an over-long reason and keeps the flag', async () => {
+    const long = 'x'.repeat(300);
+    const { service } = setup([
+      reply({ flags: [{ kind: 'clarity', quote: 'in order to', reason: long }] }),
+    ]);
+    const result = await service.run(analyzeRequest, controller().signal);
+    const shortened = `${'x'.repeat(139)}…`;
+    expect(result).toEqual({
+      ok: true,
+      value: { flags: [{ kind: 'clarity', quote: 'in order to', reason: shortened }] },
+    });
+  });
+
+  it('drops one invalid flag and keeps the valid one', async () => {
+    const { service } = setup([
+      reply({
+        flags: [
+          { kind: 'nonsense', quote: 'in order to', reason: 'bad kind' },
+          { kind: 'clarity', quote: 'in order to', reason: 'Wordy.' },
+        ],
+      }),
+    ]);
+    const result = await service.run(analyzeRequest, controller().signal);
+    expect(result).toEqual({
+      ok: true,
+      value: { flags: [{ kind: 'clarity', quote: 'in order to', reason: 'Wordy.' }] },
+    });
+  });
+
   it('drops a flag whose quote is not in the paragraph', async () => {
     const { service } = setup([
       reply({

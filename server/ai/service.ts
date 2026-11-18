@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
   FlagSchema,
   MAX_FLAGS_PER_PARAGRAPH,
+  MAX_REASON_CHARS,
   RestructureResponseSchema,
   RewriteResponseSchema,
   type AiRequest,
@@ -39,9 +40,26 @@ const NONCE_BYTES = 16;
 // Production nonce source. Tests pass their own so prompts are deterministic.
 const randomNonce = (): string => randomBytes(NONCE_BYTES).toString('hex');
 
-// The model may return more flags than D16 allows; the service keeps the first two that
-// match the paragraph. So the reply is checked against FlagSchema alone, not the 2-flag cap.
-const ModelAnalyzeSchema = z.object({ flags: z.array(FlagSchema) }).strict();
+// The reply must be an object with a flags array. Each flag is then judged on its own: one bad
+// flag (a reason over the limit, an unknown kind) must not discard the good ones, or a short outage
+// of quality would show as an AI outage (D14). Over-long reasons are shortened, not rejected, since
+// the limit is a display rule (D8) and the model's wording is otherwise fine.
+const ModelAnalyzeSchema = z.object({ flags: z.array(z.unknown()) }).strict();
+const REASON_ELLIPSIS = '…';
+
+const shortenReason = (raw: unknown): unknown => {
+  if (typeof raw !== 'object' || raw === null || !('reason' in raw)) {
+    return raw;
+  }
+  const { reason } = raw;
+  if (typeof reason !== 'string' || reason.length <= MAX_REASON_CHARS) {
+    return raw;
+  }
+  return {
+    ...raw,
+    reason: `${reason.slice(0, MAX_REASON_CHARS - REASON_ELLIPSIS.length).trimEnd()}${REASON_ELLIPSIS}`,
+  };
+};
 
 const checkAnalyze = (
   request: AnalyzeRequest,
@@ -54,6 +72,8 @@ const checkAnalyze = (
   // A quote that is not verbatim in the paragraph would underline the wrong text (D2, T10).
   // A quote that appears more than once keeps every match here; the client anchors the first one.
   const flags = parsed.data.flags
+    .map((raw) => FlagSchema.safeParse(shortenReason(raw)))
+    .flatMap((flag) => (flag.success ? [flag.data] : []))
     .filter((flag) => request.paragraph.includes(flag.quote))
     .slice(0, MAX_FLAGS_PER_PARAGRAPH);
   return { flags };
