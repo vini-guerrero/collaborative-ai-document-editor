@@ -167,6 +167,14 @@
 /* The wide layout uses the full page: the column and the text surface lose their reading caps. */
 .editor-page-main--full {
   max-inline-size: none;
+  /* Full width still keeps a clear gutter on both sides. */
+  padding-inline: var(--ds-space-300);
+}
+
+@media (min-width: 768px) {
+  .editor-page-main--full {
+    padding-inline: var(--ds-space-400);
+  }
 }
 
 .editor-page-main--full .editor-surface,

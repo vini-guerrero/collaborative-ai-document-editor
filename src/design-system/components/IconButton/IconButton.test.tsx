@@ -11,6 +11,18 @@ describe('IconButton (S7)', () => {
     expect(screen.getByRole('button', { name: 'Close panel' })).not.toBeNull();
   });
 
+  it('shows its label in Title Case as a tooltip, or the text it is given', () => {
+    render(
+      <>
+        <IconButton icon="x" label="Close panel" />
+        <IconButton icon="trash" label="Delete note" tooltip="Remove This Note" />
+      </>,
+    );
+
+    expect(screen.getByRole('tooltip', { name: 'Close Panel' })).not.toBeNull();
+    expect(screen.getByRole('tooltip', { name: 'Remove This Note' })).not.toBeNull();
+  });
+
   it('activates with Enter from the keyboard', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();

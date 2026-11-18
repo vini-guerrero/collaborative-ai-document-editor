@@ -141,6 +141,7 @@ export function AppShell({
               id={menuButtonId}
               icon="menu"
               label="Open navigation"
+              tooltipAlign="start"
               aria-expanded={isDrawerOpen}
               aria-controls={navId}
               onClick={() => {

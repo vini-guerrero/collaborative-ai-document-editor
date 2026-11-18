@@ -29,6 +29,7 @@ export function DocumentRow({ doc, now, onDelete }: DocumentRowProps): JSX.Eleme
         <IconButton
           icon="trash"
           label={`Delete "${title}"`}
+          tooltip={`Delete "${title}"`}
           onClick={() => {
             onDelete(doc);
           }}

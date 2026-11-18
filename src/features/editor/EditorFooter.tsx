@@ -1,5 +1,5 @@
 import type { JSX } from 'react';
-import { IconButton, ThemeSwitcher, Tooltip, useBreakpoint } from '@/design-system';
+import { IconButton, ThemeSwitcher, useBreakpoint } from '@/design-system';
 import { formatRelativeTime } from '@/lib/relativeTime';
 import { ModeToggle } from './ModeToggle';
 import type { DocumentInfo } from './useDocumentPersistence';
@@ -59,9 +59,7 @@ export function EditorFooter({
             />
           )}
           {compact ? null : (
-            <Tooltip content="History">
-              <IconButton icon="history" label="History" onClick={controls.onHistory} />
-            </Tooltip>
+            <IconButton icon="history" label="History" onClick={controls.onHistory} />
           )}
           <ThemeSwitcher />
         </div>

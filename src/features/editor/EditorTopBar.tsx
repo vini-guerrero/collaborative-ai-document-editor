@@ -1,6 +1,6 @@
 import type { JSX, ReactNode } from 'react';
 import { Link } from 'react-router';
-import { Icon, iconLinkClassName, useBreakpoint } from '@/design-system';
+import { Icon, Tooltip, iconLinkClassName, useBreakpoint } from '@/design-system';
 import { AiModeToggle } from './AiModeToggle';
 import { EditorOverflowMenu } from './EditorOverflowMenu';
 import type { AiMode, ViewMode } from './editorModes';
@@ -41,9 +41,11 @@ export function EditorTopBar({
 
   return (
     <header className="editor-top-bar">
-      <Link to="/" aria-label="Back to documents" className={iconLinkClassName()}>
-        <Icon name="arrow-left" />
-      </Link>
+      <Tooltip content="Back to Documents" align="start">
+        <Link to="/" aria-label="Back to documents" className={iconLinkClassName()}>
+          <Icon name="arrow-left" />
+        </Link>
+      </Tooltip>
       {view !== undefined && compact ? (
         <div className="editor-top-bar__overflow">
           <EditorOverflowMenu

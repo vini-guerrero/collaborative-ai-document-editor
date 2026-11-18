@@ -43,6 +43,7 @@ export function DocumentCard({ doc, now, onDelete }: DocumentCardProps): JSX.Ele
         <IconButton
           icon="trash"
           label={`Delete "${title}"`}
+          tooltip={`Delete "${title}"`}
           onClick={() => {
             onDelete(doc);
           }}

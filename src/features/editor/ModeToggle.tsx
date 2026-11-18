@@ -1,5 +1,5 @@
 import type { JSX } from 'react';
-import { IconButton, Tooltip, type IconName } from '@/design-system';
+import { IconButton, type IconName } from '@/design-system';
 
 export interface ModeOption<Mode extends string> {
   readonly value: Mode;
@@ -26,15 +26,14 @@ export function ModeToggle<Mode extends string>({
   const current = value === first.value ? first : second;
   const other = current === first ? second : first;
   return (
-    <Tooltip content={`${current.label}\nSwitch to ${other.label}`}>
-      <IconButton
-        icon={other.icon}
-        label={`Switch to ${other.label}`}
-        variant="secondary"
-        onClick={() => {
-          onChange(other.value);
-        }}
-      />
-    </Tooltip>
+    <IconButton
+      tooltip={`${current.label}\nSwitch to ${other.label}`}
+      icon={other.icon}
+      label={`Switch to ${other.label}`}
+      variant="secondary"
+      onClick={() => {
+        onChange(other.value);
+      }}
+    />
   );
 }

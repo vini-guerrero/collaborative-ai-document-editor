@@ -6,6 +6,8 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
 import { Icon, type IconName } from '../../icons';
+import { titleCase } from '../../titleCase';
+import { Tooltip } from '../Tooltip/Tooltip';
 import '../Button/Button.css';
 import '../IconButton/IconButton.css';
 import { Popover } from '../Popover/Popover';
@@ -137,24 +139,34 @@ export function Menu({ label, trigger, items, onSelect }: MenuProps): JSX.Elemen
     }
   }
 
+  const triggerButton = (
+    <button
+      ref={setAnchor}
+      type="button"
+      aria-haspopup="menu"
+      aria-expanded={isOpen}
+      aria-label={trigger.kind === 'icon' ? label : undefined}
+      className={
+        trigger.kind === 'icon'
+          ? 'ds-button ds-button--subtle ds-icon-button'
+          : 'ds-button ds-button--subtle'
+      }
+      onClick={handleTriggerClick}
+      onKeyDown={handleTriggerKeyDown}
+    >
+      {trigger.kind === 'icon' ? <Icon name={trigger.icon} /> : trigger.text}
+    </button>
+  );
+
   return (
     <>
-      <button
-        ref={setAnchor}
-        type="button"
-        aria-haspopup="menu"
-        aria-expanded={isOpen}
-        aria-label={trigger.kind === 'icon' ? label : undefined}
-        className={
-          trigger.kind === 'icon'
-            ? 'ds-button ds-button--subtle ds-icon-button'
-            : 'ds-button ds-button--subtle'
-        }
-        onClick={handleTriggerClick}
-        onKeyDown={handleTriggerKeyDown}
-      >
-        {trigger.kind === 'icon' ? <Icon name={trigger.icon} /> : trigger.text}
-      </button>
+      {trigger.kind === 'icon' ? (
+        <Tooltip content={titleCase(label)} align="start">
+          {triggerButton}
+        </Tooltip>
+      ) : (
+        triggerButton
+      )}
       <Popover
         anchor={anchor}
         open={isOpen}

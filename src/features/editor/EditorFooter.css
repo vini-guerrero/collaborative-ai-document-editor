@@ -33,3 +33,23 @@
   inset-block-start: auto;
   inset-block-end: calc(100% + var(--ds-space-050));
 }
+
+/* Compact controls: 28px buttons with 16px icons sit centred in the 40px row, 8px from its edges. */
+.editor-footer {
+  padding-block: var(--ds-space-050);
+}
+
+.editor-footer__controls {
+  gap: var(--ds-space-050);
+}
+
+.editor-footer .ds-icon-button {
+  inline-size: 28px;
+  min-block-size: 28px;
+  block-size: 28px;
+}
+
+.editor-footer .ds-icon-button svg {
+  inline-size: 16px;
+  block-size: 16px;
+}

@@ -26,6 +26,11 @@
   transition: opacity var(--ds-duration-short) var(--ds-easing-out-practical);
 }
 
+.ds-tooltip--start .ds-tooltip__bubble {
+  inset-inline-start: 0;
+  inset-inline-end: auto;
+}
+
 .ds-tooltip:hover .ds-tooltip__bubble,
 .ds-tooltip:focus-within .ds-tooltip__bubble {
   visibility: visible;
