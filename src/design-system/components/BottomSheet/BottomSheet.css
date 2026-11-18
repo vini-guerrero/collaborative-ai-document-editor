@@ -73,3 +73,15 @@
     opacity: 1;
   }
 }
+
+/* From md the sheet docks to the bottom-right as a card (the prototype's history panel), rather
+   than stretching across a wide screen. */
+@media (min-width: 768px) {
+  .ds-bottom-sheet {
+    inset-inline: auto var(--ds-space-200);
+    inset-block-end: var(--ds-space-200);
+    inline-size: 24rem;
+    max-inline-size: calc(100vw - 2 * var(--ds-space-200));
+    border-radius: var(--ds-radius-xlarge);
+  }
+}

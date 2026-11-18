@@ -27,3 +27,13 @@
   font: var(--ds-font-body);
   color: var(--ds-text-subtle);
 }
+
+/* The collapse control reads as the panel's title, flush left like the entries below it. */
+.history-timeline > .ds-button {
+  justify-self: start;
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.history-timeline__list {
+  max-inline-size: 100%;
+}
