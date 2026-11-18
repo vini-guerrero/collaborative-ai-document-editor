@@ -6,10 +6,30 @@
   display: flex;
   align-items: center;
   gap: var(--ds-space-100);
-  min-block-size: var(--ds-space-400);
+  min-block-size: var(--ds-space-500);
   padding-inline: var(--ds-space-200);
   border-block-start: var(--ds-border-width) solid var(--ds-border);
   background: var(--ds-surface);
   color: var(--ds-text-subtle);
   font: var(--app-type-secondary);
+}
+
+/* The controls sit at the right edge, on the same 32px line as the text. */
+.editor-footer__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  margin-inline-start: auto;
+}
+
+/* The save status is announced politely and keeps its place even when empty. */
+.editor-footer__status {
+  min-inline-size: 0;
+  margin: 0;
+}
+
+/* At the bottom edge the tooltips open upward, so they are not cut off by the viewport. */
+.editor-footer .ds-tooltip__bubble {
+  inset-block-start: auto;
+  inset-block-end: calc(100% + var(--ds-space-050));
 }

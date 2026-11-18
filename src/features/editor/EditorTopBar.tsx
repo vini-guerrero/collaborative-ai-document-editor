@@ -1,13 +1,6 @@
 import type { JSX, ReactNode } from 'react';
 import { Link } from 'react-router';
-import {
-  Icon,
-  IconButton,
-  ThemeSwitcher,
-  Tooltip,
-  iconLinkClassName,
-  useBreakpoint,
-} from '@/design-system';
+import { Icon, iconLinkClassName, useBreakpoint } from '@/design-system';
 import { AiModeToggle } from './AiModeToggle';
 import { EditorOverflowMenu } from './EditorOverflowMenu';
 import type { AiMode, ViewMode } from './editorModes';
@@ -24,8 +17,6 @@ export interface EditorViewControls {
 }
 
 export interface EditorTopBarProps {
-  // Text for the save live region; empty when there is nothing to announce.
-  message: string;
   // The title field; absent while the document is loading or cannot be opened.
   title?: ReactNode;
   // Absent while the document is loading or cannot be opened.
@@ -36,11 +27,10 @@ export interface EditorTopBarProps {
   flagControl?: ReactNode;
 }
 
-// H5, D1, D15, H7, S9: the back arrow, the title, the view and AI mode toggles, and the save
+// H5, D1, D15, H7, S9: the back arrow, the title, the AI status, the view and AI mode toggles, and the save
 // status. Below md the view toggle and History move into the overflow menu. The AI status and the
 // flag control have reserved widths, so their appearing or changing does not move the toggles.
 export function EditorTopBar({
-  message,
   title,
   view,
   aiStatus,
@@ -64,6 +54,8 @@ export function EditorTopBar({
         </div>
       ) : null}
       {title === undefined ? null : <div className="editor-top-bar__title">{title}</div>}
+      <div className="editor-top-bar__flags">{flagControl ?? null}</div>
+      <div className="editor-top-bar__ai">{aiStatus ?? null}</div>
       <div className="editor-top-bar__toggles">
         {view !== undefined && !compact ? (
           <ViewModeToggle value={view.viewMode} onChange={view.onViewModeChange} />
@@ -72,17 +64,6 @@ export function EditorTopBar({
           <AiModeToggle value={view.aiMode} onChange={view.onAiModeChange} />
         ) : null}
       </div>
-      <div className="editor-top-bar__flags">{flagControl ?? null}</div>
-      <div className="editor-top-bar__ai">{aiStatus ?? null}</div>
-      {view !== undefined && !compact ? (
-        <Tooltip content="History">
-          <IconButton icon="history" label="History" onClick={view.onHistory} />
-        </Tooltip>
-      ) : null}
-      <ThemeSwitcher />
-      <p role="status" className="editor-top-bar__status">
-        {message}
-      </p>
     </header>
   );
 }

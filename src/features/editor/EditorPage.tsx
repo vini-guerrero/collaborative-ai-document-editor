@@ -36,7 +36,7 @@ export function EditorPageView({
   if (loaded.kind === 'loading') {
     return (
       <>
-        <EditorTopBar message="" />
+        <EditorTopBar />
         <main className="editor-page-main">
           <Spinner label="Loading document" />
         </main>
@@ -47,7 +47,7 @@ export function EditorPageView({
   if (loaded.kind === 'error') {
     return (
       <>
-        <EditorTopBar message="" />
+        <EditorTopBar />
         <main className="editor-page-main">
           <EmptyState
             title="This Document Could Not Be Opened"

@@ -24,8 +24,7 @@
 }
 
 .editor-top-bar__ai,
-.editor-top-bar__flags,
-.editor-top-bar__status {
+.editor-top-bar__flags {
   align-items: center;
 }
 
@@ -114,14 +113,6 @@
   }
 }
 
-.editor-top-bar__status {
-  min-inline-size: 0;
-  margin: 0;
-  font: var(--ds-font-body-small);
-  color: var(--ds-text-subtle);
-  text-align: end;
-}
-
 /* The page column: centred at the prototype's 740px, with generous top space (56px) and 80px at the
    bottom. The 16px side gutter holds at phone width; from md the column gets the 24px side space. */
 .editor-page-main {
@@ -171,4 +162,14 @@
 /* The raw Markdown view uses the room: a wider column than the reading page (D15). */
 .editor-page-main--wide {
   max-inline-size: 64rem;
+}
+
+/* The wide layout uses the full page: the column and the text surface lose their reading caps. */
+.editor-page-main--full {
+  max-inline-size: none;
+}
+
+.editor-page-main--full .editor-surface,
+.editor-page-main--full .editor-surface-frame {
+  max-inline-size: none;
 }

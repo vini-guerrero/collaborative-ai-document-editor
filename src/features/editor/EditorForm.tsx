@@ -16,6 +16,7 @@ import { serializeMarkdown } from './markdown/markdown';
 import { applyMarkdownSource } from './applyMarkdownSource';
 import { useRestructureFlow } from './restructure/useRestructureFlow';
 import { rewriteActionsFor } from './suggestion/rewriteActions';
+import { useWideLayout } from './useWideLayout';
 import { useRewriteSession } from './suggestion/useRewriteSession';
 import type { SlashItem } from './slash/slashItems';
 import { useAiMode } from './useAiMode';
@@ -85,6 +86,7 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
   const actions = rewriteActionsFor(mountedEditor, rewrite);
   const restructure = useRestructureFlow(mountedEditor, recordAiAccept);
   const { aiMode, setAiMode } = useAiMode();
+  const { wide, setWide } = useWideLayout();
   // D1, D15: nothing is analyzed in On Demand mode or while the raw Markdown is shown.
   const aiPaused = aiMode === 'on-demand' || viewMode === 'markdown';
 
@@ -152,7 +154,6 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
   return (
     <div className="editor-page">
       <EditorTopBar
-        message={saveMessage(status, failure)}
         title={titleField}
         aiStatus={<StatusIndicator />}
         flagControl={
@@ -173,7 +174,11 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
       />
       <main
         className={
-          viewMode === 'markdown' ? 'editor-page-main editor-page-main--wide' : 'editor-page-main'
+          wide
+            ? 'editor-page-main editor-page-main--full'
+            : viewMode === 'markdown'
+              ? 'editor-page-main editor-page-main--wide'
+              : 'editor-page-main'
         }
       >
         <h1>
@@ -222,7 +227,19 @@ export function EditorForm({ documentId, initial, now, onReady }: EditorFormProp
           onRestoreVersion={restoreVersion}
         />
       </main>
-      <EditorFooter info={info} now={now()} />
+      <EditorFooter
+        info={info}
+        now={now()}
+        message={saveMessage(status, failure)}
+        controls={{
+          wide,
+          onWideChange: setWide,
+          onHistory: () => {
+            setHistoryEntries([...historyRef.current]);
+            setHistoryOpen(true);
+          },
+        }}
+      />
     </div>
   );
 }
