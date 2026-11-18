@@ -1,0 +1,32 @@
+/* S5, S7: each kind differs by underline style, not only colour. Tokens only, so light and
+   dark themes both apply. Focus rings belong to phase 35. */
+.ProseMirror .flag {
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--ai-flag-underline);
+}
+
+/* Clarity and wordiness: wavy. */
+.ProseMirror .flag--clarity {
+  text-decoration-style: wavy;
+  text-decoration-color: var(--ds-border-information);
+}
+
+/* Tone consistency: dashed. */
+.ProseMirror .flag--tone {
+  text-decoration-style: dashed;
+  text-decoration-color: var(--ds-border-discovery);
+}
+
+/* Grammar and typos: dotted. */
+.ProseMirror .flag--grammar {
+  text-decoration-style: dotted;
+  text-decoration-color: var(--ds-border-danger);
+}
+
+/* Questions to the author: double. */
+.ProseMirror .flag--question {
+  text-decoration-style: double;
+  text-decoration-color: var(--ds-border-success);
+}
