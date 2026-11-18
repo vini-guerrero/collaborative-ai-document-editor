@@ -8,11 +8,18 @@ A Markdown editor in the browser with an AI co-author. The AI flags passages and
 - **Editor:** Markdown in a rich editor with a formatting toolbar (undo, redo, headings, bold, italic, strikethrough, code, lists, quote, code block) and a raw Markdown view. Autosave and version history with restore. A footer shows the last edit, the revision count and the save status, with a standard or wide layout, History and the theme switch.
 - **Export:** download the document as a `.md` file from the button beside the title.
 - **Ambient mode:** the AI underlines passages (clarity, tone, grammar, questions to the author) after you pause typing. **On Demand mode:** you invoke it on a selection, a section, or with `/`.
+- **AI bubble:** a small animated bubble beside a paragraph shows while the AI is reading it, then pulses once suggestions are underlined; clicking it opens the suggestion card.
 - **Suggestions:** an anchored card with a live word diff. Accept, Dismiss or Refine (tone, length, free instruction).
 - **Restructure:** move, split or merge sections, with the same preview-then-accept flow.
 - **Theme:** light and dark, following the system or set with the toggle. The brand colour is Atlassian purple, derived from the ADS purple scale, with AAA text contrast on filled and text colours.
 
 Documents and history are stored in the browser (localStorage). No account, no database.
+
+## How it was built
+
+1. **Discovery:** product interviews turned into written product and technical decisions (`docs/`): what the editor and home screen do, the AI contract, storage, security and the design system.
+2. **Implementation:** the decisions were split into small tasks on a board and built one at a time on a `development` branch, each change passing `pnpm check` (format, lint, types, licenses, tests, build) before it was committed.
+3. **Polish:** the running app was used and reviewed in the browser, in light and dark, and refined from that experience: the AI call policy, the brand colour and type scale, accessibility and contrast, the toolbar, footer and AI bubble.
 
 ## Stack
 
@@ -93,4 +100,5 @@ pnpm format       # apply Prettier
 - Add richer structured logging on the server, with the same redaction rules.
 - Add a settings screen to tweak AI options, such as the model per task and the idle pause.
 - Add links and horizontal rules to the formatting toolbar, which needs a small URL input.
+- Use the software development lifecycle more fully: issues for each task, a branch per change, pull requests with review and CI checks before merging to `main`, versioned releases with tags and a changelog.
 - Let the user pick the restructure operation (move, split, merge) in the slash menu.
