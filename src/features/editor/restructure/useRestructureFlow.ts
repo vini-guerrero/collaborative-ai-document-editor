@@ -7,7 +7,12 @@ import { failureOf, type SuggestionFailure } from '../suggestion/suggestionReque
 import { applyRestructure } from './applyRestructure';
 import { describeOperation } from './describeOperation';
 import { clearRestructureMeta, setRestructureMeta } from './restructurePreviewPlugin';
-import { requestSectionsOf, sectionIndexAt, type RequestSectionsFailure } from './requestSections';
+import {
+  isActionPossible,
+  requestSectionsOf,
+  sectionIndexAt,
+  type RequestSectionsFailure,
+} from './requestSections';
 import { outline, type Section } from './sections';
 
 // Why a restructure cannot be shown or applied. Mapped to D14 text by the panel.
@@ -79,6 +84,10 @@ export function useRestructureFlow(
       return;
     }
     const section = sectionIndexAt(editor.state.doc, editor.state.selection.from);
+    if (!isActionPossible(editor.state.doc, action, section)) {
+      setState({ kind: 'error', reason: 'nothing_to_do' });
+      return;
+    }
     const controller = new AbortController();
     controllerRef.current = controller;
     setState({ kind: 'loading' });

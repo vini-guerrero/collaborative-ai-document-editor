@@ -6,6 +6,7 @@ import type { RestructureFailure, RestructureFlow } from './useRestructureFlow';
 // D14: plain, factual one-liners. The model's text is never shown here (T10).
 const FAILURE_TEXT: Record<RestructureFailure, string> = {
   empty: 'There is no text to restructure.',
+  nothing_to_do: 'This section has nothing to move, split or merge yet.',
   too_long: 'The document is too long to restructure in one step.',
   out_of_credit: 'The AI is out of credit.',
   unavailable: 'The AI is unavailable. Try again later.',

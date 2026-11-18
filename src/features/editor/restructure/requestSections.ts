@@ -5,10 +5,11 @@ import {
   MAX_SECTIONS,
   type Section as RequestSection,
 } from '@shared/schemas';
-import { docSections } from './docSections';
+import type { RestructureAction } from '@shared/schemas/restructure';
+import { bodyBlocksOf, docSections } from './docSections';
 import type { Section } from './sections';
 
-export type RequestSectionsFailure = 'empty' | 'too_long';
+export type RequestSectionsFailure = 'empty' | 'too_long' | 'nothing_to_do';
 
 export type RequestSections =
   | { readonly ok: true; readonly sections: RequestSection[] }
@@ -48,4 +49,16 @@ export function sectionIndexAt(doc: Node, pos: number): number {
     blocks.some((block) => pos >= block.pos && pos < block.pos + block.node.nodeSize),
   );
   return Math.max(index, 0);
+}
+
+// D10: whether the action has any valid operation. Move and merge need two sections; split needs
+// the caret's section to hold at least two paragraphs. Asking the AI otherwise cannot succeed, and
+// its failed reply would show as an outage (D14).
+export function isActionPossible(doc: Node, action: RestructureAction, section: number): boolean {
+  const sections = docSections(doc);
+  if (action !== 'split') {
+    return sections.length >= 2;
+  }
+  const blocks = sections[section];
+  return blocks !== undefined && bodyBlocksOf(blocks).length >= 2;
 }
